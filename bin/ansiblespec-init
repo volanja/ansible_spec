@@ -1,0 +1,7 @@
+#! /usr/bin/env ruby
+# coding: utf-8
+
+require 'ansible_spec'
+AnsibleSpec.main
+
+exit 0
