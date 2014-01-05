@@ -1,7 +1,7 @@
 # AnsibleSpec
 
-This is Severspec template for Run test Multi Role and Multi Host with Ansible
-Create template (Rakefile and spec/spec_hepler.rb)
+This is Severspec template for Run test Multi Role and Multi Host with Ansible  
+Create template (Rakefile and spec/spec_hepler.rb)  
 Serverspec template use Ansible InventoryFile and site.yml
 
 ## Installation
