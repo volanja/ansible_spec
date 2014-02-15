@@ -1,4 +1,5 @@
 require "ansible_spec/version"
+require "fileutils"
 
 # Reference
 # https://github.com/serverspec/serverspec/blob/master/lib/serverspec/setup.rb
