@@ -20,8 +20,8 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency "bundler", "~> 1.3"
   gem.add_development_dependency "rake"
-  gem.add_development_dependency "serverspec", "~> 0.13.5"
+  gem.add_development_dependency "serverspec", ">= 0.13.5"
 
-  gem.add_runtime_dependency "serverspec", "~> 0.13.5"
+  gem.add_runtime_dependency "serverspec", ">= 0.13.5"
 
 end
