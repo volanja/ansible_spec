@@ -1,4 +1,5 @@
 # AnsibleSpec
+[![Gem Version](https://badge.fury.io/rb/ansible_spec.svg)](http://badge.fury.io/rb/ansible_spec)
 
 This is Severspec template for Run test Multi Role and Multi Host with Ansible  
 Create template (Rakefile and spec/spec_hepler.rb)  
