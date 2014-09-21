@@ -41,7 +41,7 @@ sample is [here](https://github.com/volanja/ansible-sample-tdd)
 
 ```
 .
-├── .ansiblespec                 #Create file (use Serverspec). read [Change .ansiblespec(v0.0.1.3)](https://github.com/volanja/ansible_spec#change_ansiblespec_v0013)
+├── .ansiblespec                 #Create file (use Serverspec). read above section.
 ├── README.md
 ├── hosts                        #use Ansible and Serverspec if .ansiblespec is not exist.
 ├── site.yml                     #use Ansible and Serverspec if .ansiblespec is not exist. 
