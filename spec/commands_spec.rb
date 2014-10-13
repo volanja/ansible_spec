@@ -29,13 +29,13 @@ describe "テスト" do
 
   it "/tmpにディレクトリが作成されること" do
     created_dir.each{|d|
-      File.directory?(d).should be_true
+      expect(File.directory?(d)).to be_truthy
     }
   end
 
   it "/tmpにファイルが作成されること" do
     created_file.each{|f|
-      FileTest.exist?(f).should be_true
+      expect(FileTest.exist?(f)).to be_truthy
     }
   end
 
