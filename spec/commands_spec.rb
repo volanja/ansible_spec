@@ -14,6 +14,7 @@ test_dir = "tmp"
 describe "テスト" do
   # テスト実行前
   before(:all) do
+    $stdout = File.open("/dev/null", "w") #テスト実行中は標準出力は/dev/nullにする。
     FileUtils.mkdir_p(test_dir) unless FileTest.exist?(test_dir)
     Dir.chdir(test_dir) #tmp/に移動
     AnsibleSpec.main
@@ -25,6 +26,7 @@ describe "テスト" do
     created_dir.each{|d| Dir.delete(d) }
     Dir.chdir("../")
     Dir.delete(test_dir)
+    $stdout =STDOUT # テスト実行後は元に戻す
   end
 
   it "/tmpにディレクトリが作成されること" do
