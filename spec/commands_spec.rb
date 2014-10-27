@@ -1,5 +1,6 @@
 # coding: utf-8
 require 'ansible_spec'
+require 'diff/lcs'
 
 created_file = [
 "spec/spec_helper.rb",
@@ -41,4 +42,22 @@ describe "テスト" do
     }
   end
 
+  it "ファイルがオリジナルと一致すること" do
+    created_file.each{|f|
+      expect(no_diff("../lib/src/"+f,f)).to be_truthy
+    }
+  end
+
+end
+
+# check diff
+# if exists diff, return false
+# if not exist diff, return true
+def no_diff(src_file,dst_file)
+  src = File.open(src_file).read
+  dst = File.open(dst_file).read
+  if Diff::LCS.diff(src,dst).count == 0
+    return true
+  end
+  return false
 end
