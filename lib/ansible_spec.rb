@@ -78,10 +78,10 @@ def load_ansiblespec()
     @inventoryfile = 'hosts'
   end
   if File.exist?(@playbook) == false
-    puts 'Error: ' + @playbook + ' is not Found. create site.yml or /.ansiblespec  See https://github.com/volanja/ansible_spec'
+    puts 'Error: ' + @playbook + ' is not Found. create site.yml or ./.ansiblespec  See https://github.com/volanja/ansible_spec'
     exit 1
   elsif File.exist?(@inventoryfile) == false
-    puts 'Error: ' + @inventoryfile + ' is not Found. create hosts or /.ansiblespec  See https://github.com/volanja/ansible_spec'
+    puts 'Error: ' + @inventoryfile + ' is not Found. create hosts or ./.ansiblespec  See https://github.com/volanja/ansible_spec'
     exit 1
   end
 end
