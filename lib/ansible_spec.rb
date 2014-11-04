@@ -16,7 +16,7 @@ module AnsibleSpec
 
 
   def self.safe_create_spec_helper
-    content = File.open("../lib/src/spec/spec_helper.rb").read
+    content = File.open(File.dirname(__FILE__) + "/../lib/src/spec/spec_helper.rb").read
     safe_mkdir("spec")
     safe_touch("spec/spec_helper.rb")
     File.open("spec/spec_helper.rb", 'w') do |f|
@@ -26,7 +26,7 @@ module AnsibleSpec
   end
 
   def self.safe_create_rakefile
-    content = File.open("../lib/src/Rakefile").read
+    content = File.open(File.dirname(__FILE__) + "/../lib/src/Rakefile").read
     safe_touch("Rakefile")
     File.open("Rakefile", 'w') do |f|
       f.puts content
@@ -34,7 +34,7 @@ module AnsibleSpec
   end
 
   def self.safe_create_ansiblespec
-    content = File.open("../lib/src/.ansiblespec").read
+    content = File.open(File.dirname(__FILE__) + "/../lib/src/.ansiblespec").read
     safe_touch(".ansiblespec")
     File.open(".ansiblespec", 'w') do |f|
       f.puts content
