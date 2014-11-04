@@ -1,5 +1,4 @@
 require 'serverspec'
-#require 'pathname'
 require 'net/ssh'
 
 set :backend, :ssh
