@@ -1,4 +1,5 @@
 require "ansible_spec/version"
+require "ansible_spec/load_ansible"
 require "fileutils"
 
 # Reference
