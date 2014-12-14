@@ -4,29 +4,11 @@ require 'yaml'
 require 'ansible_spec'
 
 playbook, inventoryfile = AnsibleSpec.load_ansiblespec
-load_file = YAML.load_file(playbook)
-
-# e.g. comment-out
-if load_file === false
-  puts 'Error: No data in site.yml'
-  exit
-end
-
-properties = Array.new
-load_file.each do |site|
-  if site.has_key?("include")
-    properties.push YAML.load_file(site["include"])[0]
-  else
-    properties.push site
-  end
-end
-# puts properties
-# {"name"=>"Ansible-Sample-TDD", "hosts"=>"server", "user"=>"root", "roles"=>["nginx", "mariadb"]}
-
 
 #load inventry file
 # inventory fileとplaybookのhostsをマッピングする。
 hosts = AnsibleSpec.load_targets(inventoryfile)
+properties = AnsibleSpec.load_playbook(playbook)
 properties.each do |var|
   if hosts.has_key?("#{var["hosts"]}")
     var["hosts"] = hosts["#{var["hosts"]}"]

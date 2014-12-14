@@ -40,4 +40,26 @@ module AnsibleSpec
     end
     return playbook, inventoryfile
   end
+
+  # param: playbook
+  # return: json
+  #         {"name"=>"Ansible-Sample-TDD", "hosts"=>"server", "user"=>"root", "roles"=>["nginx", "mariadb"]}
+  def self.load_playbook(f)
+    playbook = YAML.load_file(f)
+
+    # e.g. comment-out
+    if playbook === false
+      puts 'Error: No data in site.yml'
+      exit
+    end
+    properties = Array.new
+    playbook.each do |site|
+      if site.has_key?("include")
+        properties.push YAML.playbook(site["include"])[0]
+      else
+        properties.push site
+      end
+    end
+    return properties
+  end
 end
