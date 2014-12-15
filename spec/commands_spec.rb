@@ -12,47 +12,6 @@ created_dir = [
 ]
 test_dir = "tmp"
 
-# ansible_specを実行してテストする。
-describe "コマンドの実行" do
-  # テスト実行前
-  before(:all) do
-    #$stdout = File.open("/dev/null", "w") #テスト実行中は標準出力は/dev/nullにする。
-    FileUtils.mkdir_p(test_dir) unless FileTest.exist?(test_dir)
-    Dir.chdir(test_dir) #tmp/に移動
-    #`ansiblespec-init`
-    res = system('ansiblespec-init')
-    puts res
-  end
-
-  # テスト実行後
-  after(:all) do
-    created_file.each{|f| File.delete(f) }
-    created_dir.each{|d| Dir.delete(d) }
-    Dir.chdir("../")
-    FileUtils.remove_entry_secure(test_dir)
-    #$stdout =STDOUT # テスト実行後は元に戻す
-  end
-
-  it "/tmpにディレクトリが作成されること" do
-    created_dir.each{|d|
-      expect(File.directory?(d)).to be_truthy
-    }
-  end
-
-  it "/tmpにファイルが作成されること" do
-    created_file.each{|f|
-      expect(FileTest.exist?(f)).to be_truthy
-    }
-  end
-
-  it "ファイルがオリジナルと一致すること" do
-    created_file.each{|f|
-      expect(no_diff("../lib/src/"+f,f)).to be_truthy
-    }
-  end
-
-end
-
 describe "モジュールの実行" do
   # テスト実行前
   before(:all) do
