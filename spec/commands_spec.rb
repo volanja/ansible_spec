@@ -16,7 +16,7 @@ test_dir = "tmp"
 describe "コマンドの実行" do
   # テスト実行前
   before(:all) do
-    $stdout = File.open("/dev/null", "w") #テスト実行中は標準出力は/dev/nullにする。
+    #$stdout = File.open("/dev/null", "w") #テスト実行中は標準出力は/dev/nullにする。
     FileUtils.mkdir_p(test_dir) unless FileTest.exist?(test_dir)
     Dir.chdir(test_dir) #tmp/に移動
     #`ansiblespec-init`
@@ -30,7 +30,7 @@ describe "コマンドの実行" do
     created_dir.each{|d| Dir.delete(d) }
     Dir.chdir("../")
     FileUtils.remove_entry_secure(test_dir)
-    $stdout =STDOUT # テスト実行後は元に戻す
+    #$stdout =STDOUT # テスト実行後は元に戻す
   end
 
   it "/tmpにディレクトリが作成されること" do
@@ -56,7 +56,7 @@ end
 describe "モジュールの実行" do
   # テスト実行前
   before(:all) do
-    $stdout = File.open("/dev/null", "w") #テスト実行中は標準出力は/dev/nullにする。
+    #$stdout = File.open("/dev/null", "w") #テスト実行中は標準出力は/dev/nullにする。
     FileUtils.mkdir_p(test_dir) unless FileTest.exist?(test_dir)
     Dir.chdir(test_dir) #tmp/に移動
     AnsibleSpec.main
@@ -69,7 +69,7 @@ describe "モジュールの実行" do
     Dir.chdir("../")
     FileUtils.remove_entry_secure(test_dir)
     #Dir.delete(test_dir)
-    $stdout =STDOUT # テスト実行後は元に戻す
+    #$stdout =STDOUT # テスト実行後は元に戻す
   end
 
   it "/tmpにディレクトリが作成されること" do
