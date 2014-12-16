@@ -55,7 +55,7 @@ module AnsibleSpec
     properties = Array.new
     playbook.each do |site|
       if site.has_key?("include")
-        properties.push YAML.playbook(site["include"])[0]
+        properties.push YAML.load_file(site["include"])[0]
       else
         properties.push site
       end
