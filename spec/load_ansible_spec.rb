@@ -3,7 +3,7 @@ require 'ansible_spec'
 
 describe "load_targetsの実行" do
   context '正常系:1グループ' do
-    tmp_file = 'hosts'
+    tmp_hosts = 'hosts'
     before(:all) do
       content = <<'EOF'
 [server]
@@ -12,10 +12,10 @@ describe "load_targetsの実行" do
 example.com
 
 EOF
-      File.open(tmp_file, 'w') do |f|
+      File.open(tmp_hosts, 'w') do |f|
         f.puts content
       end
-      @res = AnsibleSpec.load_targets(tmp_file)
+      @res = AnsibleSpec.load_targets(tmp_hosts)
     end
 
     it 'res is hash' do
@@ -44,12 +44,12 @@ EOF
     end
 
     after(:all) do
-      File.delete(tmp_file)
+      File.delete(tmp_hosts)
     end
   end
 
   context '正常系:2グループ' do
-    tmp_file = 'hosts'
+    tmp_hosts = 'hosts'
     before(:all) do
       content = <<'EOF'
 [web]
@@ -61,10 +61,10 @@ EOF
 192.168.0.6
 
 EOF
-      File.open(tmp_file, 'w') do |f|
+      File.open(tmp_hosts, 'w') do |f|
         f.puts content
       end
-      @res = AnsibleSpec.load_targets(tmp_file)
+      @res = AnsibleSpec.load_targets(tmp_hosts)
     end
 
     it 'res is hash' do
@@ -104,22 +104,22 @@ EOF
     end
 
     after(:all) do
-      File.delete(tmp_file)
+      File.delete(tmp_hosts)
     end
   end
 
   context '異常系:全てコメントアウトされている状態' do
-    tmp_file = 'hosts'
+    tmp_hosts = 'hosts'
     before(:all) do
       content = <<'EOF'
 #[server]
 #192.168.0.1
 
 EOF
-      File.open(tmp_file, 'w') do |f|
+      File.open(tmp_hosts, 'w') do |f|
         f.puts content
       end
-      @res = AnsibleSpec.load_targets(tmp_file)
+      @res = AnsibleSpec.load_targets(tmp_hosts)
     end
 
     it 'res is hash' do
@@ -135,20 +135,20 @@ EOF
     end
 
     after(:all) do
-      File.delete(tmp_file)
+      File.delete(tmp_hosts)
     end
   end
 
   context '異常系:ファイル内が空の状態' do
-    tmp_file = 'hosts'
+    tmp_hosts = 'hosts'
     before(:all) do
       content = <<'EOF'
 
 EOF
-      File.open(tmp_file, 'w') do |f|
+      File.open(tmp_hosts, 'w') do |f|
         f.puts content
       end
-      @res = AnsibleSpec.load_targets(tmp_file)
+      @res = AnsibleSpec.load_targets(tmp_hosts)
     end
 
     it 'res is hash' do
@@ -164,12 +164,12 @@ EOF
     end
 
     after(:all) do
-      File.delete(tmp_file)
+      File.delete(tmp_hosts)
     end
   end
 
   context '異常系:1行だけコメントアウトされている状態' do
-    tmp_file = 'hosts'
+    tmp_hosts = 'hosts'
     before(:all) do
       content = <<'EOF'
 [server]
@@ -177,10 +177,10 @@ EOF
 192.168.0.11
 
 EOF
-      File.open(tmp_file, 'w') do |f|
+      File.open(tmp_hosts, 'w') do |f|
         f.puts content
       end
-      @res = AnsibleSpec.load_targets(tmp_file)
+      @res = AnsibleSpec.load_targets(tmp_hosts)
     end
 
     it 'res is hash' do
@@ -202,12 +202,12 @@ EOF
     end
 
     after(:all) do
-      File.delete(tmp_file)
+      File.delete(tmp_hosts)
     end
   end
 
   context '異常系:グループ名のみコメントアウトされている状態' do
-    tmp_file = 'hosts'
+    tmp_hosts = 'hosts'
     before(:all) do
       content = <<'EOF'
 [web]
@@ -216,10 +216,10 @@ EOF
 192.168.0.4
 
 EOF
-      File.open(tmp_file, 'w') do |f|
+      File.open(tmp_hosts, 'w') do |f|
         f.puts content
       end
-      @res = AnsibleSpec.load_targets(tmp_file)
+      @res = AnsibleSpec.load_targets(tmp_hosts)
     end
 
     it 'res is hash' do
@@ -241,7 +241,7 @@ EOF
     end
 
     after(:all) do
-      File.delete(tmp_file)
+      File.delete(tmp_hosts)
     end
   end
 end
