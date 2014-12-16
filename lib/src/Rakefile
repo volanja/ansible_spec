@@ -3,18 +3,7 @@ require 'rspec/core/rake_task'
 require 'yaml'
 require 'ansible_spec'
 
-playbook, inventoryfile = AnsibleSpec.load_ansiblespec
-
-#load inventry file
-# inventory fileとplaybookのhostsをマッピングする。
-hosts = AnsibleSpec.load_targets(inventoryfile)
-properties = AnsibleSpec.load_playbook(playbook)
-properties.each do |var|
-  if hosts.has_key?("#{var["hosts"]}")
-    var["hosts"] = hosts["#{var["hosts"]}"]
-  end
-end
-# puts properties
+properties = AnsibleSpec.get_properties
 # {"name"=>"Ansible-Sample-TDD", "hosts"=>["192.168.0.103"], "user"=>"root", "roles"=>["nginx", "mariadb"]}
 
 namespace :serverspec do

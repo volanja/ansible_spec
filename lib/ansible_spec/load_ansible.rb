@@ -62,4 +62,21 @@ module AnsibleSpec
     end
     return properties
   end
+
+  # return: json
+  # {"name"=>"Ansible-Sample-TDD", "hosts"=>["192.168.0.103"], "user"=>"root", "roles"=>["nginx", "mariadb"]}
+  def self.get_properties()
+    playbook, inventoryfile = load_ansiblespec
+
+    #load inventry file
+    # inventory fileとplaybookのhostsをマッピングする。
+    hosts = load_targets(inventoryfile)
+    properties = load_playbook(playbook)
+    properties.each do |var|
+      if hosts.has_key?("#{var["hosts"]}")
+        var["hosts"] = hosts["#{var["hosts"]}"]
+      end
+    end
+    return properties
+  end
 end
