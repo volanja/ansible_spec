@@ -4,7 +4,7 @@ require 'ansible_spec'
 describe "load_targetsの実行" do
   context '正常系:1グループ' do
     tmp_file = 'hosts'
-    before do
+    before(:all) do
       content = <<'EOF'
 [server]
 192.168.0.1
@@ -18,7 +18,11 @@ EOF
       @res = AnsibleSpec.load_targets(tmp_file)
     end
 
-    it 'check 1 group' do
+    it 'res is hash' do
+      expect(@res.instance_of?(Hash)).to be_truthy
+    end
+
+    it 'exist 1 group' do
       expect(@res.length).to eq 1
     end
 
@@ -39,14 +43,14 @@ EOF
       expect(@res['server'][3]).to eq nil
     end
 
-    after do
+    after(:all) do
       File.delete(tmp_file)
     end
   end
 
   context '正常系:2グループ' do
     tmp_file = 'hosts'
-    before do
+    before(:all) do
       content = <<'EOF'
 [web]
 192.168.0.3
@@ -61,6 +65,10 @@ EOF
         f.puts content
       end
       @res = AnsibleSpec.load_targets(tmp_file)
+    end
+
+    it 'res is hash' do
+      expect(@res.instance_of?(Hash)).to be_truthy
     end
 
     it 'check 2 group' do
@@ -95,14 +103,14 @@ EOF
       expect(@res['db'][2]).to eq nil
     end
 
-    after do
+    after(:all) do
       File.delete(tmp_file)
     end
   end
 
   context '異常系:全てコメントアウトされている状態' do
     tmp_file = 'hosts'
-    before do
+    before(:all) do
       content = <<'EOF'
 #[server]
 #192.168.0.1
@@ -114,6 +122,10 @@ EOF
       @res = AnsibleSpec.load_targets(tmp_file)
     end
 
+    it 'res is hash' do
+      expect(@res.instance_of?(Hash)).to be_truthy
+    end
+
     it 'check 0 group' do
       expect(@res.length).to eq 0
     end
@@ -122,14 +134,43 @@ EOF
       expect(@res.key?('server')).not_to be_truthy
     end
 
-    after do
+    after(:all) do
+      File.delete(tmp_file)
+    end
+  end
+
+  context '異常系:ファイル内が空の状態' do
+    tmp_file = 'hosts'
+    before(:all) do
+      content = <<'EOF'
+
+EOF
+      File.open(tmp_file, 'w') do |f|
+        f.puts content
+      end
+      @res = AnsibleSpec.load_targets(tmp_file)
+    end
+
+    it 'res is hash' do
+      expect(@res.instance_of?(Hash)).to be_truthy
+    end
+
+    it 'check 0 group' do
+      expect(@res.length).to eq 0
+    end
+
+    it 'not exist [server]' do
+      expect(@res.key?('server')).not_to be_truthy
+    end
+
+    after(:all) do
       File.delete(tmp_file)
     end
   end
 
   context '異常系:1行だけコメントアウトされている状態' do
     tmp_file = 'hosts'
-    before do
+    before(:all) do
       content = <<'EOF'
 [server]
 #192.168.0.10
@@ -140,6 +181,10 @@ EOF
         f.puts content
       end
       @res = AnsibleSpec.load_targets(tmp_file)
+    end
+
+    it 'res is hash' do
+      expect(@res.instance_of?(Hash)).to be_truthy
     end
 
     it 'check 1 group' do
@@ -156,14 +201,14 @@ EOF
       expect(@res['server'][0]).to eq '192.168.0.11'
     end
 
-    after do
+    after(:all) do
       File.delete(tmp_file)
     end
   end
 
   context '異常系:グループ名のみコメントアウトされている状態' do
     tmp_file = 'hosts'
-    before do
+    before(:all) do
       content = <<'EOF'
 [web]
 192.168.0.3
@@ -175,6 +220,10 @@ EOF
         f.puts content
       end
       @res = AnsibleSpec.load_targets(tmp_file)
+    end
+
+    it 'res is hash' do
+      expect(@res.instance_of?(Hash)).to be_truthy
     end
 
     it 'check 1 group' do
@@ -191,7 +240,7 @@ EOF
       expect(@res['web'][1]).to eq '192.168.0.4'
     end
 
-    after do
+    after(:all) do
       File.delete(tmp_file)
     end
   end
