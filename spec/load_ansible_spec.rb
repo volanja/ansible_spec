@@ -244,7 +244,9 @@ EOF
       File.delete(tmp_hosts)
     end
   end
+end
 
+describe "load_playbookの実行" do
   context '正常系' do
     require 'yaml'
     tmp_pb = 'playbook'
@@ -398,6 +400,271 @@ EOF
     after(:all) do
       File.delete(tmp_pb)
       File.delete(tmp_inc)
+    end
+  end
+
+  context '異常系(playbookファイルの中身がない場合)' do
+    require 'yaml'
+    tmp_pb = 'playbook'
+    before(:all) do
+      content = <<'EOF'
+EOF
+      File.open(tmp_pb, 'w') do |f|
+        f.puts content
+      end
+    end
+
+    it 'exitする' do
+      expect{ AnsibleSpec.load_playbook(tmp_pb) }.to raise_error(SystemExit)
+      # TODO
+      # 標準出力のメッセージまでテストしたいが、exitしてしまう。
+      #expect{ AnsibleSpec.load_playbook(tmp_pb) }.to output("Error: No data in site.yml").to_stdout
+    end
+
+    after(:all) do
+      File.delete(tmp_pb)
+    end
+  end
+end
+
+describe "load_ansiblespecの実行" do
+  context '正常系' do
+    require 'yaml'
+    tmp_ansiblespec = '.ansiblespec'
+    tmp_playbook = 'site.yml'
+    tmp_hosts = 'hosts'
+
+    before(:all) do
+
+      content = <<'EOF'
+---
+-
+  playbook: site.yml
+  inventory: hosts
+EOF
+
+      content_p = <<'EOF'
+- name: Ansible-Sample-TDD
+  hosts: server
+  user: root
+  roles:
+    - nginx
+    - mariadb
+EOF
+
+      content_h = <<'EOF'
+[server]
+192.168.0.103
+192.168.0.104
+EOF
+      File.open(tmp_ansiblespec, 'w') do |f|
+        f.puts content
+      end
+      File.open(tmp_playbook, 'w') do |f|
+        f.puts content_p
+      end
+      File.open(tmp_hosts, 'w') do |f|
+        f.puts content_h
+      end
+      @playbook, @inventoryfile = AnsibleSpec.load_ansiblespec()
+    end
+
+    it 'playbook is site.yml' do
+      expect(@playbook).to eq 'site.yml'
+    end
+
+    it 'inventoryfile is hosts' do
+      expect(@inventoryfile).to eq 'hosts'
+    end
+
+    after(:all) do
+      File.delete(tmp_ansiblespec)
+      File.delete(tmp_playbook)
+      File.delete(tmp_hosts)
+    end
+  end
+
+  context '異常系(.ansiblespecがないが、site.ymlとhostsがある場合)' do
+    require 'yaml'
+    tmp_playbook = 'site.yml'
+    tmp_hosts = 'hosts'
+
+    before(:all) do
+
+      content_p = <<'EOF'
+- name: Ansible-Sample-TDD
+  hosts: server
+  user: root
+  roles:
+    - nginx
+    - mariadb
+EOF
+
+      content_h = <<'EOF'
+[server]
+192.168.0.103
+192.168.0.104
+EOF
+      File.open(tmp_playbook, 'w') do |f|
+        f.puts content_p
+      end
+      File.open(tmp_hosts, 'w') do |f|
+        f.puts content_h
+      end
+      @playbook, @inventoryfile = AnsibleSpec.load_ansiblespec()
+    end
+
+    it 'playbook is site.yml' do
+      expect(@playbook).to eq 'site.yml'
+    end
+
+    it 'inventoryfile is hosts' do
+      expect(@inventoryfile).to eq 'hosts'
+    end
+
+    after(:all) do
+      File.delete(tmp_playbook)
+      File.delete(tmp_hosts)
+    end
+  end
+
+  context '異常系(.ansiblespecとsite.ymlがないが、hostsがある場合)' do
+    require 'yaml'
+    tmp_hosts = 'hosts'
+
+    before(:all) do
+
+      content_h = <<'EOF'
+[server]
+192.168.0.103
+192.168.0.104
+EOF
+      File.open(tmp_hosts, 'w') do |f|
+        f.puts content_h
+      end
+    end
+
+    it 'exitする' do
+      expect{ AnsibleSpec.load_ansiblespec }.to raise_error(SystemExit)
+    end
+
+    after(:all) do
+      File.delete(tmp_hosts)
+    end
+  end
+
+  context '異常系(.ansiblespecとhostsがないが、site.ymlがある場合)' do
+    require 'yaml'
+    tmp_playbook = 'site.yml'
+
+    before(:all) do
+
+      content_p = <<'EOF'
+- name: Ansible-Sample-TDD
+  hosts: server
+  user: root
+  roles:
+    - nginx
+    - mariadb
+EOF
+      File.open(tmp_playbook, 'w') do |f|
+        f.puts content_p
+      end
+    end
+
+    it 'exitする' do
+      expect{ AnsibleSpec.load_ansiblespec }.to raise_error(SystemExit)
+    end
+
+    after(:all) do
+      File.delete(tmp_playbook)
+    end
+  end
+
+end
+
+describe "get_propertiesの実行" do
+  context '正常系' do
+    require 'yaml'
+    tmp_ansiblespec = '.ansiblespec'
+    tmp_playbook = 'site.yml'
+    tmp_hosts = 'hosts'
+
+    before(:all) do
+
+      content = <<'EOF'
+---
+-
+  playbook: site.yml
+  inventory: hosts
+EOF
+
+      content_p = <<'EOF'
+- name: Ansible-Sample-TDD
+  hosts: server
+  user: root
+  roles:
+    - nginx
+    - mariadb
+EOF
+
+      content_h = <<'EOF'
+[server]
+192.168.0.103
+192.168.0.104
+EOF
+
+      File.open(tmp_ansiblespec, 'w') do |f|
+        f.puts content
+      end
+      File.open(tmp_playbook, 'w') do |f|
+        f.puts content_p
+      end
+      File.open(tmp_hosts, 'w') do |f|
+        f.puts content_h
+      end
+      @res = AnsibleSpec.get_properties
+    end
+
+    it 'res is array' do
+      expect(@res.instance_of?(Array)).to be_truthy
+    end
+
+    it 'res[0] is hash' do
+      expect(@res[0].instance_of?(Hash)).to be_truthy
+    end
+
+    it 'check 1 group' do
+      expect(@res[0].length).to eq 4
+    end
+
+    it 'exist name' do
+      expect(@res[0].key?('name')).to be_truthy
+      expect(@res[0]['name']).to eq 'Ansible-Sample-TDD'
+    end
+
+    it 'exist hosts' do
+      expect(@res[0]['hosts'].instance_of?(Array)).to be_truthy
+      expect(@res[0]['hosts'][0]).to eq '192.168.0.103'
+      expect(@res[0]['hosts'][1]).to eq '192.168.0.104'
+    end
+
+    it 'exist user' do
+      expect(@res[0].key?('user')).to be_truthy
+      expect(@res[0]['user']).to eq 'root'
+    end
+
+    it 'exist roles' do
+      expect(@res[0].key?('roles')).to be_truthy
+      expect(@res[0]['roles'].instance_of?(Array)).to be_truthy
+      expect(@res[0]['roles'][0]).to eq 'nginx'
+      expect(@res[0]['roles'][1]).to eq 'mariadb'
+    end
+
+    after(:all) do
+      File.delete(tmp_ansiblespec)
+      File.delete(tmp_playbook)
+      File.delete(tmp_hosts)
     end
   end
 end
