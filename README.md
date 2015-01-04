@@ -2,9 +2,15 @@
 [![Gem Version](https://badge.fury.io/rb/ansible_spec.svg)](http://badge.fury.io/rb/ansible_spec)
 [![Build Status](https://travis-ci.org/volanja/ansible_spec.svg?branch=master)](https://travis-ci.org/volanja/ansible_spec)  
 
-This is Severspec template for Run test Multi Role and Multi Host with Ansible  
-Create template (Rakefile and spec/spec_hepler.rb)  
-Serverspec template use Ansible InventoryFile and site.yml
+This gem is Ansible Config Parser for Serverspec.  
+Serverspec RakeTask use Ansible Config(InventoryFile and Playbook).  
+Support Run Multi Role and Multi Host of Ansible.  
+
+This gem created template file Until v0.0.1.4,  
+But it was modularized on v0.1. Because module is easy to unit-test and Rakefile is simple.  
+
+If you want old release that can create template, see [v0.0.1.4](https://github.com/volanja/ansible_spec/tree/v0.0.1.4).  
+But I can't support old release.  
 
 ## Installation
 

@@ -12,7 +12,7 @@ created_dir = [
 ]
 test_dir = "tmp"
 
-describe "テスト" do
+describe "モジュールの実行" do
   # テスト実行前
   before(:all) do
     $stdout = File.open("/dev/null", "w") #テスト実行中は標準出力は/dev/nullにする。
@@ -26,7 +26,8 @@ describe "テスト" do
     created_file.each{|f| File.delete(f) }
     created_dir.each{|d| Dir.delete(d) }
     Dir.chdir("../")
-    Dir.delete(test_dir)
+    FileUtils.remove_entry_secure(test_dir)
+    #Dir.delete(test_dir)
     $stdout =STDOUT # テスト実行後は元に戻す
   end
 
