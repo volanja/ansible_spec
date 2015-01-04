@@ -20,6 +20,7 @@ host = ENV['TARGET_HOST']
 options = Net::SSH::Config.for(host)
 
 options[:user] ||= ENV['TARGET_USER']
+options[:port] ||= ENV['TARGET_PORT']
 options[:keys] ||= ENV['TARGET_PRIVATE_KEY']
 
 set :host,        options[:host_name] || host

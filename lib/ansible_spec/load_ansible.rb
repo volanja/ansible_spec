@@ -1,22 +1,61 @@
 module AnsibleSpec
   # param: inventory file of Ansible
-  # return: Hash {"active_group_name" => ["192.168.0.1","192.168.0.2"]}
+  # return: Hash {"group" => ["192.168.0.1","192.168.0.2"]}
+  # return: Hash {"group" => [{"name" => "192.168.0.1","uri" => "192.168.0.1", "port" => 22},...]}
   def self.load_targets(file)
-    hosts = File.open(file).read
-    active_group = Hash.new
-    active_group_name = ''
-    hosts.each_line{|line|
+    f = File.open(file).read
+    res = Hash.new
+    group = ''
+    f.each_line{|line|
       line = line.chomp
-      next if line.start_with?('#')
+      # skip
+      next if line.start_with?('#') #comment
+      next if line.empty? == true   #null
+
+      # get group
       if line.start_with?('[') && line.end_with?(']')
-        active_group_name = line.gsub('[','').gsub(']','')
-        active_group["#{active_group_name}"] = Array.new
-      elsif active_group_name.empty? == false
-        next if line.empty? == true
-        active_group["#{active_group_name}"] << line
+        group = line.gsub('[','').gsub(']','')
+        res["#{group}"] = Array.new
+        next
+      end
+
+      #get host
+      if group.empty? == false
+        host = Hash.new
+        host['name'] = line
+        if line.split.count == 1
+          if line.include?(":") # 192.168.0.1:22
+            host['uri']  = line.split(":")[0]
+            host['port'] = line.split(":")[1].to_i
+          else # 192.168.0.1
+            res["#{group}"] << line
+            next
+          end
+        else
+          # 192.168.0.1 ansible_ssh_port=22
+          line.split.each{|v|
+            if v.include?("=")
+              host = host.merge(get_inventory_param(v))
+            else
+              host['uri'] = v
+            end
+          }
+        end
+        res["#{group}"] << host
       end
     }
-    return active_group
+    return res
+  end
+
+  # param ansible_ssh_port=22
+  # return: hash
+  def self.get_inventory_param(str)
+    res = Hash.new
+    if str.include?("=")
+      key,value = str.split("=")
+      res['port'] = value.to_i if key == "ansible_ssh_port"
+    end
+    return res
   end
 
   # param: none
