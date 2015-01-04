@@ -18,8 +18,9 @@ describe 'ssh' do
           @ssh = double(:ssh)
           if host.instance_of?(Hash)
             set :host, host["uri"]
-            set :ssh_options, :user => property["user"], :port => host["port"]
+            set :ssh_options, :user => property["user"], :port => host["port"], :keys => host["private_key"]
             allow(@ssh).to receive(:port).and_return(Specinfra.configuration.ssh_options[:port])
+            allow(@ssh).to receive(:keys).and_return(Specinfra.configuration.ssh_options[:keys])
           else
             set :host, host
             set :ssh_options, :user => property["user"]
@@ -48,6 +49,13 @@ describe 'ssh' do
       expect(v.user).to eq 'root'
       expect(v.host).to eq '192.168.0.3'
       expect(v.port).to eq 5309
+    end
+    it '192.168.0.4 ansible_ssh_private_key_file=~/.ssh/id_rsa' do
+      v = @h["task_3"]
+      expect(v.user).to eq 'root'
+      expect(v.host).to eq '192.168.0.4'
+      expect(v.port).to eq 22
+      expect(v.keys).to eq '~/.ssh/id_rsa'
     end
     after do
       delete_normality
@@ -81,6 +89,7 @@ EOF
 192.168.0.1
 192.168.0.2 ansible_ssh_port=22
 192.168.0.3:5309
+192.168.0.4 ansible_ssh_private_key_file=~/.ssh/id_rsa
 
 #[variables]
 #192.168.0.4

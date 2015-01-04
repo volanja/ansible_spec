@@ -33,6 +33,7 @@ EOF
 192.168.0.1
 192.168.0.2 ansible_ssh_port=22
 192.168.0.3:5309
+192.168.0.4 ansible_ssh_private_key_file=~/.ssh/id_rsa
 
 #[variables]
 #192.168.0.4
@@ -87,6 +88,12 @@ describe "load_targetsの実行" do
       expect(@res['normal'][2]['uri']).to eq '192.168.0.3'
       expect(@res['normal'][2]['port']).to eq 5309
     end
+    it '192.168.0.4 ansible_ssh_private_key_file=~/.ssh/id_rsa' do
+      expect(@res['normal'][3].instance_of?(Hash)).to be_truthy
+      expect(@res['normal'][3]['uri']).to eq '192.168.0.4'
+      expect(@res['normal'][3]['port']).to eq 22
+      expect(@res['normal'][3]['private_key']).to eq '~/.ssh/id_rsa'
+    end
 
     after(:all) do
       File.delete(tmp_hosts)
@@ -138,6 +145,12 @@ describe "get_propertiesの実行" do
       expect(@res[0]['hosts'][2].instance_of?(Hash)).to be_truthy
       expect(@res[0]['hosts'][2]['uri']).to eq '192.168.0.3'
       expect(@res[0]['hosts'][2]['port']).to eq 5309
+    end
+    it 'normal 192.168.0.4 ansible_ssh_private_key_file=~/.ssh/id_rsa' do
+      expect(@res[0]['hosts'][3].instance_of?(Hash)).to be_truthy
+      expect(@res[0]['hosts'][3]['uri']).to eq '192.168.0.4'
+      expect(@res[0]['hosts'][3]['port']).to eq 22
+      expect(@res[0]['hosts'][3]['private_key']).to eq '~/.ssh/id_rsa'
     end
 
     it 'exist user' do

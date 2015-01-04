@@ -51,9 +51,11 @@ module AnsibleSpec
   # return: hash
   def self.get_inventory_param(str)
     res = Hash.new
+    res['port'] = 22
     if str.include?("=")
       key,value = str.split("=")
       res['port'] = value.to_i if key == "ansible_ssh_port"
+      res['private_key'] = value if key == "ansible_ssh_private_key_file"
     end
     return res
   end
