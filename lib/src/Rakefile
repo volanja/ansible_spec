@@ -7,15 +7,15 @@ properties = AnsibleSpec.get_properties
 # {"name"=>"Ansible-Sample-TDD", "hosts"=>["192.168.0.103"], "user"=>"root", "roles"=>["nginx", "mariadb"]}
 
 namespace :serverspec do
-  properties.each do |var|
-    var["hosts"].each do |host|
-      desc "Run serverspec for #{var["name"]}"
-      RSpec::Core::RakeTask.new(var["name"].to_sym) do |t|
-        puts "Run serverspec for #{var["name"]} to #{host}"
+  properties.each do |property|
+    property["hosts"].each do |host|
+      desc "Run serverspec for #{property["name"]}"
+      RSpec::Core::RakeTask.new(property["name"].to_sym) do |t|
+        puts "Run serverspec for #{property["name"]} to #{host}"
         ENV['TARGET_HOST'] = host
         ENV['TARGET_PRIVATE_KEY'] = '~/.ssh/id_rsa'
-        ENV['TARGET_USER'] = var["user"]
-        t.pattern = 'roles/{' + var["roles"].join(',') + '}/spec/*_spec.rb'
+        ENV['TARGET_USER'] = property["user"]
+        t.pattern = 'roles/{' + property["roles"].join(',') + '}/spec/*_spec.rb'
       end
     end
   end

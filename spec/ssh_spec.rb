@@ -9,12 +9,12 @@ describe 'ssh' do
         properties = AnsibleSpec.get_properties
         @h = Hash.new
         n = 0
-        properties.each do |var|
-          var["hosts"].each do |host|
+        properties.each do |property|
+          property["hosts"].each do |host|
               #ENV['TARGET_PRIVATE_KEY'] = '~/.ssh/id_rsa'
-              #t.pattern = 'roles/{' + var["roles"].join(',') + '}/spec/*_spec.rb'
+              #t.pattern = 'roles/{' + property["roles"].join(',') + '}/spec/*_spec.rb'
               set :host, host
-              set :ssh_options, :user => var["user"]
+              set :ssh_options, :user => property["user"]
               @ssh = double(:ssh)
               allow(@ssh).to receive(:host).and_return(Specinfra.configuration.host)
               allow(@ssh).to receive(:user).and_return(Specinfra.configuration.ssh_options[:user])
