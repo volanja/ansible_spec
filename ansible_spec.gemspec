@@ -8,9 +8,9 @@ Gem::Specification.new do |gem|
   gem.version       = AnsibleSpec::VERSION
   gem.authors       = ["volanja"]
   gem.email         = ["volaaanja@gmail.com"]
-  gem.description   = %q{This is Severspec template for Run test Multi Role and Multi Host with Ansible}
-  gem.summary       = %q{This is Severspec template for Run test Multi Role and Multi Host with Ansbile}
-  gem.homepage      = "https://github.com/volanja"
+  gem.description   = %q{Ansible Config Parser for Serverspec. Run test Multi Role and Multi Host by Ansible Configuration}
+  gem.summary       = %q{Ansible Config Parser for Serverspec. Run test Multi Role and Multi Host by Ansible Configuration}
+  gem.homepage      = "https://github.com/volanja/ansible_spec"
   gem.license       = "MIT"
 
   gem.files         = `git ls-files`.split($/)
@@ -23,6 +23,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "diff-lcs"
   gem.add_development_dependency "simplecov"
 
-  gem.add_runtime_dependency "serverspec", ">= 0.13.5"
+  gem.add_runtime_dependency "serverspec", ">= 2.0.0"
 
 end
