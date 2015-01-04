@@ -1,6 +1,12 @@
 # coding: utf-8
 require 'ansible_spec'
 
+def create_file(name,content)
+  File.open(name, 'w') do |f|
+    f.puts content
+  end
+end
+
 describe "load_targetsの実行" do
   context '正常系:1グループ' do
     tmp_hosts = 'hosts'
@@ -12,9 +18,7 @@ describe "load_targetsの実行" do
 example.com
 
 EOF
-      File.open(tmp_hosts, 'w') do |f|
-        f.puts content
-      end
+      create_file(tmp_hosts,content)
       @res = AnsibleSpec.load_targets(tmp_hosts)
     end
 
@@ -61,9 +65,7 @@ EOF
 192.168.0.6
 
 EOF
-      File.open(tmp_hosts, 'w') do |f|
-        f.puts content
-      end
+      create_file(tmp_hosts,content)
       @res = AnsibleSpec.load_targets(tmp_hosts)
     end
 
@@ -116,9 +118,7 @@ EOF
 #192.168.0.1
 
 EOF
-      File.open(tmp_hosts, 'w') do |f|
-        f.puts content
-      end
+      create_file(tmp_hosts,content)
       @res = AnsibleSpec.load_targets(tmp_hosts)
     end
 
@@ -177,9 +177,7 @@ EOF
 192.168.0.11
 
 EOF
-      File.open(tmp_hosts, 'w') do |f|
-        f.puts content
-      end
+      create_file(tmp_hosts,content)
       @res = AnsibleSpec.load_targets(tmp_hosts)
     end
 
@@ -216,9 +214,7 @@ EOF
 192.168.0.4
 
 EOF
-      File.open(tmp_hosts, 'w') do |f|
-        f.puts content
-      end
+      create_file(tmp_hosts,content)
       @res = AnsibleSpec.load_targets(tmp_hosts)
     end
 
@@ -259,9 +255,7 @@ describe "load_playbookの実行" do
     - nginx
     - mariadb
 EOF
-      File.open(tmp_pb, 'w') do |f|
-        f.puts content
-      end
+      create_file(tmp_pb,content)
       @res = AnsibleSpec.load_playbook(tmp_pb)
     end
 
@@ -317,9 +311,7 @@ EOF
     - mariadb
 - include: nginx.yml
 EOF
-      File.open(tmp_pb, 'w') do |f|
-        f.puts content_pb
-      end
+      create_file(tmp_pb,content_pb)
 
       content_inc = <<'EOF'
 - name: Ansible-Nginx
@@ -328,9 +320,7 @@ EOF
   roles:
     - nginx
 EOF
-      File.open(tmp_inc, 'w') do |f|
-        f.puts content_inc
-      end
+      create_file(tmp_inc,content_inc)
 
       @res = AnsibleSpec.load_playbook(tmp_pb)
     end
@@ -409,9 +399,7 @@ EOF
     before(:all) do
       content = <<'EOF'
 EOF
-      File.open(tmp_pb, 'w') do |f|
-        f.puts content
-      end
+      create_file(tmp_pb,content)
     end
 
     it 'exitする' do
@@ -457,15 +445,9 @@ EOF
 192.168.0.103
 192.168.0.104
 EOF
-      File.open(tmp_ansiblespec, 'w') do |f|
-        f.puts content
-      end
-      File.open(tmp_playbook, 'w') do |f|
-        f.puts content_p
-      end
-      File.open(tmp_hosts, 'w') do |f|
-        f.puts content_h
-      end
+      create_file(tmp_ansiblespec,content)
+      create_file(tmp_playbook,content_p)
+      create_file(tmp_hosts,content_h)
       @playbook, @inventoryfile = AnsibleSpec.load_ansiblespec()
     end
 
@@ -505,12 +487,8 @@ EOF
 192.168.0.103
 192.168.0.104
 EOF
-      File.open(tmp_playbook, 'w') do |f|
-        f.puts content_p
-      end
-      File.open(tmp_hosts, 'w') do |f|
-        f.puts content_h
-      end
+      create_file(tmp_playbook,content_p)
+      create_file(tmp_hosts,content_h)
       @playbook, @inventoryfile = AnsibleSpec.load_ansiblespec()
     end
 
@@ -539,9 +517,7 @@ EOF
 192.168.0.103
 192.168.0.104
 EOF
-      File.open(tmp_hosts, 'w') do |f|
-        f.puts content_h
-      end
+      create_file(tmp_hosts,content_h)
     end
 
     it 'exitする' do
@@ -567,9 +543,7 @@ EOF
     - nginx
     - mariadb
 EOF
-      File.open(tmp_playbook, 'w') do |f|
-        f.puts content_p
-      end
+      create_file(tmp_playbook,content_p)
     end
 
     it 'exitする' do
@@ -614,15 +588,9 @@ EOF
 192.168.0.104
 EOF
 
-      File.open(tmp_ansiblespec, 'w') do |f|
-        f.puts content
-      end
-      File.open(tmp_playbook, 'w') do |f|
-        f.puts content_p
-      end
-      File.open(tmp_hosts, 'w') do |f|
-        f.puts content_h
-      end
+      create_file(tmp_ansiblespec,content)
+      create_file(tmp_playbook,content_p)
+      create_file(tmp_hosts,content_h)
       @res = AnsibleSpec.get_properties
     end
 
