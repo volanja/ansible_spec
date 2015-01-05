@@ -34,9 +34,8 @@ EOF
 192.168.0.2 ansible_ssh_port=22
 192.168.0.3:5309
 192.168.0.4 ansible_ssh_private_key_file=~/.ssh/id_rsa
-
-#[alias]
-#jumper ansible_ssh_port=5555 ansible_ssh_host=192.168.1.50
+192.168.0.5 ansible_ssh_user=git
+jumper ansible_ssh_port=5555 ansible_ssh_host=192.168.1.50
 
 EOF
   create_file(tmp_ansiblespec,content)
@@ -62,7 +61,6 @@ describe "load_targetsの実行" do
 
     it 'exist group' do
       expect(@res.key?('normal')).to be_truthy
-      #expect(@res.key?('alias')).to be_truthy
     end
 
     it 'normal 192.168.0.1' do
@@ -88,6 +86,22 @@ describe "load_targetsの実行" do
       expect(obj['uri']).to eq '192.168.0.4'
       expect(obj['port']).to eq 22
       expect(obj['private_key']).to eq '~/.ssh/id_rsa'
+    end
+
+    it '192.168.0.5 ansible_ssh_user=git' do
+      obj = @res['normal'][4]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['uri']).to eq '192.168.0.5'
+      expect(obj['port']).to eq 22
+      expect(obj['user']).to eq 'git'
+    end
+
+    it 'jumper ansible_ssh_port=5555 ansible_ssh_host=192.168.1.50' do
+      obj = @res['normal'][5]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['name']).to eq 'jumper ansible_ssh_port=5555 ansible_ssh_host=192.168.1.50'
+      expect(obj['uri']).to eq '192.168.1.50'
+      expect(obj['port']).to eq 5555
     end
 
     after(:all) do
@@ -149,6 +163,22 @@ describe "get_propertiesの実行" do
       expect(obj['uri']).to eq '192.168.0.4'
       expect(obj['port']).to eq 22
       expect(obj['private_key']).to eq '~/.ssh/id_rsa'
+    end
+
+    it '192.168.0.5 ansible_ssh_user=git' do
+      obj = @res[0]['hosts'][4]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['uri']).to eq '192.168.0.5'
+      expect(obj['port']).to eq 22
+      expect(obj['user']).to eq 'git'
+    end
+
+    it 'jumper ansible_ssh_port=5555 ansible_ssh_host=192.168.1.50' do
+      obj = @res[0]['hosts'][5]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['name']).to eq 'jumper ansible_ssh_port=5555 ansible_ssh_host=192.168.1.50'
+      expect(obj['uri']).to eq '192.168.1.50'
+      expect(obj['port']).to eq 5555
     end
 
     it 'exist user' do

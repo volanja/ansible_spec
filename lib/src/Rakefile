@@ -17,7 +17,11 @@ namespace :serverspec do
           ENV['TARGET_HOST'] = host["uri"]
           ENV['TARGET_PORT'] = host["port"].to_s
           ENV['TARGET_PRIVATE_KEY'] = host["private_key"]
-          ENV['TARGET_USER'] = property["user"]
+          unless host["user"].nil?
+            ENV['TARGET_USER'] = host["user"]
+          else
+            ENV['TARGET_USER'] = property["user"]
+          end
         else
           ENV['TARGET_HOST'] = host
           ENV['TARGET_PRIVATE_KEY'] = '~/.ssh/id_rsa'

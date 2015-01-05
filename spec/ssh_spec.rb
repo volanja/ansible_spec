@@ -18,7 +18,12 @@ describe 'ssh' do
           @ssh = double(:ssh)
           if host.instance_of?(Hash)
             set :host, host["uri"]
-            set :ssh_options, :user => property["user"], :port => host["port"], :keys => host["private_key"]
+            unless host["user"].nil?
+              user = host["user"]
+            else
+              user = property["user"]
+            end
+            set :ssh_options, :user => user, :port => host["port"], :keys => host["private_key"]
             allow(@ssh).to receive(:port).and_return(Specinfra.configuration.ssh_options[:port])
             allow(@ssh).to receive(:keys).and_return(Specinfra.configuration.ssh_options[:keys])
           else
@@ -57,6 +62,22 @@ describe 'ssh' do
       expect(v.port).to eq 22
       expect(v.keys).to eq '~/.ssh/id_rsa'
     end
+
+    it '192.168.0.5 ansible_ssh_user=git' do
+      v = @h["task_4"]
+      expect(v.user).to eq 'git'
+      expect(v.host).to eq '192.168.0.5'
+      expect(v.port).to eq 22
+    end
+
+    it 'jumper ansible_ssh_port=5555 ansible_ssh_host=192.168.1.50' do
+      v = @h["task_5"]
+      expect(v.user).to eq 'root'
+      expect(v.host).to eq '192.168.1.50'
+      expect(v.port).to eq 5555
+
+    end
+
     after do
       delete_normality
     end
@@ -90,9 +111,8 @@ EOF
 192.168.0.2 ansible_ssh_port=22
 192.168.0.3:5309
 192.168.0.4 ansible_ssh_private_key_file=~/.ssh/id_rsa
-
-#[alias]
-#jumper ansible_ssh_port=5555 ansible_ssh_host=192.168.1.50
+192.168.0.5 ansible_ssh_user=git
+jumper ansible_ssh_port=5555 ansible_ssh_host=192.168.1.50
 EOF
 
   File.open(tmp_ansiblespec, 'w') do |f|

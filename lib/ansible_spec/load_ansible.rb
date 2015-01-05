@@ -22,26 +22,15 @@ module AnsibleSpec
       #get host
       if group.empty? == false
         host = Hash.new
-        host['name'] = line
-        if line.split.count == 1
-          if line.include?(":") # 192.168.0.1:22
-            host['uri']  = line.split(":")[0]
-            host['port'] = line.split(":")[1].to_i
-          else # 192.168.0.1
-            res["#{group}"] << line
-            next
-          end
+        # 1つのみ、かつ:を含まない場合
+        if line.split.count == 1 && !line.include?(":")
+          # 192.168.0.1
+          res["#{group}"] << line
+          next
         else
-          # 192.168.0.1 ansible_ssh_port=22
-          line.split.each{|v|
-            if v.include?("=")
-              host = host.merge(get_inventory_param(v))
-            else
-              host['uri'] = v
-            end
-          }
+          res["#{group}"] << get_inventory_param(line)
+          next
         end
-        res["#{group}"] << host
       end
     }
     return res
@@ -49,15 +38,29 @@ module AnsibleSpec
 
   # param ansible_ssh_port=22
   # return: hash
-  def self.get_inventory_param(str)
-    res = Hash.new
-    res['port'] = 22
-    if str.include?("=")
-      key,value = str.split("=")
-      res['port'] = value.to_i if key == "ansible_ssh_port"
-      res['private_key'] = value if key == "ansible_ssh_private_key_file"
+  def self.get_inventory_param(line)
+    host = Hash.new
+    # 初期値
+    host['name'] = line
+    host['port'] = 22
+    if line.include?(":") # 192.168.0.1:22
+      host['uri']  = line.split(":")[0]
+      host['port'] = line.split(":")[1].to_i
+      return host
     end
-    return res
+    # 192.168.0.1 ansible_ssh_port=22
+    line.split.each{|v|
+      unless v.include?("=")
+        host['uri'] = v
+      else
+        key,value = v.split("=")
+        host['port'] = value.to_i if key == "ansible_ssh_port"
+        host['private_key'] = value if key == "ansible_ssh_private_key_file"
+        host['user'] = value if key == "ansible_ssh_user"
+        host['uri'] = value if key == "ansible_ssh_host"
+      end
+    }
+    return host
   end
 
   # param: none
