@@ -91,13 +91,6 @@ EOF
 192.168.0.3:5309
 192.168.0.4 ansible_ssh_private_key_file=~/.ssh/id_rsa
 
-#[variables]
-#192.168.0.4
-
-#[variables:vars]
-#ansible_ssh_port=22
-#ansible_ssh_user=root
-
 #[alias]
 #jumper ansible_ssh_port=5555 ansible_ssh_host=192.168.1.50
 EOF
