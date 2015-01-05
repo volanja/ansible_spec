@@ -66,24 +66,28 @@ describe "load_targetsの実行" do
     end
 
     it 'normal 192.168.0.1' do
-      expect(@res['normal'][0].instance_of?(String)).to be_truthy
-      expect(@res['normal'][0]).to eq '192.168.0.1'
+      obj = @res['normal'][0]
+      expect(obj.instance_of?(String)).to be_truthy
+      expect(obj).to eq '192.168.0.1'
     end
     it 'normal 192.168.0.2 ansible_ssh_port=22' do
-      expect(@res['normal'][1].instance_of?(Hash)).to be_truthy
-      expect(@res['normal'][1]['uri']).to eq '192.168.0.2'
-      expect(@res['normal'][1]['port']).to eq 22
+      obj = @res['normal'][1]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['uri']).to eq '192.168.0.2'
+      expect(obj['port']).to eq 22
     end
     it 'normal 192.168.0.3:5309' do
-      expect(@res['normal'][2].instance_of?(Hash)).to be_truthy
-      expect(@res['normal'][2]['uri']).to eq '192.168.0.3'
-      expect(@res['normal'][2]['port']).to eq 5309
+      obj = @res['normal'][2]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['uri']).to eq '192.168.0.3'
+      expect(obj['port']).to eq 5309
     end
     it '192.168.0.4 ansible_ssh_private_key_file=~/.ssh/id_rsa' do
-      expect(@res['normal'][3].instance_of?(Hash)).to be_truthy
-      expect(@res['normal'][3]['uri']).to eq '192.168.0.4'
-      expect(@res['normal'][3]['port']).to eq 22
-      expect(@res['normal'][3]['private_key']).to eq '~/.ssh/id_rsa'
+      obj = @res['normal'][3]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['uri']).to eq '192.168.0.4'
+      expect(obj['port']).to eq 22
+      expect(obj['private_key']).to eq '~/.ssh/id_rsa'
     end
 
     after(:all) do
@@ -112,7 +116,7 @@ describe "get_propertiesの実行" do
       expect(@res[0].instance_of?(Hash)).to be_truthy
     end
 
-    it 'check 1 group' do
+    it 'check 4 group' do
       expect(@res[0].length).to eq 4
     end
 
@@ -127,21 +131,24 @@ describe "get_propertiesの実行" do
     end
 
     it 'normal 192.168.0.2 ansible_ssh_port=22' do
-      expect(@res[0]['hosts'][1].instance_of?(Hash)).to be_truthy
-      expect(@res[0]['hosts'][1]['uri']).to eq '192.168.0.2'
-      expect(@res[0]['hosts'][1]['port']).to eq 22
+      obj = @res[0]['hosts'][1]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['uri']).to eq '192.168.0.2'
+      expect(obj['port']).to eq 22
     end
 
     it 'normal 192.168.0.3:5309' do
-      expect(@res[0]['hosts'][2].instance_of?(Hash)).to be_truthy
-      expect(@res[0]['hosts'][2]['uri']).to eq '192.168.0.3'
-      expect(@res[0]['hosts'][2]['port']).to eq 5309
+      obj = @res[0]['hosts'][2]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['uri']).to eq '192.168.0.3'
+      expect(obj['port']).to eq 5309
     end
     it 'normal 192.168.0.4 ansible_ssh_private_key_file=~/.ssh/id_rsa' do
-      expect(@res[0]['hosts'][3].instance_of?(Hash)).to be_truthy
-      expect(@res[0]['hosts'][3]['uri']).to eq '192.168.0.4'
-      expect(@res[0]['hosts'][3]['port']).to eq 22
-      expect(@res[0]['hosts'][3]['private_key']).to eq '~/.ssh/id_rsa'
+      obj = @res[0]['hosts'][3]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['uri']).to eq '192.168.0.4'
+      expect(obj['port']).to eq 22
+      expect(obj['private_key']).to eq '~/.ssh/id_rsa'
     end
 
     it 'exist user' do
