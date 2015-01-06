@@ -15,6 +15,15 @@ If you want old release that can create template, see [v0.0.1.4](https://github.
 and use `gem install ansible_spec -v 0.0.1.4`  
 But I can't support old release.  
 
+##[WIP] New feature at v0.1
+
+- [x] Support ServerSpec v2
+- [x] Simplification Rakefile and Modularization. Because of Improvement of testability.
+- [x] Support InventoryParameters(ansible_ssh_host,ansible_ssh_port,ansible_ssh_user,ansible_ssh_private_key_file)
+- [] Support DynamicInventory
+
+And so on...
+
 ## Installation
 
 install it yourself as:
