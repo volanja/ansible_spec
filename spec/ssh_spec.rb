@@ -1,38 +1,81 @@
 require 'spec_helper'
+require 'ansible_spec'
+require 'yaml'
 
 set :backend, :ssh
 
 describe 'ssh' do
   context 'with root user' do 
     before do
-        create_normality
-        properties = AnsibleSpec.get_properties
-        @h = Hash.new
-        n = 0
-        properties.each do |property|
-          property["hosts"].each do |host|
-              #ENV['TARGET_PRIVATE_KEY'] = '~/.ssh/id_rsa'
-              #t.pattern = 'roles/{' + property["roles"].join(',') + '}/spec/*_spec.rb'
-              set :host, host
-              set :ssh_options, :user => property["user"]
-              @ssh = double(:ssh)
-              allow(@ssh).to receive(:host).and_return(Specinfra.configuration.host)
-              allow(@ssh).to receive(:user).and_return(Specinfra.configuration.ssh_options[:user])
-              @h["task_#{n}"] = @ssh
-              n += 1
+      create_normality
+      properties = AnsibleSpec.get_properties
+      @h = Hash.new
+      n = 0
+      properties.each do |property|
+        property["hosts"].each do |host|
+          #ENV['TARGET_PRIVATE_KEY'] = '~/.ssh/id_rsa'
+          #t.pattern = 'roles/{' + property["roles"].join(',') + '}/spec/*_spec.rb'
+          @ssh = double(:ssh)
+          if host.instance_of?(Hash)
+            set :host, host["uri"]
+            unless host["user"].nil?
+              user = host["user"]
+            else
+              user = property["user"]
+            end
+            set :ssh_options, :user => user, :port => host["port"], :keys => host["private_key"]
+            allow(@ssh).to receive(:port).and_return(Specinfra.configuration.ssh_options[:port])
+            allow(@ssh).to receive(:keys).and_return(Specinfra.configuration.ssh_options[:keys])
+          else
+            set :host, host
+            set :ssh_options, :user => property["user"]
           end
+          allow(@ssh).to receive(:host).and_return(Specinfra.configuration.host)
+          allow(@ssh).to receive(:user).and_return(Specinfra.configuration.ssh_options[:user])
+          @h["task_#{n}"] = @ssh
+          n += 1
         end
+      end
     end
-    it 'should not prepend sudo' do
-      @h.each{|k,v|
-        if k == "task_0"
-          expect(v.user).to eq 'root'
-          expect(v.host).to eq '192.168.0.103'
-        elsif k == "task_1"
-          expect(v.user).to eq 'root'
-          expect(v.host).to eq '192.168.0.104'
-        end
-      }
+
+    it '192.168.0.1' do
+      v = @h["task_0"]
+      expect(v.user).to eq 'root'
+      expect(v.host).to eq '192.168.0.1'
+    end
+    it '192.168.0.2:22' do
+      v = @h["task_1"]
+      expect(v.user).to eq 'root'
+      expect(v.host).to eq '192.168.0.2'
+      expect(v.port).to eq 22
+    end
+    it '192.168.0.3 ansible_ssh_port=22' do
+      v = @h["task_2"]
+      expect(v.user).to eq 'root'
+      expect(v.host).to eq '192.168.0.3'
+      expect(v.port).to eq 5309
+    end
+    it '192.168.0.4 ansible_ssh_private_key_file=~/.ssh/id_rsa' do
+      v = @h["task_3"]
+      expect(v.user).to eq 'root'
+      expect(v.host).to eq '192.168.0.4'
+      expect(v.port).to eq 22
+      expect(v.keys).to eq '~/.ssh/id_rsa'
+    end
+
+    it '192.168.0.5 ansible_ssh_user=git' do
+      v = @h["task_4"]
+      expect(v.user).to eq 'git'
+      expect(v.host).to eq '192.168.0.5'
+      expect(v.port).to eq 22
+    end
+
+    it 'jumper ansible_ssh_port=5555 ansible_ssh_host=192.168.1.50' do
+      v = @h["task_5"]
+      expect(v.user).to eq 'root'
+      expect(v.host).to eq '192.168.1.50'
+      expect(v.port).to eq 5555
+
     end
 
     after do
@@ -55,7 +98,7 @@ EOF
 
   content_p = <<'EOF'
 - name: Ansible-Sample-TDD
-  hosts: server
+  hosts: normal
   user: root
   roles:
     - nginx
@@ -63,9 +106,13 @@ EOF
 EOF
 
   content_h = <<'EOF'
-[server]
-192.168.0.103
-192.168.0.104
+[normal]
+192.168.0.1
+192.168.0.2 ansible_ssh_port=22
+192.168.0.3:5309
+192.168.0.4 ansible_ssh_private_key_file=~/.ssh/id_rsa
+192.168.0.5 ansible_ssh_user=git
+jumper ansible_ssh_port=5555 ansible_ssh_host=192.168.1.50
 EOF
 
   File.open(tmp_ansiblespec, 'w') do |f|
