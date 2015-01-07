@@ -24,5 +24,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "simplecov"
 
   gem.add_runtime_dependency "serverspec", ">= 2.0.0"
+  gem.add_runtime_dependency "hostlist_expression"
 
 end

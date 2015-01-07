@@ -75,7 +75,30 @@ describe 'ssh' do
       expect(v.user).to eq 'root'
       expect(v.host).to eq '192.168.1.50'
       expect(v.port).to eq 5555
+    end
 
+    it 'www[01:02].example.com' do
+      v = @h["task_6"]
+      expect(v.user).to eq 'root'
+      expect(v.host).to eq 'www01.example.com'
+    end
+
+    it 'www[01:02].example.com' do
+      v = @h["task_7"]
+      expect(v.user).to eq 'root'
+      expect(v.host).to eq 'www02.example.com'
+    end
+
+    it 'db-[a:b].example.com' do
+      v = @h["task_8"]
+      expect(v.user).to eq 'root'
+      expect(v.host).to eq 'db-a.example.com'
+    end
+
+    it 'db-[a:b].example.com' do
+      v = @h["task_9"]
+      expect(v.user).to eq 'root'
+      expect(v.host).to eq 'db-b.example.com'
     end
 
     after do
@@ -113,6 +136,8 @@ EOF
 192.168.0.4 ansible_ssh_private_key_file=~/.ssh/id_rsa
 192.168.0.5 ansible_ssh_user=git
 jumper ansible_ssh_port=5555 ansible_ssh_host=192.168.1.50
+www[01:02].example.com
+db-[a:b].example.com
 EOF
 
   File.open(tmp_ansiblespec, 'w') do |f|

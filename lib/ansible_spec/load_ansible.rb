@@ -1,3 +1,5 @@
+require 'hostlist_expression'
+
 module AnsibleSpec
   # param: inventory file of Ansible
   # return: Hash {"group" => ["192.168.0.1","192.168.0.2"]}
@@ -26,6 +28,13 @@ module AnsibleSpec
         if line.split.count == 1 && !line.include?(":")
           # 192.168.0.1
           res["#{group}"] << line
+          next
+        elsif line.split.count == 1 && line.include?("[") && line.include?("]")
+          # www[01:50].example.com
+          # db-[a:f].example.com
+          hostlist_expression(line,":").each{|h|
+            res["#{group}"] << h
+          }
           next
         else
           res["#{group}"] << get_inventory_param(line)

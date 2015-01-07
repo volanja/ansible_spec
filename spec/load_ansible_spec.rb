@@ -110,6 +110,51 @@ EOF
     end
   end
 
+  context '正常系:1グループ www[01:50].example.com' do
+    tmp_hosts = 'hosts'
+    before(:all) do
+      content = <<'EOF'
+[web]
+www[01:50].example.com
+[databases]
+db-[a:f].example.com
+EOF
+      create_file(tmp_hosts,content)
+      @res = AnsibleSpec.load_targets(tmp_hosts)
+    end
+
+    it 'res is hash' do
+      expect(@res.instance_of?(Hash)).to be_truthy
+    end
+
+    it 'check 1 group' do
+      expect(@res.length).to eq 2
+    end
+
+    it 'check group name' do
+      expect(@res.key?('web')).to be_truthy
+      expect(@res.key?('databases')).to be_truthy
+    end
+
+    it 'www[01:50].example.com' do
+      1.upto(50){|n|
+        leading_zero = n.to_s.rjust(2, '0')
+        expect(@res['web']["#{n - 1}".to_i]).to eq "www#{leading_zero}.example.com"
+      }
+    end
+
+    it 'db-[a:f].example.com' do
+      alphabet = [*'a'..'f'] # Array splat
+      alphabet.each_with_index {|word, i|
+        expect(@res['databases'][i]).to eq "db-#{word}.example.com"
+      }
+    end
+
+    after(:all) do
+      File.delete(tmp_hosts)
+    end
+  end
+
   context '異常系:全てコメントアウトされている状態' do
     tmp_hosts = 'hosts'
     before(:all) do
