@@ -20,7 +20,8 @@ But I can't support old release.
 - [x] Support ServerSpec v2
 - [x] Simplification Rakefile and Modularization. Because of Improvement of testability.
 - [x] Support InventoryParameters(ansible_ssh_host,ansible_ssh_port,ansible_ssh_user,ansible_ssh_private_key_file)
-- [] Support DynamicInventory
+- [x] Support [hostlist expressions](http://docs.ansible.com/intro_inventory.html#hosts-and-groups)
+- [ ] Support DynamicInventory
 
 And so on...
 
