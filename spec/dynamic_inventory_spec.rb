@@ -2,7 +2,7 @@
 require 'ansible_spec'
 
 describe "load_targetsの実行" do
-  context '正常系:複数グループ:変数' do
+  context '正常系:単グループ:DynamicInventory' do
     tmp_hosts = 'hosts'
     before do
       content_h = <<'EOF'
