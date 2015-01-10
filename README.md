@@ -22,7 +22,7 @@ But I can't support old release.
 - [x] Support InventoryParameters  
 (ansible_ssh_host, ansible_ssh_port, ansible_ssh_user, ansible_ssh_private_key_file)
 - [x] Support [hostlist expressions](http://docs.ansible.com/intro_inventory.html#hosts-and-groups)
-- [ ] Support DynamicInventory
+- [x] Support DynamicInventory
 
 And so on...
 
