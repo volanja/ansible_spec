@@ -10,7 +10,7 @@ end
 describe "load_targetsの実行" do
   context '正常系:1グループ' do
     tmp_hosts = 'hosts'
-    before(:all) do
+    before do
       content = <<'EOF'
 [server]
 192.168.0.1
@@ -47,14 +47,14 @@ EOF
       expect(@res['server'][3]).to eq nil
     end
 
-    after(:all) do
+    after do
       File.delete(tmp_hosts)
     end
   end
 
   context '正常系:2グループ' do
     tmp_hosts = 'hosts'
-    before(:all) do
+    before do
       content = <<'EOF'
 [web]
 192.168.0.3
@@ -105,14 +105,14 @@ EOF
       expect(@res['db'][2]).to eq nil
     end
 
-    after(:all) do
+    after do
       File.delete(tmp_hosts)
     end
   end
 
   context '正常系:1グループ www[01:50].example.com' do
     tmp_hosts = 'hosts'
-    before(:all) do
+    before do
       content = <<'EOF'
 [web]
 www[01:50].example.com
@@ -150,14 +150,14 @@ EOF
       }
     end
 
-    after(:all) do
+    after do
       File.delete(tmp_hosts)
     end
   end
 
   context '異常系:全てコメントアウトされている状態' do
     tmp_hosts = 'hosts'
-    before(:all) do
+    before do
       content = <<'EOF'
 #[server]
 #192.168.0.1
@@ -179,14 +179,14 @@ EOF
       expect(@res.key?('server')).not_to be_truthy
     end
 
-    after(:all) do
+    after do
       File.delete(tmp_hosts)
     end
   end
 
   context '異常系:ファイル内が空の状態' do
     tmp_hosts = 'hosts'
-    before(:all) do
+    before do
       content = <<'EOF'
 
 EOF
@@ -208,14 +208,14 @@ EOF
       expect(@res.key?('server')).not_to be_truthy
     end
 
-    after(:all) do
+    after do
       File.delete(tmp_hosts)
     end
   end
 
   context '異常系:1行だけコメントアウトされている状態' do
     tmp_hosts = 'hosts'
-    before(:all) do
+    before do
       content = <<'EOF'
 [server]
 #192.168.0.10
@@ -244,14 +244,14 @@ EOF
       expect(@res['server'][0]).to eq '192.168.0.11'
     end
 
-    after(:all) do
+    after do
       File.delete(tmp_hosts)
     end
   end
 
   context '異常系:グループ名のみコメントアウトされている状態' do
     tmp_hosts = 'hosts'
-    before(:all) do
+    before do
       content = <<'EOF'
 [web]
 192.168.0.3
@@ -281,7 +281,7 @@ EOF
       expect(@res['web'][1]).to eq '192.168.0.4'
     end
 
-    after(:all) do
+    after do
       File.delete(tmp_hosts)
     end
   end
@@ -291,7 +291,7 @@ describe "load_playbookの実行" do
   context '正常系' do
     require 'yaml'
     tmp_pb = 'playbook'
-    before(:all) do
+    before do
       content = <<'EOF'
 - name: Ansible-Sample-TDD
   hosts: server
@@ -338,7 +338,7 @@ EOF
       expect(@res[0]['roles'][1]).to eq 'mariadb'
     end
 
-    after(:all) do
+    after do
       File.delete(tmp_pb)
     end
   end
@@ -347,7 +347,7 @@ EOF
     require 'yaml'
     tmp_pb = 'site.yml'
     tmp_inc = 'nginx.yml'
-    before(:all) do
+    before do
       content_pb = <<'EOF'
 - name: Ansible-Sample-TDD
   hosts: server
@@ -432,7 +432,7 @@ EOF
       expect(@res[1]['roles'].instance_of?(Array)).to be_truthy
       expect(@res[1]['roles'][0]).to eq 'nginx'
     end
-    after(:all) do
+    after do
       File.delete(tmp_pb)
       File.delete(tmp_inc)
     end
@@ -441,7 +441,7 @@ EOF
   context '異常系(playbookファイルの中身がない場合)' do
     require 'yaml'
     tmp_pb = 'playbook'
-    before(:all) do
+    before do
       content = <<'EOF'
 EOF
       create_file(tmp_pb,content)
@@ -454,7 +454,7 @@ EOF
       #expect{ AnsibleSpec.load_playbook(tmp_pb) }.to output("Error: No data in site.yml").to_stdout
     end
 
-    after(:all) do
+    after do
       File.delete(tmp_pb)
     end
   end
@@ -467,7 +467,7 @@ describe "load_ansiblespecの実行" do
     tmp_playbook = 'site.yml'
     tmp_hosts = 'hosts'
 
-    before(:all) do
+    before do
 
       content = <<'EOF'
 ---
@@ -504,7 +504,7 @@ EOF
       expect(@inventoryfile).to eq 'hosts'
     end
 
-    after(:all) do
+    after do
       File.delete(tmp_ansiblespec)
       File.delete(tmp_playbook)
       File.delete(tmp_hosts)
@@ -516,7 +516,7 @@ EOF
     tmp_playbook = 'site.yml'
     tmp_hosts = 'hosts'
 
-    before(:all) do
+    before do
 
       content_p = <<'EOF'
 - name: Ansible-Sample-TDD
@@ -545,7 +545,7 @@ EOF
       expect(@inventoryfile).to eq 'hosts'
     end
 
-    after(:all) do
+    after do
       File.delete(tmp_playbook)
       File.delete(tmp_hosts)
     end
@@ -555,7 +555,7 @@ EOF
     require 'yaml'
     tmp_hosts = 'hosts'
 
-    before(:all) do
+    before do
 
       content_h = <<'EOF'
 [server]
@@ -569,7 +569,7 @@ EOF
       expect{ AnsibleSpec.load_ansiblespec }.to raise_error(SystemExit)
     end
 
-    after(:all) do
+    after do
       File.delete(tmp_hosts)
     end
   end
@@ -578,7 +578,7 @@ EOF
     require 'yaml'
     tmp_playbook = 'site.yml'
 
-    before(:all) do
+    before do
 
       content_p = <<'EOF'
 - name: Ansible-Sample-TDD
@@ -595,7 +595,7 @@ EOF
       expect{ AnsibleSpec.load_ansiblespec }.to raise_error(SystemExit)
     end
 
-    after(:all) do
+    after do
       File.delete(tmp_playbook)
     end
   end
@@ -609,7 +609,7 @@ describe "get_propertiesの実行" do
     tmp_playbook = 'site.yml'
     tmp_hosts = 'hosts'
 
-    before(:all) do
+    before do
 
       content = <<'EOF'
 ---
@@ -674,7 +674,7 @@ EOF
       expect(@res[0]['roles'][1]).to eq 'mariadb'
     end
 
-    after(:all) do
+    after do
       File.delete(tmp_ansiblespec)
       File.delete(tmp_playbook)
       File.delete(tmp_hosts)

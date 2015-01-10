@@ -14,7 +14,7 @@ test_dir = "tmp"
 
 describe "モジュールの実行" do
   # テスト実行前
-  before(:all) do
+  before do
     $stdout = File.open("/dev/null", "w") #テスト実行中は標準出力は/dev/nullにする。
     FileUtils.mkdir_p(test_dir) unless FileTest.exist?(test_dir)
     Dir.chdir(test_dir) #tmp/に移動
@@ -22,7 +22,7 @@ describe "モジュールの実行" do
   end
 
   # テスト実行後
-  after(:all) do
+  after do
     created_file.each{|f| File.delete(f) }
     created_dir.each{|d| Dir.delete(d) }
     Dir.chdir("../")

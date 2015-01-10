@@ -46,7 +46,7 @@ end
 describe "load_targetsの実行" do
   context '正常系:複数グループ:変数' do
     tmp_hosts = 'hosts'
-    before(:all) do
+    before do
       ready_test
       @res = AnsibleSpec.load_targets(tmp_hosts)
     end
@@ -104,7 +104,7 @@ describe "load_targetsの実行" do
       expect(obj['port']).to eq 5555
     end
 
-    after(:all) do
+    after do
       File.delete(tmp_hosts)
     end
   end
@@ -116,7 +116,7 @@ describe "get_propertiesの実行" do
     tmp_playbook = 'site.yml'
     tmp_hosts = 'hosts'
 
-    before(:all) do
+    before do
       ready_test
       @res = AnsibleSpec.get_properties
     end
@@ -193,7 +193,7 @@ describe "get_propertiesの実行" do
       expect(@res[0]['roles'][1]).to eq 'mariadb'
     end
 
-    after(:all) do
+    after do
       File.delete(tmp_ansiblespec)
       File.delete(tmp_playbook)
       File.delete(tmp_hosts)
