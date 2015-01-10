@@ -1,10 +1,14 @@
 require 'hostlist_expression'
+require 'oj'
 
 module AnsibleSpec
   # param: inventory file of Ansible
   # return: Hash {"group" => ["192.168.0.1","192.168.0.2"]}
   # return: Hash {"group" => [{"name" => "192.168.0.1","uri" => "192.168.0.1", "port" => 22},...]}
   def self.load_targets(file)
+    if File.executable?(file)
+      return get_dynamic_inventory(file)
+    end
     f = File.open(file).read
     res = Hash.new
     group = ''
@@ -41,6 +45,18 @@ module AnsibleSpec
           next
         end
       end
+    }
+    return res
+  end
+
+  # param filename
+  #       {"databases":{"hosts":["aaa.com","bbb.com"],"vars":{"a":true}}}
+  # return {"databases"=>["aaa.com", "bbb.com"]}
+  def self.get_dynamic_inventory(file)
+    so, se, st = Open3.capture3("./#{file}")
+    res = Hash.new
+    Oj.load(so.to_s).each{|k,v|
+      res["#{k.to_s}"] = v['hosts']
     }
     return res
   end

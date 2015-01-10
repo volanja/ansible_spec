@@ -25,5 +25,6 @@ Gem::Specification.new do |gem|
 
   gem.add_runtime_dependency "serverspec", ">= 2.0.0"
   gem.add_runtime_dependency "hostlist_expression"
+  gem.add_runtime_dependency "oj"
 
 end
