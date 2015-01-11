@@ -285,6 +285,75 @@ EOF
       File.delete(tmp_hosts)
     end
   end
+
+  context '正常系:複数グループ:Children in Group' do
+    tmp_hosts = 'hosts'
+    before do
+      content_h = <<'EOF'
+[server]
+192.168.0.103
+192.168.0.104 ansible_ssh_port=22
+
+[databases]
+192.168.0.105
+192.168.0.106 ansible_ssh_port=5555
+
+[pg:children]
+server
+databases
+EOF
+      create_file(tmp_hosts,content_h)
+      @res = AnsibleSpec.load_targets(tmp_hosts)
+    end
+
+    it 'res is hash' do
+      expect(@res.instance_of?(Hash)).to be_truthy
+    end
+
+    it 'exist 1 group' do
+      expect(@res.length).to eq 3
+    end
+
+    it 'exist group' do
+      expect(@res.key?('server')).to be_truthy
+      expect(@res.key?('databases')).to be_truthy
+      expect(@res.key?('pg')).to be_truthy
+      expect(@res.key?('pg:children')).not_to be_truthy
+    end
+
+    it 'pg 192.168.0.103' do
+      obj = @res['pg'][0]
+      expect(obj.instance_of?(String)).to be_truthy
+      expect(obj).to eq '192.168.0.103'
+    end
+
+    it 'pg 192.168.0.104 ansible_ssh_port=22' do
+      obj = @res['pg'][1]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['name']).to eq '192.168.0.104 ansible_ssh_port=22'
+      expect(obj['uri']).to eq '192.168.0.104'
+      expect(obj['port']).to eq 22
+    end
+
+    it 'pg 192.168.0.105' do
+      obj = @res['pg'][2]
+      expect(obj.instance_of?(String)).to be_truthy
+      expect(obj).to eq '192.168.0.105'
+    end
+
+    it 'pg 192.168.0.106 ansible_ssh_port=5555' do
+      obj = @res['pg'][3]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['name']).to eq '192.168.0.106 ansible_ssh_port=5555'
+      expect(obj['uri']).to eq '192.168.0.106'
+      expect(obj['port']).to eq 5555
+    end
+
+    after do
+      File.delete(tmp_hosts)
+    end
+  end
+
 end
 
 describe "load_playbookの実行" do
