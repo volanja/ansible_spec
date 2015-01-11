@@ -46,7 +46,35 @@ module AnsibleSpec
         end
       end
     }
+
+    # parse children [group:children]
+    search = Regexp.new(":children".to_s)
+    res.keys.each{|k|
+      unless (k =~ search).nil?
+        # get group parent & merge parent
+        res.merge!(get_parent(res,search,k))
+        # delete group children
+        if res.has_key?("#{k}") && res.has_key?("#{k.gsub(search,'')}")
+          res.delete("#{k}")
+        end
+      end
+    }
     return res
+  end
+
+  # param  hash   {"server"=>["192.168.0.103"], "databases"=>["192.168.0.104"], "pg:children"=>["server", "databases"]}
+  # param  search ":children"
+  # param  k      "pg:children"
+  # return {"server"=>["192.168.0.103"], "databases"=>["192.168.0.104"], "pg"=>["192.168.0.103", "192.168.0.104"]}
+  def self.get_parent(hash,search,k)
+    k_parent = k.gsub(search,'')
+    arry = Array.new
+    hash["#{k}"].each{|group|
+      arry = arry + hash["#{group}"]
+    }
+    h = Hash.new
+    h["#{k_parent}"] = arry
+    return h
   end
 
   # param filename
