@@ -141,7 +141,7 @@ databases
 
 or DynamicInventory(need execute permission)
 
-```example that DynamicInventory
+```
 #!/bin/bash
 echo '{"databases": {"hosts": ["host1.example.com", "host2.example.com"],"vars":{"a": true}}}'
 ```
@@ -163,6 +163,7 @@ playbook can use `include`
 ```
 
 ## Run Test(Sample)
+
 ```
 $ rake -T
 rake serverspec:Ansible-Sample-TDD   # Run serverspec for Ansible-Sample-TDD
