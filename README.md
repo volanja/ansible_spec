@@ -2,39 +2,38 @@
 [![Gem Version](https://badge.fury.io/rb/ansible_spec.svg)](http://badge.fury.io/rb/ansible_spec)
 [![Build Status](https://travis-ci.org/volanja/ansible_spec.svg?branch=master)](https://travis-ci.org/volanja/ansible_spec)  
 
-**v0.1 is Work In Progress**
-
 This gem is Ansible Config Parser for Serverspec.  
-Serverspec RakeTask use Ansible Config(InventoryFile and Playbook).  
+Serverspec RakeTask uses Ansible Config(InventoryFile and Playbook).  
 Support Run Multi Role and Multi Host of Ansible.  
 
-This gem created template file Until v0.0.1.4,  
+This gem created template file until v0.0.1.4,  
 But it was modularized on v0.1. Because module is easy to unit-test and Rakefile is simple.  
 
-If you want old release that can create template, see [v0.0.1.4](https://github.com/volanja/ansible_spec/tree/v0.0.1.4).  
-and use `gem install ansible_spec -v 0.0.1.4`  
-But I can't support old release.  
+If you want old release that can create template, use `gem install ansible_spec -v 0.0.1.4`  
+But I can't support(Bug fix, Add feature) old release.  
 
-##[WIP] New feature at v0.1
+## New feature at v0.1
 
-- [x] Support ServerSpec v2
-- [x] Simplification Rakefile and Modularization. Because of Improvement of testability.
-- [x] Support InventoryParameters  
-(ansible_ssh_host, ansible_ssh_port, ansible_ssh_user, ansible_ssh_private_key_file)
-- [x] Support [hostlist expressions](http://docs.ansible.com/intro_inventory.html#hosts-and-groups)
-- [x] Support DynamicInventory
-
-And so on...
+- Support Serverspec v2
+- Simplification Rakefile and Modularization. Because of Improvement of testability.
+- Support InventoryParameters  
+  - ansible_ssh_port
+  - ansible_ssh_user
+  - ansible_ssh_host
+  - ansible_ssh_private_key_file
+- Support [hostlist expressions](http://docs.ansible.com/intro_inventory.html#hosts-and-groups)
+- Support DynamicInventory
 
 ## Installation
 
 install it yourself as:
 
-    $ gem install ansible_spec
+```
+$ gem install ansible_spec
+```
 
 ## Usage
-
-### Create file Serverspec
+### Create Rakafile & spec/spec_helper.rb
 
 ```
 $ ansiblespec-init 
@@ -42,6 +41,14 @@ $ ansiblespec-init
     create  spec/spec_helper.rb
     create  Rakefile
     create  .ansiblespec
+```
+
+### VersionUp from v0.0.1.4 to v0.1
+
+```
+$ rm Rakefile
+$ rm spec/spec_helper.md
+$ ansiblespec-init 
 ```
 
 ### Change .ansiblespec(v0.0.1.3)
@@ -85,20 +92,62 @@ sample is [here](https://github.com/volanja/ansible-sample-tdd)
 ```
 
 ### Serverspec with Ansible
-Serverspec use this file.  (Rakefile understand Notation of Ansible.)  
+Serverspec use Ansible file.  (Rakefile understand Notation of Ansible.)  
 
-* hosts  
-hosts can use [group_name]  
+* Inventory file
+Inventory file can sue this:
+- InventoryParameters
+  - ansible_ssh_port
+  - ansible_ssh_user
+  - ansible_ssh_private_key
+  - ansible_ssh_host
+- define hosts as expressions. `host-[1:3]` would expand into `host-1`,`host-2`,`host-3`
+- Group Children
+- [DynamicInventory](http://docs.ansible.com/intro_dynamic_inventory.html)
 
 ```hosts
 [server]
-192.168.0.103
-192.168.0.104
+# skip line(comment)
+# normal
+192.168.0.1
+# use port 5309
+192.168.0.3:5309
+# use port 22
+192.168.0.2 ansible_ssh_port=22
+# use Private-key ~/.ssh/id_rsa
+192.168.0.4 ansible_ssh_private_key_file=~/.ssh/id_rsa
+# use user `git`
+192.168.0.5 ansible_ssh_user=git
+# use port 5555 & host 192.168.1.50
+jumper ansible_ssh_port=5555 ansible_ssh_host=192.168.1.50
 
+[web]
+# www1.example.com to www99.example.com
+www[1:99].example.com
+# www01.example.com to www99.example.com
+www[01:99].example.com
+
+[databases]
+# db-a.example.com to db-z.example.com
+db-[a:z].example.com
+# db-A.example.com to db-Z.example.com
+db-[A:Z].example.com
+
+# Multi Group. use server & databases
+[parent:children]
+server
+databases
 ```
 
-* site.yml  
-site.yml can use ```include```  
+or DynamicInventory(need execute permission)
+
+```example that DynamicInventory
+#!/bin/bash
+echo '{"databases": {"hosts": ["host1.example.com", "host2.example.com"],"vars":{"a": true}}}'
+```
+
+* playbook
+playbook can use `include`  
 
 ```site.yml
 - name: Ansible-Sample-TDD
@@ -106,12 +155,18 @@ site.yml can use ```include```
   user: root
   roles:
     - nginx
+- name: Ansible-Sample-TDD2
+  hosts: parent
+  user: root
+  roles:
+    - nginx
 ```
 
-## Run Test
+## Run Test(Sample)
 ```
 $ rake -T
-rake serverspec:Ansible-Sample-TDD  # Run serverspec for Ansible-Sample-TDD
+rake serverspec:Ansible-Sample-TDD   # Run serverspec for Ansible-Sample-TDD
+rake serverspec:Ansible-Sample-TDD2  # Run serverspec for Ansible-Sample-TDD2
 
 $ rake serverspec:Ansible-Sample-TDD
 Run serverspec for Ansible-Sample-TDD to 192.168.0.103
