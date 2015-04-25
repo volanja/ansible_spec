@@ -1,5 +1,6 @@
 require 'hostlist_expression'
 require 'oj'
+require 'open3'
 
 module AnsibleSpec
   # param: inventory file of Ansible
