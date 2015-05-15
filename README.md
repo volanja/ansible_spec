@@ -6,16 +6,9 @@ This gem is Ansible Config Parser for Serverspec.
 Serverspec RakeTask uses Ansible Config(InventoryFile and Playbook).  
 Support Run Multi Role and Multi Host of Ansible.  
 
-This gem created template file until v0.0.1.4,  
-But it was modularized on v0.1. Because module is easy to unit-test and Rakefile is simple.  
-
-If you want old release that can create template, use `gem install ansible_spec -v 0.0.1.4`  
-But I can't support(Bug fix, Add feature) old release.  
-
-## New feature at v0.1
+# feature
 
 - Support Serverspec v2
-- Simplification Rakefile and Modularization. Because of Improvement of testability.
 - Support InventoryParameters  
   - ansible_ssh_port
   - ansible_ssh_user
@@ -24,7 +17,7 @@ But I can't support(Bug fix, Add feature) old release.
 - Support [hostlist expressions](http://docs.ansible.com/intro_inventory.html#hosts-and-groups)
 - Support DynamicInventory
 
-## Installation
+# Installation
 
 install it yourself as:
 
@@ -32,8 +25,8 @@ install it yourself as:
 $ gem install ansible_spec
 ```
 
-## Usage
-### Create Rakafile & spec/spec_helper.rb
+# Usage
+## Create Rakafile & spec/spec_helper.rb
 
 ```
 $ ansiblespec-init 
@@ -43,15 +36,7 @@ $ ansiblespec-init
     create  .ansiblespec
 ```
 
-### VersionUp from v0.0.1.4 to v0.1
-
-```
-$ rm Rakefile
-$ rm spec/spec_helper.md
-$ ansiblespec-init 
-```
-
-### Change .ansiblespec(v0.0.1.3)
+## [Option] .ansiblespec
 If `.ansiblespec` is exist, use variables(playbook and inventory).  
 So, If you don't use `site.yml` and `hosts`, you change this file.  
 If `.ansiblespec` not found, use `site.yml` as playbook and `hosts` as inventory.  
@@ -63,38 +48,10 @@ If `.ansiblespec` not found, use `site.yml` as playbook and `hosts` as inventory
   inventory: hosts
 ```
 
-### Create Ansible Directory
 
-sample is [here](https://github.com/volanja/ansible-sample-tdd)
+## Inventory
+Serverspec use Ansible Inventory.  (Rakefile understand Notation of Ansible.)  
 
-```
-.
-├── .ansiblespec                 #Create file (use Serverspec). read above section.
-├── README.md
-├── hosts                        #use Ansible and Serverspec if .ansiblespec is not exist.
-├── site.yml                     #use Ansible and Serverspec if .ansiblespec is not exist. 
-├── nginx.yml                    #(comment-out) incluted by site.yml
-├── roles
-│   └── nginx
-│       ├── handlers
-│       │   └── main.yml
-│       ├── spec                 #use Serverspec
-│       │   └── nginx_spec.rb
-│       ├── tasks
-│       │   └── main.yml
-│       ├── templates
-│       │   └── nginx.repo
-│       └── vars
-│           └── main.yml
-├── Rakefile                     #Create file (use Serverspec)
-└── spec                         #Create file (use Serverspec)
-    └── spec_helper.rb
-```
-
-### Serverspec with Ansible
-Serverspec use Ansible file.  (Rakefile understand Notation of Ansible.)  
-
-* Inventory file
 Inventory file can sue this:
 - InventoryParameters
   - ansible_ssh_port
@@ -104,6 +61,8 @@ Inventory file can sue this:
 - define hosts as expressions. `host-[1:3]` would expand into `host-1`,`host-2`,`host-3`
 - Group Children
 - [DynamicInventory](http://docs.ansible.com/intro_dynamic_inventory.html)
+
+### Sample
 
 ```hosts
 [server]
@@ -139,14 +98,43 @@ server
 databases
 ```
 
-or DynamicInventory(need execute permission)
+## DynamicInventory(need execute permission)
 
 ```
 #!/bin/bash
 echo '{"databases": {"hosts": ["host1.example.com", "host2.example.com"],"vars":{"a": true}}}'
 ```
 
-* playbook
+
+# Sample
+## Directory
+sample is [here](https://github.com/volanja/ansible-sample-tdd)
+
+```
+.
+├── .ansiblespec                 #Create file (use Serverspec). read above section.
+├── README.md
+├── hosts                        #use Ansible and Serverspec if .ansiblespec is not exist.
+├── site.yml                     #use Ansible and Serverspec if .ansiblespec is not exist. 
+├── nginx.yml                    #(comment-out) incluted by site.yml
+├── roles
+│   └── nginx
+│       ├── handlers
+│       │   └── main.yml
+│       ├── spec                 #use Serverspec
+│       │   └── nginx_spec.rb
+│       ├── tasks
+│       │   └── main.yml
+│       ├── templates
+│       │   └── nginx.repo
+│       └── vars
+│           └── main.yml
+├── Rakefile                     #Create file (use Serverspec)
+└── spec                         #Create file (use Serverspec)
+    └── spec_helper.rb
+```
+
+## Playbook
 playbook can use `include`  
 
 ```site.yml
@@ -162,7 +150,7 @@ playbook can use `include`
     - nginx
 ```
 
-## Run Test(Sample)
+## Run Test
 
 ```
 $ rake -T
@@ -178,7 +166,7 @@ Finished in 0.34306 seconds
 11 examples, 0 failures
 ```
 
-## Contributing
+# Contributing
 
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
