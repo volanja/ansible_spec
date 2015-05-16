@@ -121,7 +121,10 @@ module AnsibleSpec
   # return: playbook, inventoryfile
   def self.load_ansiblespec()
     f = '.ansiblespec'
-    if File.exist?(f)
+    if ENV["PLAYBOOK"] && ENV["INVENTORY"]
+      playbook = ENV["PLAYBOOK"]
+      inventoryfile = ENV["INVENTORY"]
+    elsif File.exist?(f)
       y = YAML.load_file(f)
       playbook = y[0]['playbook']
       inventoryfile = y[0]['inventory']
@@ -129,6 +132,7 @@ module AnsibleSpec
       playbook = 'site.yml'
       inventoryfile = 'hosts'
     end
+
     if File.exist?(playbook) == false
       puts 'Error: ' + playbook + ' is not Found. create site.yml or ./.ansiblespec  See https://github.com/volanja/ansible_spec'
       exit 1

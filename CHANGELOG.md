@@ -1,4 +1,13 @@
+# v0.2
+- fix #24 Support ENV
+
+```
+Example:
+$ PLAYBOOK=site.yml INVENTORY=hosts rake serverspec:Ansible-Sample-TDD 
+```
+
 # v0.1.1
+
 fix #22
 
 
