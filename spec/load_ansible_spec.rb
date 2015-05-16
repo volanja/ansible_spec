@@ -530,7 +530,36 @@ EOF
 end
 
 describe "load_ansiblespecの実行" do
-  context '正常系' do
+  context '正常系(環境変数)' do
+    require 'yaml'
+    tmp_playbook = 'site_env.yml'
+    tmp_hosts = 'hosts_env'
+
+    before do
+      ENV['PLAYBOOK'] = tmp_playbook
+      ENV['INVENTORY'] = tmp_hosts
+      create_file(tmp_playbook,'')
+      create_file(tmp_hosts,'')
+      @playbook, @inventoryfile = AnsibleSpec.load_ansiblespec()
+    end
+
+    it "playbook is #{tmp_playbook}" do
+      expect(@playbook).to eq tmp_playbook
+    end
+
+    it "inventoryfile is #{tmp_hosts}" do
+      expect(@inventoryfile).to eq tmp_hosts
+    end
+
+    after do
+      ENV.delete('PLAYBOOK')
+      ENV.delete('INVENTORY')
+      File.delete(tmp_playbook)
+      File.delete(tmp_hosts)
+    end
+  end
+
+  context '正常系(.ansiblespec)' do
     require 'yaml'
     tmp_ansiblespec = '.ansiblespec'
     tmp_playbook = 'site.yml'
@@ -544,33 +573,18 @@ describe "load_ansiblespecの実行" do
   playbook: site.yml
   inventory: hosts
 EOF
-
-      content_p = <<'EOF'
-- name: Ansible-Sample-TDD
-  hosts: server
-  user: root
-  roles:
-    - nginx
-    - mariadb
-EOF
-
-      content_h = <<'EOF'
-[server]
-192.168.0.103
-192.168.0.104
-EOF
       create_file(tmp_ansiblespec,content)
-      create_file(tmp_playbook,content_p)
-      create_file(tmp_hosts,content_h)
+      create_file(tmp_playbook,'')
+      create_file(tmp_hosts,'')
       @playbook, @inventoryfile = AnsibleSpec.load_ansiblespec()
     end
 
-    it 'playbook is site.yml' do
-      expect(@playbook).to eq 'site.yml'
+    it "playbook is #{tmp_playbook}" do
+      expect(@playbook).to eq tmp_playbook
     end
 
-    it 'inventoryfile is hosts' do
-      expect(@inventoryfile).to eq 'hosts'
+    it "inventoryfile is #{tmp_hosts}" do
+      expect(@inventoryfile).to eq tmp_hosts
     end
 
     after do
@@ -580,38 +594,61 @@ EOF
     end
   end
 
-  context '異常系(.ansiblespecがないが、site.ymlとhostsがある場合)' do
+  context '正常系(.ansiblespecと環境変数がある場合、環境変数が優先される)' do
+    require 'yaml'
+    tmp_ansiblespec = '.ansiblespec'
+    tmp_playbook = 'site.yml'
+    tmp_hosts = 'hosts'
+    env_playbook = 'site_env.yml'
+    env_hosts = 'hosts_env'
+
+    before do
+      ENV['PLAYBOOK'] = env_playbook
+      ENV['INVENTORY'] = env_hosts
+      create_file(tmp_ansiblespec,'')
+      create_file(tmp_playbook,'')
+      create_file(tmp_hosts,'')
+      create_file(env_playbook,'')
+      create_file(env_hosts,'')
+      @playbook, @inventoryfile = AnsibleSpec.load_ansiblespec()
+    end
+
+    it "playbook is #{env_playbook}" do
+      expect(@playbook).to eq env_playbook
+    end
+
+    it "inventoryfile is #{env_hosts}" do
+      expect(@inventoryfile).to eq env_hosts
+    end
+
+    after do
+      ENV.delete('PLAYBOOK')
+      ENV.delete('INVENTORY')
+      File.delete(tmp_ansiblespec)
+      File.delete(tmp_playbook)
+      File.delete(tmp_hosts)
+      File.delete(env_playbook)
+      File.delete(env_hosts)
+    end
+  end
+
+  context '正常系(.ansiblespecと環境変数がないが、site.ymlとhostsがある場合)' do
     require 'yaml'
     tmp_playbook = 'site.yml'
     tmp_hosts = 'hosts'
 
     before do
-
-      content_p = <<'EOF'
-- name: Ansible-Sample-TDD
-  hosts: server
-  user: root
-  roles:
-    - nginx
-    - mariadb
-EOF
-
-      content_h = <<'EOF'
-[server]
-192.168.0.103
-192.168.0.104
-EOF
-      create_file(tmp_playbook,content_p)
-      create_file(tmp_hosts,content_h)
+      create_file(tmp_playbook,'')
+      create_file(tmp_hosts,'')
       @playbook, @inventoryfile = AnsibleSpec.load_ansiblespec()
     end
 
-    it 'playbook is site.yml' do
-      expect(@playbook).to eq 'site.yml'
+    it "playbook is #{tmp_playbook}" do
+      expect(@playbook).to eq tmp_playbook
     end
 
-    it 'inventoryfile is hosts' do
-      expect(@inventoryfile).to eq 'hosts'
+    it "inventoryfile is #{tmp_hosts}" do
+      expect(@inventoryfile).to eq tmp_hosts
     end
 
     after do
@@ -620,18 +657,128 @@ EOF
     end
   end
 
+  context '異常系(環境変数PLAYBOOKがないので初期値を使う)' do
+    require 'yaml'
+    tmp_playbook = 'site.yml'
+    tmp_hosts = 'hosts'
+    env_hosts = 'hosts_env'
+
+    before do
+      ENV['INVENTORY'] = tmp_hosts
+      create_file(tmp_playbook,'')
+      create_file(tmp_hosts,'')
+      @playbook, @inventoryfile = AnsibleSpec.load_ansiblespec()
+    end
+
+    it "playbook is #{tmp_playbook}" do
+      expect(@playbook).to eq tmp_playbook
+    end
+
+    it "inventoryfile is #{tmp_hosts}" do
+      expect(@inventoryfile).to eq tmp_hosts
+    end
+
+    after do
+      ENV.delete('INVENTORY')
+      File.delete(tmp_playbook)
+      File.delete(tmp_hosts)
+    end
+  end
+
+  context '異常系(環境変数INVENTORYがないので初期値を使う)' do
+    require 'yaml'
+    tmp_playbook = 'site.yml'
+    tmp_hosts = 'hosts'
+    env_playbook = 'site_env.yml'
+
+    before do
+      ENV['PLAYBOOK'] = tmp_playbook
+      create_file(tmp_playbook,'')
+      create_file(tmp_hosts,'')
+      @playbook, @inventoryfile = AnsibleSpec.load_ansiblespec()
+    end
+
+    it "playbook is #{tmp_playbook}" do
+      expect(@playbook).to eq tmp_playbook
+    end
+
+    it "inventoryfile is #{tmp_hosts}" do
+      expect(@inventoryfile).to eq tmp_hosts
+    end
+
+    after do
+      ENV.delete('PLAYBOOK')
+      File.delete(tmp_playbook)
+      File.delete(tmp_hosts)
+    end
+  end
+
+  context '異常系(環境変数INVENTORYがないので.ansiblespecを使う)' do
+    require 'yaml'
+    tmp_ansiblespec = '.ansiblespec'
+    tmp_playbook = 'site_spec.yml'
+    tmp_hosts = 'hosts_spec'
+    env_playbook = 'site_env.yml'
+    env_hosts = 'hosts_env'
+
+    before do
+      ENV['PLAYBOOK'] = env_playbook
+      content = <<'EOF'
+---
+-
+  playbook: site_spec.yml
+  inventory: hosts_spec
+EOF
+      create_file(tmp_ansiblespec,content)
+      create_file(tmp_playbook,'')
+      create_file(tmp_hosts,'')
+      create_file(env_playbook,'')
+      create_file(env_hosts,'')
+      @playbook, @inventoryfile = AnsibleSpec.load_ansiblespec()
+    end
+
+    it "playbook is #{tmp_playbook}" do
+      expect(@playbook).to eq tmp_playbook
+    end
+
+    it "inventoryfile is #{tmp_hosts}" do
+      expect(@inventoryfile).to eq tmp_hosts
+    end
+
+    after do
+      ENV.delete('PLAYBOOK')
+      File.delete(tmp_ansiblespec)
+      File.delete(tmp_playbook)
+      File.delete(tmp_hosts)
+      File.delete(env_playbook)
+      File.delete(env_hosts)
+    end
+  end
+
+  context '異常系(環境変数で指定したファイルがない場合)' do
+    require 'yaml'
+
+    before do
+      ENV['PLAYBOOK'] = 'site_env.yml'
+      ENV['INVENTORY'] = 'hosts_env'
+    end
+
+    it 'exitする' do
+      expect{ AnsibleSpec.load_ansiblespec }.to raise_error(SystemExit)
+    end
+
+    after do
+      ENV.delete('PLAYBOOK')
+      ENV.delete('INVENTORY')
+    end
+  end
+
   context '異常系(.ansiblespecとsite.ymlがないが、hostsがある場合)' do
     require 'yaml'
     tmp_hosts = 'hosts'
 
     before do
-
-      content_h = <<'EOF'
-[server]
-192.168.0.103
-192.168.0.104
-EOF
-      create_file(tmp_hosts,content_h)
+      create_file(tmp_hosts,'')
     end
 
     it 'exitする' do
@@ -648,16 +795,7 @@ EOF
     tmp_playbook = 'site.yml'
 
     before do
-
-      content_p = <<'EOF'
-- name: Ansible-Sample-TDD
-  hosts: server
-  user: root
-  roles:
-    - nginx
-    - mariadb
-EOF
-      create_file(tmp_playbook,content_p)
+      create_file(tmp_playbook,'')
     end
 
     it 'exitする' do

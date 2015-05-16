@@ -36,10 +36,10 @@ $ ansiblespec-init
     create  .ansiblespec
 ```
 
-## [Option] .ansiblespec
-If `.ansiblespec` is exist, use variables(playbook and inventory).  
-So, If you don't use `site.yml` and `hosts`, you change this file.  
-If `.ansiblespec` not found, use `site.yml` as playbook and `hosts` as inventory.  
+## [option] .ansiblespec
+if `.ansiblespec` is exist, use variables(playbook and inventory).  
+so, if you don't use `site.yml` and `hosts`, you change this file.  
+if `.ansiblespec` not found, use `site.yml` as playbook and `hosts` as inventory.  
 
 ```.ansiblespec
 --- 
@@ -48,6 +48,17 @@ If `.ansiblespec` not found, use `site.yml` as playbook and `hosts` as inventory
   inventory: hosts
 ```
 
+## [option] Environment variable
+You can use Environment variable, when RakeTask command. It listed below.
+
+- PLAYBOOK  playbook name       (e.g. site.yml)
+- INVENTORY inventory file name (e.g. hosts)
+I prioritize ENV more than `.ansiblespec`
+
+```
+Example:
+$ PLAYBOOK=site.yml INVENTORY=hosts rake serverspec:Ansible-Sample-TDD
+```
 
 ## Inventory
 Serverspec use Ansible Inventory.  (Rakefile understand Notation of Ansible.)  
