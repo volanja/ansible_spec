@@ -162,7 +162,22 @@ module AnsibleSpec
         properties.push site
       end
     end
-    return properties
+    if name_exist?(properties)
+      return properties
+    else
+      fail "Please insert name on playbook"
+    end
+  end
+
+  # Issue 27
+  # param: array
+  # return: boolean
+  #         true: name is exist on playbook
+  #         false: name is not exist on playbook
+  def self.name_exist?(array)
+    array.each do |site|
+      return site.has_key?("name") ? true : false
+    end
   end
 
   # return: json
