@@ -1,3 +1,14 @@
+# v0.2.1
+- fix #27 check name on playbook
+- Add Test
+  - 2.1.6
+  - 2.2.2
+- Delete Test
+  - 2.1.0
+  - 2.1.1
+  - 2.2.0
+  - 2.2.1
+
 # v0.2
 - fix #24 Support ENV
 
