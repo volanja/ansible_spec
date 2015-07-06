@@ -527,6 +527,59 @@ EOF
       File.delete(tmp_pb)
     end
   end
+
+  context '異常系(playbook内にnameがない場合)' do
+    require 'yaml'
+    tmp_pb = 'playbook'
+    before do
+      content = <<'EOF'
+- hosts: server
+  user: root
+  roles:
+    - nginx
+    - mariadb
+EOF
+      create_file(tmp_pb,content)
+    end
+
+    it 'exitする' do
+      expect{ AnsibleSpec.load_playbook(tmp_pb) }.to raise_error("Please insert name on playbook")
+    end
+
+    after do
+      File.delete(tmp_pb)
+    end
+  end
+end
+
+describe "name_exist?の実行" do
+  context '正常系' do
+    before do
+      h = Hash.new
+      h["name"] = "test"
+      ar = Array.new
+      ar << h
+      @res_t = AnsibleSpec.name_exist?(ar)
+    end
+
+    it 'res_t is true' do
+      expect(@res_t).to be_truthy
+    end
+  end
+
+  context '異常系' do
+    before do
+      h = Hash.new
+      h["var"] = "test"
+      ar = Array.new
+      ar << h
+      @res_f = AnsibleSpec.name_exist?(ar)
+    end
+
+    it 'res_f is false' do
+      expect(@res_f).to be_falsey
+    end
+  end
 end
 
 describe "load_ansiblespecの実行" do
