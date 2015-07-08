@@ -162,12 +162,36 @@ module AnsibleSpec
         properties.push site
       end
     end
+    properties.each do |property|
+      property["roles"] = flatten_role(property["roles"])
+    end
     if name_exist?(properties)
       return properties
     else
       fail "Please insert name on playbook"
     end
   end
+
+  # flatten roles (Issue 29)
+  # param: Array
+  #        e.g. ["nginx"]
+  #        e.g. [{"roles"=>"nginx"}]
+  #        e.g. [{"role"=>"nginx", "dir"=>"/opt/b", "port"=>5001}]
+  # return: Array
+  #         e.g.["nginx"]
+  def self.flatten_role(roles)
+    ret = Array.new
+    roles.each do |role|
+      if role.is_a?(String)
+        ret << role
+      elsif role.is_a?(Hash)
+        ret << role["role"] if role.has_key?("role")
+        ret << role["roles"] if role.has_key?("roles")
+      end
+    end
+    return ret
+  end
+
 
   # Issue 27
   # param: array

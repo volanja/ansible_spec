@@ -412,6 +412,118 @@ EOF
     end
   end
 
+  context '正常系(nest roles)' do
+    require 'yaml'
+    tmp_pb = 'playbook'
+    before do
+      content = <<'EOF'
+- name: Ansible-Sample-TDD
+  hosts: server
+  user: root
+  roles:
+  - roles: nginx
+  - roles: mariadb
+EOF
+      create_file(tmp_pb,content)
+      @res = AnsibleSpec.load_playbook(tmp_pb)
+    end
+
+    it 'res is array' do
+      expect(@res.instance_of?(Array)).to be_truthy
+    end
+
+    it 'res[0] is hash' do
+      expect(@res[0].instance_of?(Hash)).to be_truthy
+    end
+
+    it 'check 1 group' do
+      expect(@res[0].length).to eq 4
+    end
+
+    it 'exist name' do
+      expect(@res[0].key?('name')).to be_truthy
+      expect(@res[0]['name']).to eq 'Ansible-Sample-TDD'
+    end
+
+    it 'exist hosts' do
+      expect(@res[0].key?('hosts')).to be_truthy
+      expect(@res[0]['hosts']).to eq 'server'
+    end
+
+    it 'exist user' do
+      expect(@res[0].key?('user')).to be_truthy
+      expect(@res[0]['user']).to eq 'root'
+    end
+
+    it 'exist roles' do
+      expect(@res[0].key?('roles')).to be_truthy
+      expect(@res[0]['roles'].instance_of?(Array)).to be_truthy
+      expect(@res[0]['roles'][0]).to eq 'nginx'
+      expect(@res[0]['roles'][1]).to eq 'mariadb'
+    end
+
+    after do
+      File.delete(tmp_pb)
+    end
+  end
+
+  context '正常系(nest roles)' do
+    require 'yaml'
+    tmp_pb = 'playbook'
+    before do
+      content = <<'EOF'
+- name: Ansible-Sample-TDD
+  hosts: server
+  user: root
+  roles:
+  - common
+  - { role: nginx, dir: '/opt/a',  port: 5001 }
+  - { role: mariadb, dir: '/opt/b',  port: 5002 }
+EOF
+      create_file(tmp_pb,content)
+      @res = AnsibleSpec.load_playbook(tmp_pb)
+    end
+
+    it 'res is array' do
+      expect(@res.instance_of?(Array)).to be_truthy
+    end
+
+    it 'res[0] is hash' do
+      expect(@res[0].instance_of?(Hash)).to be_truthy
+    end
+
+    it 'check 1 group' do
+      expect(@res[0].length).to eq 4
+    end
+
+    it 'exist name' do
+      expect(@res[0].key?('name')).to be_truthy
+      expect(@res[0]['name']).to eq 'Ansible-Sample-TDD'
+    end
+
+    it 'exist hosts' do
+      expect(@res[0].key?('hosts')).to be_truthy
+      expect(@res[0]['hosts']).to eq 'server'
+    end
+
+    it 'exist user' do
+      expect(@res[0].key?('user')).to be_truthy
+      expect(@res[0]['user']).to eq 'root'
+    end
+
+    it 'exist roles' do
+      expect(@res[0].key?('roles')).to be_truthy
+      expect(@res[0]['roles'].instance_of?(Array)).to be_truthy
+      expect(@res[0]['roles'][0]).to eq 'common'
+      expect(@res[0]['roles'][1]).to eq 'nginx'
+      expect(@res[0]['roles'][2]).to eq 'mariadb'
+    end
+
+    after do
+      File.delete(tmp_pb)
+    end
+  end
+
   context '正常系(include)' do
     require 'yaml'
     tmp_pb = 'site.yml'
