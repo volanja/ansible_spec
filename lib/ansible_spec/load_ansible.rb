@@ -186,7 +186,6 @@ module AnsibleSpec
         ret << role
       elsif role.is_a?(Hash)
         ret << role["role"] if role.has_key?("role")
-        ret << role["roles"] if role.has_key?("roles")
       end
     end
     return ret

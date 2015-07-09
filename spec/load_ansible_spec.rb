@@ -421,8 +421,8 @@ EOF
   hosts: server
   user: root
   roles:
-  - roles: nginx
-  - roles: mariadb
+  - role: nginx
+  - role: mariadb
 EOF
       create_file(tmp_pb,content)
       @res = AnsibleSpec.load_playbook(tmp_pb)
