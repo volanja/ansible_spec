@@ -217,6 +217,8 @@ module AnsibleSpec
         var["hosts"] = hosts.values.flatten
       elsif hosts.has_key?("#{var["hosts"]}")
         var["hosts"] = hosts["#{var["hosts"]}"]
+      else
+        fail "no hosts matched"
       end
     end
     return properties
