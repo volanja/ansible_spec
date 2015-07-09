@@ -213,7 +213,9 @@ module AnsibleSpec
     hosts = load_targets(inventoryfile)
     properties = load_playbook(playbook)
     properties.each do |var|
-      if hosts.has_key?("#{var["hosts"]}")
+      if var["hosts"].to_s == "all"
+        var["hosts"] = hosts.values.flatten
+      elsif hosts.has_key?("#{var["hosts"]}")
         var["hosts"] = hosts["#{var["hosts"]}"]
       end
     end
