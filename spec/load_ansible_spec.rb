@@ -536,6 +536,7 @@ EOF
   roles:
     - mariadb
 - include: nginx.yml
+- include: nginx.yml with=params
 EOF
       create_file(tmp_pb,content_pb)
 
@@ -1133,7 +1134,52 @@ EOF
     end
   end
 
-  context '異常系 (hosts is not match)' do
+  context 'Add hostslist for localhost string' do
+    require 'yaml'
+    tmp_ansiblespec = '.ansiblespec'
+    tmp_playbook = 'site.yml'
+    tmp_hosts = 'hosts'
+
+    before do
+      content = <<'EOF'
+---
+-
+  playbook: site.yml
+  inventory: hosts
+EOF
+
+      content_p = <<'EOF'
+- name: Ansible-Sample-TDD
+  hosts: localhost
+  user: root
+  roles:
+    - nginx
+    - mariadb
+EOF
+
+      content_h = <<'EOF'
+[server]
+192.168.0.103
+EOF
+
+      create_file(tmp_ansiblespec,content)
+      create_file(tmp_playbook,content_p)
+      create_file(tmp_hosts,content_h) # content ignored in this test
+    end
+
+    it 'add array to hosts' do
+      expect(AnsibleSpec.get_properties[0]["hosts"]).to eq(['127.0.0.1'])
+    end
+
+    after do
+      File.delete(tmp_ansiblespec)
+      File.delete(tmp_playbook)
+      File.delete(tmp_hosts)
+    end
+  end
+
+
+  context 'hostgroup not defined in inventory' do
     require 'yaml'
     tmp_ansiblespec = '.ansiblespec'
     tmp_playbook = 'site.yml'
@@ -1168,8 +1214,8 @@ EOF
       create_file(tmp_hosts,content_h)
     end
 
-    it 'exitする' do
-      expect{ AnsibleSpec.get_properties }.to raise_error("no hosts matched")
+    it 'Skip hostgroups not defined in inventory' do
+      expect{ AnsibleSpec.get_properties }.not_to raise_error
     end
 
     after do

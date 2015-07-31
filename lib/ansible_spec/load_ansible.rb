@@ -79,15 +79,12 @@ module AnsibleSpec
   end
 
   # param filename
-  #       {"databases":{"hosts":["aaa.com","bbb.com"],"vars":{"a":true}}}
-  # return {"databases"=>["aaa.com", "bbb.com"]}
+  # Made comapatible with ec2.py dynamic inventory script from ansible
+  # http://docs.ansible.com/ansible/intro_dynamic_inventory.html#example-aws-ec2-external-inventory-script
   def self.get_dynamic_inventory(file)
     so, se, st = Open3.capture3("./#{file}")
-    res = Hash.new
-    Oj.load(so.to_s).each{|k,v|
-      res["#{k.to_s}"] = v['hosts']
-    }
-    return res
+    raise "Error while executing dynamic inventory script: #{se}" if so.empty?
+    Oj.load(so.to_s)
   end
 
   # param ansible_ssh_port=22
@@ -157,13 +154,13 @@ module AnsibleSpec
     properties = Array.new
     playbook.each do |site|
       if site.has_key?("include")
-        properties.push YAML.load_file(site["include"])[0]
+        properties.push YAML.load_file(site["include"].split.first)[0]
       else
         properties.push site
       end
     end
     properties.each do |property|
-      property["roles"] = flatten_role(property["roles"])
+      property["roles"] = flatten_role(property["roles"]) if property["roles"]
     end
     if name_exist?(properties)
       return properties
@@ -212,13 +209,16 @@ module AnsibleSpec
     # inventory fileとplaybookのhostsをマッピングする。
     hosts = load_targets(inventoryfile)
     properties = load_playbook(playbook)
+
     properties.each do |var|
       if var["hosts"].to_s == "all"
         var["hosts"] = hosts.values.flatten
+      elsif var["hosts"].to_s == "localhost"
+        var["hosts"] = ["127.0.0.1"]
       elsif hosts.has_key?("#{var["hosts"]}")
         var["hosts"] = hosts["#{var["hosts"]}"]
       else
-        fail "no hosts matched"
+        puts "No matching inventory found for play '#{var['name']}'"
       end
     end
     return properties
