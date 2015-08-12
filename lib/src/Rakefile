@@ -11,7 +11,7 @@ namespace :serverspec do
   properties.each do |property|
     property["hosts"].each do |host|
       desc "Run serverspec for #{property["name"]}"
-      RSpec::Core::RakeTask.new(property["name"].to_sym) do |t|
+      RSpec::Core::RakeTask.new(property["name"].gsub(' ', '_').to_sym) do |t|
         puts "Run serverspec for #{property["name"]} to #{host}"
         if host.instance_of?(Hash)
           ENV['TARGET_HOST'] = host["uri"]
