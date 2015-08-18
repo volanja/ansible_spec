@@ -105,6 +105,7 @@ module AnsibleSpec
         host['uri'] = v
       else
         key,value = v.split("=")
+        host['connection'] = value if key == "ansible_connection"
         host['port'] = value.to_i if key == "ansible_ssh_port"
         host['private_key'] = value if key == "ansible_ssh_private_key_file"
         host['user'] = value if key == "ansible_ssh_user"
@@ -213,8 +214,6 @@ module AnsibleSpec
     properties.each do |var|
       if var["hosts"].to_s == "all"
         var["hosts"] = hosts.values.flatten
-      elsif var["hosts"].to_s == "localhost"
-        var["hosts"] = ["127.0.0.1"]
       elsif hosts.has_key?("#{var["hosts"]}")
         var["hosts"] = hosts["#{var["hosts"]}"]
       else
