@@ -1160,6 +1160,8 @@ EOF
       content_h = <<'EOF'
 [server]
 192.168.0.103
+[localhost]
+127.0.0.1
 EOF
 
       create_file(tmp_ansiblespec,content)
