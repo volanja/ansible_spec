@@ -1,6 +1,7 @@
 require 'hostlist_expression'
 require 'oj'
 require 'open3'
+require 'inifile'
 
 module AnsibleSpec
   # param: inventory file of Ansible
@@ -117,6 +118,39 @@ module AnsibleSpec
     return host
   end
 
+  # ansible/lib/ansible/constants.py load_config_file()
+  # Load Config File order(first found is used): ENV, CWD, HOME, /etc/ansible
+  # return string
+  def self.get_cfg_path
+    path0 = ENV["ANSIBLE_CONFIG"]
+    path0 = Dir.home + "/" + path0 unless path0.nil?
+    path1 = Dir.getwd + "/ansible.cfg"
+    path2 = Dir.home + "/.ansible.cfg"
+    path3 = "/etc/ansible/ansible.cfg"
+
+  for path in [path0, path1, path2, path3]
+    if !path.nil? and File.exist?(path)
+      return path
+    end
+  end
+  return nil
+  end
+
+  # return: Hash
+  def self.get_default_config(cfg)
+    ret = Hash.new
+    # set default
+    ret['user'] = ENV['USER']
+    ret['port'] = 22
+    # get config
+    return ret if cfg.nil?
+    ini = IniFile.load(cfg)
+    ret['user'] = ini['global']['remote_user'] if ini['global'].has_key?('remote_user')
+    #ret['port'] = ini['remote_port'] if ini.has_key?('remote_port')
+    #ret['private_key'] = ini['private_key_file'] if ini.has_key?('private_key_file')
+    return ret
+  end
+
   # param: none
   # return: playbook, inventoryfile
   def self.load_ansiblespec()
@@ -155,6 +189,7 @@ module AnsibleSpec
       exit
     end
     properties = Array.new
+    # inclue
     playbook.each do |site|
       if site.has_key?("include")
         properties.push YAML.load_file(site["include"])[0]
@@ -162,8 +197,10 @@ module AnsibleSpec
         properties.push site
       end
     end
+    default = get_default_config(get_cfg_path)
     properties.each do |property|
       property["roles"] = flatten_role(property["roles"])
+      property["user"] = default["user"] if property["user"].nil?
     end
     if name_exist?(properties)
       return properties

@@ -200,3 +200,28 @@ describe "get_propertiesの実行" do
     end
   end
 end
+
+describe "get_cfg_pathの実行" do
+  context '正常系:path0' do
+    cfg = 'test.cfg'
+    unless ENV['ANSIBLE_CONFIG'].nil?
+      tmp_env = ENV['ANSIBLE_CONFIG']
+    end
+
+    before do
+      ENV['ANSIBLE_CONFIG'] = cfg
+      create_file(Dir.home + '/' + cfg,'')
+      @res = AnsibleSpec.get_cfg_path
+    end
+
+    it 'path0' do
+      expect(@res).to eq Dir.home + '/' + cfg
+    end
+    after do
+      File.delete(Dir.home + '/' + cfg)
+      unless @tmp_env.nil?
+        ENV['ANSIBLE_CONFIG'] = tmp_env
+      end
+    end
+  end
+end
