@@ -536,6 +536,7 @@ EOF
   roles:
     - mariadb
 - include: nginx.yml
+- include: nginx.yml with=params
 EOF
       create_file(tmp_pb,content_pb)
 
@@ -694,15 +695,13 @@ describe "name_exist?の実行" do
   end
 end
 
-describe "load_ansiblespecの実行" do
-  context '正常系(環境変数)' do
+describe "#load_ansiblespec" do
+  context 'load fallback variables if no .ansiblespec file exists and no ENV vars given' do
     require 'yaml'
-    tmp_playbook = 'site_env.yml'
-    tmp_hosts = 'hosts_env'
+    tmp_playbook = 'site.yml'
+    tmp_hosts = 'hosts'
 
     before do
-      ENV['PLAYBOOK'] = tmp_playbook
-      ENV['INVENTORY'] = tmp_hosts
       create_file(tmp_playbook,'')
       create_file(tmp_hosts,'')
       @playbook, @inventoryfile = AnsibleSpec.load_ansiblespec()
@@ -724,19 +723,19 @@ describe "load_ansiblespecの実行" do
     end
   end
 
-  context '正常系(.ansiblespec)' do
+  context 'Use .ansiblespec file when present' do
     require 'yaml'
     tmp_ansiblespec = '.ansiblespec'
-    tmp_playbook = 'site.yml'
-    tmp_hosts = 'hosts'
+    tmp_playbook = 'something.yml'
+    tmp_hosts = 'other_hosts'
 
     before do
 
       content = <<'EOF'
 ---
 -
-  playbook: site.yml
-  inventory: hosts
+  playbook: something.yml
+  inventory: other_hosts
 EOF
       create_file(tmp_ansiblespec,content)
       create_file(tmp_playbook,'')
@@ -759,7 +758,7 @@ EOF
     end
   end
 
-  context '正常系(.ansiblespecと環境変数がある場合、環境変数が優先される)' do
+  context 'Overwriting config variables found in file with ENV variables' do
     require 'yaml'
     tmp_ansiblespec = '.ansiblespec'
     tmp_playbook = 'site.yml'
@@ -767,10 +766,17 @@ EOF
     env_playbook = 'site_env.yml'
     env_hosts = 'hosts_env'
 
+    content = <<'EOF'
+---
+-
+  playbook: site.yml
+  inventory: hosts
+EOF
+
     before do
       ENV['PLAYBOOK'] = env_playbook
       ENV['INVENTORY'] = env_hosts
-      create_file(tmp_ansiblespec,'')
+      create_file(tmp_ansiblespec, content)
       create_file(tmp_playbook,'')
       create_file(tmp_hosts,'')
       create_file(env_playbook,'')
@@ -797,7 +803,7 @@ EOF
     end
   end
 
-  context '正常系(.ansiblespecと環境変数がないが、site.ymlとhostsがある場合)' do
+  context 'Use fallback values if file is not present and no ENV vars given' do
     require 'yaml'
     tmp_playbook = 'site.yml'
     tmp_hosts = 'hosts'
@@ -878,7 +884,7 @@ EOF
     end
   end
 
-  context '異常系(環境変数INVENTORYがないので.ansiblespecを使う)' do
+  context 'Use ENV variable to overwrite just one variable (playbook)' do
     require 'yaml'
     tmp_ansiblespec = '.ansiblespec'
     tmp_playbook = 'site_spec.yml'
@@ -902,8 +908,8 @@ EOF
       @playbook, @inventoryfile = AnsibleSpec.load_ansiblespec()
     end
 
-    it "playbook is #{tmp_playbook}" do
-      expect(@playbook).to eq tmp_playbook
+    it "playbook is #{env_playbook}" do
+      expect(@playbook).to eq env_playbook
     end
 
     it "inventoryfile is #{tmp_hosts}" do
@@ -920,7 +926,7 @@ EOF
     end
   end
 
-  context '異常系(環境変数で指定したファイルがない場合)' do
+  context 'Raise error if playbook and inventory file do not exist' do
     require 'yaml'
 
     before do
@@ -929,7 +935,7 @@ EOF
     end
 
     it 'exitする' do
-      expect{ AnsibleSpec.load_ansiblespec }.to raise_error(SystemExit)
+      expect{ AnsibleSpec.load_ansiblespec }.to raise_error
     end
 
     after do
@@ -947,7 +953,7 @@ EOF
     end
 
     it 'exitする' do
-      expect{ AnsibleSpec.load_ansiblespec }.to raise_error(SystemExit)
+      expect{ AnsibleSpec.load_ansiblespec }.to raise_error
     end
 
     after do
@@ -964,7 +970,7 @@ EOF
     end
 
     it 'exitする' do
-      expect{ AnsibleSpec.load_ansiblespec }.to raise_error(SystemExit)
+      expect{ AnsibleSpec.load_ansiblespec }.to raise_error
     end
 
     after do
@@ -1133,7 +1139,54 @@ EOF
     end
   end
 
-  context '異常系 (hosts is not match)' do
+  context 'Add hostslist for localhost string' do
+    require 'yaml'
+    tmp_ansiblespec = '.ansiblespec'
+    tmp_playbook = 'site.yml'
+    tmp_hosts = 'hosts'
+
+    before do
+      content = <<'EOF'
+---
+-
+  playbook: site.yml
+  inventory: hosts
+EOF
+
+      content_p = <<'EOF'
+- name: Ansible-Sample-TDD
+  hosts: localhost
+  user: root
+  roles:
+    - nginx
+    - mariadb
+EOF
+
+      content_h = <<'EOF'
+[server]
+192.168.0.103
+[localhost]
+127.0.0.1
+EOF
+
+      create_file(tmp_ansiblespec,content)
+      create_file(tmp_playbook,content_p)
+      create_file(tmp_hosts,content_h) # content ignored in this test
+    end
+
+    it 'add array to hosts' do
+      expect(AnsibleSpec.get_properties[0]["hosts"]).to eq(['127.0.0.1'])
+    end
+
+    after do
+      File.delete(tmp_ansiblespec)
+      File.delete(tmp_playbook)
+      File.delete(tmp_hosts)
+    end
+  end
+
+
+  context 'hostgroup not defined in inventory' do
     require 'yaml'
     tmp_ansiblespec = '.ansiblespec'
     tmp_playbook = 'site.yml'
@@ -1168,8 +1221,8 @@ EOF
       create_file(tmp_hosts,content_h)
     end
 
-    it 'exitする' do
-      expect{ AnsibleSpec.get_properties }.to raise_error("no hosts matched")
+    it 'Skip hostgroups not defined in inventory' do
+      expect{ AnsibleSpec.get_properties }.not_to raise_error
     end
 
     after do

@@ -79,15 +79,12 @@ module AnsibleSpec
   end
 
   # param filename
-  #       {"databases":{"hosts":["aaa.com","bbb.com"],"vars":{"a":true}}}
-  # return {"databases"=>["aaa.com", "bbb.com"]}
+  # Made comapatible with ec2.py dynamic inventory script from ansible
+  # http://docs.ansible.com/ansible/intro_dynamic_inventory.html#example-aws-ec2-external-inventory-script
   def self.get_dynamic_inventory(file)
     so, se, st = Open3.capture3("./#{file}")
-    res = Hash.new
-    Oj.load(so.to_s).each{|k,v|
-      res["#{k.to_s}"] = v['hosts']
-    }
-    return res
+    raise "Error while executing dynamic inventory script: #{se}" if so.empty?
+    Oj.load(so.to_s)
   end
 
   # param ansible_ssh_port=22
@@ -108,6 +105,7 @@ module AnsibleSpec
         host['uri'] = v
       else
         key,value = v.split("=")
+        host['connection'] = value if key == "ansible_connection"
         host['port'] = value.to_i if key == "ansible_ssh_port"
         host['private_key'] = value if key == "ansible_ssh_private_key_file"
         host['user'] = value if key == "ansible_ssh_user"
@@ -120,27 +118,29 @@ module AnsibleSpec
   # param: none
   # return: playbook, inventoryfile
   def self.load_ansiblespec()
-    f = '.ansiblespec'
-    if ENV["PLAYBOOK"] && ENV["INVENTORY"]
-      playbook = ENV["PLAYBOOK"]
-      inventoryfile = ENV["INVENTORY"]
-    elsif File.exist?(f)
-      y = YAML.load_file(f)
-      playbook = y[0]['playbook']
-      inventoryfile = y[0]['inventory']
+    file = '.ansiblespec'
+    if File.exist?(file)
+      config = YAML.load_file(file)
+      if config
+        playbook = config[0]['playbook']
+        inventoryfile = config[0]['inventory']
+      else
+        raise "Config file #{file} was empty/no valid yml file. please provide playbook and inventory params."
+      end
     else
       playbook = 'site.yml'
       inventoryfile = 'hosts'
     end
+    # Overwrite values if env variables are given
+    playbook = ENV["PLAYBOOK"] if ENV["PLAYBOOK"]
+    inventoryfile = ENV["INVENTORY"] if ENV["INVENTORY"]
 
     if File.exist?(playbook) == false
-      puts 'Error: ' + playbook + ' is not Found. create site.yml or ./.ansiblespec  See https://github.com/volanja/ansible_spec'
-      exit 1
+      raise "Error: #{playbook} is not Found. create site.yml or ./.ansiblespec  See https://github.com/volanja/ansible_spec"
     elsif File.exist?(inventoryfile) == false
-      puts 'Error: ' + inventoryfile + ' is not Found. create hosts or ./.ansiblespec  See https://github.com/volanja/ansible_spec'
-      exit 1
+      raise "Error:  #{inventoryfile} is not Found. create hosts or ./.ansiblespec  See https://github.com/volanja/ansible_spec"
     end
-    return playbook, inventoryfile
+    [playbook, inventoryfile]
   end
 
   # param: playbook
@@ -157,13 +157,13 @@ module AnsibleSpec
     properties = Array.new
     playbook.each do |site|
       if site.has_key?("include")
-        properties.push YAML.load_file(site["include"])[0]
+        properties.push YAML.load_file(site["include"].split.first)[0]
       else
         properties.push site
       end
     end
     properties.each do |property|
-      property["roles"] = flatten_role(property["roles"])
+      property["roles"] = flatten_role(property["roles"]) if property["roles"]
     end
     if name_exist?(properties)
       return properties
@@ -212,13 +212,14 @@ module AnsibleSpec
     # inventory fileとplaybookのhostsをマッピングする。
     hosts = load_targets(inventoryfile)
     properties = load_playbook(playbook)
+
     properties.each do |var|
       if var["hosts"].to_s == "all"
         var["hosts"] = hosts.values.flatten
       elsif hosts.has_key?("#{var["hosts"]}")
         var["hosts"] = hosts["#{var["hosts"]}"]
       else
-        fail "no hosts matched"
+        puts "No matching inventory found for play '#{var['name']}'"
       end
     end
     return properties

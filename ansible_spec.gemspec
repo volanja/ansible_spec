@@ -19,12 +19,11 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
 
   gem.add_development_dependency "bundler", "~> 1.3"
-  gem.add_development_dependency "rake"
   gem.add_development_dependency "diff-lcs"
   gem.add_development_dependency "simplecov"
 
+  gem.add_runtime_dependency "rake"
   gem.add_runtime_dependency "serverspec", ">= 2.0.0"
   gem.add_runtime_dependency "hostlist_expression"
   gem.add_runtime_dependency "oj"
-
 end
