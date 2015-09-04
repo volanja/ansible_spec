@@ -69,7 +69,7 @@ PLAYBOOK=test.yml INVENTORY=staging/hosts rake serverspec:Ansible-Sample-TDD
 ## Inventory
 Ansible spec uses Ansible inventory format and passes it to serverspec. (Rakefile understands notation of Ansible.)
 
-Inventory file can sue this:
+Following inventory features are supported by ansible_spec:
 - InventoryParameters
   - ansible_ssh_port
   - ansible_ssh_user
