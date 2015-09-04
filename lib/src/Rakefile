@@ -2,6 +2,7 @@ require 'rake'
 require 'rspec/core/rake_task'
 require 'yaml'
 require 'ansible_spec'
+require 'json'
 
 properties = AnsibleSpec.get_properties
 # {"name"=>"Ansible-Sample-TDD", "hosts"=>["192.168.0.103","192.168.0.103"], "user"=>"root", "roles"=>["nginx", "mariadb"]}
@@ -14,6 +15,11 @@ namespace :serverspec do
       RSpec::Core::RakeTask.new(property["name"].gsub(' ', '_').to_sym) do |t|
         puts "Run serverspec for #{property["name"]} to #{host}"
         if host.instance_of?(Hash)
+          ENV['CONNECTION'] = host['connection'] if host['connection']
+          ENV['VARS'] = property['vars'].to_json if property['vars'].is_a?(Hash)
+          if property['vars_files'].is_a?(Array)
+            ENV['VARS_FILES'] = property['vars_files'].join(',')
+          end
           ENV['TARGET_HOST'] = host["uri"]
           ENV['TARGET_PORT'] = host["port"].to_s
           ENV['TARGET_PRIVATE_KEY'] = host["private_key"]
@@ -33,3 +39,19 @@ namespace :serverspec do
   end
 end
 
+desc "Run all serverspec tasks"
+task :serverspec do
+  Rake.application.in_namespace(:serverspec){|spec| spec.tasks.each{|t| t.invoke}}
+end
+
+namespace :ansible do
+  desc "Run ansible validity test"
+  task :check do
+    sh('./spec/test.sh')
+  end
+
+  desc "Run ansible validity test with full output"
+  task :check_verbose do
+    sh('./spec/test_verbose.sh')
+  end
+end
