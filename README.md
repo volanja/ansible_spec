@@ -186,8 +186,22 @@ Finished in 0.34306 seconds
 
 # Contributing
 
+To set up a development environment:
+
+```
+$ bundle install
+```
+
+To run the tests:
+
+```
+$ bundle exec rspec
+```
+
+To contribute your change, create a GitHub pull request as follows:
+
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+5. Create new Pull Request at https://github.com/volanja/ansible_spec
