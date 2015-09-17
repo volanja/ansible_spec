@@ -121,15 +121,22 @@ module AnsibleSpec
   # return: playbook, inventoryfile
   def self.load_ansiblespec()
     f = '.ansiblespec'
-    if ENV["PLAYBOOK"] && ENV["INVENTORY"]
-      playbook = ENV["PLAYBOOK"]
-      inventoryfile = ENV["INVENTORY"]
-    elsif File.exist?(f)
+    y = nil
+    if File.exist?(f)
       y = YAML.load_file(f)
+    end
+    if ENV["PLAYBOOK"]
+      playbook = ENV["PLAYBOOK"]
+    elsif y.is_a?(Array) && y[0]['playbook']
       playbook = y[0]['playbook']
-      inventoryfile = y[0]['inventory']
     else
       playbook = 'site.yml'
+    end
+    if ENV["INVENTORY"]
+      inventoryfile = ENV["INVENTORY"]
+    elsif y.is_a?(Array) && y[0]['inventory']
+      inventoryfile = y[0]['inventory']
+    else
       inventoryfile = 'hosts'
     end
 
