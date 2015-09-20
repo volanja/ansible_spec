@@ -695,13 +695,40 @@ describe "name_exist?の実行" do
 end
 
 describe "load_ansiblespecの実行" do
-  context '正常系(環境変数)' do
+  context '正常系(環境変数PLAYBOOK)' do
     require 'yaml'
     tmp_playbook = 'site_env.yml'
-    tmp_hosts = 'hosts_env'
+    tmp_hosts = 'hosts'
 
     before do
       ENV['PLAYBOOK'] = tmp_playbook
+      create_file(tmp_playbook,'')
+      create_file(tmp_hosts,'')
+      @playbook, @inventoryfile = AnsibleSpec.load_ansiblespec()
+    end
+
+    it "playbook is #{tmp_playbook}" do
+      expect(@playbook).to eq tmp_playbook
+    end
+
+    it "inventoryfile is #{tmp_hosts}" do
+      expect(@inventoryfile).to eq tmp_hosts
+    end
+
+    after do
+      ENV.delete('PLAYBOOK')
+      ENV.delete('INVENTORY')
+      File.delete(tmp_playbook)
+      File.delete(tmp_hosts)
+    end
+  end
+
+  context '正常系(環境変数INVENTORY)' do
+    require 'yaml'
+    tmp_playbook = 'site.yml'
+    tmp_hosts = 'hosts_env'
+
+    before do
       ENV['INVENTORY'] = tmp_hosts
       create_file(tmp_playbook,'')
       create_file(tmp_hosts,'')
@@ -822,14 +849,14 @@ EOF
     end
   end
 
-  context '異常系(環境変数PLAYBOOKがないので初期値を使う)' do
+  context '正常系(環境変数PLAYBOOKがないので初期値を使う)' do
     require 'yaml'
     tmp_playbook = 'site.yml'
-    tmp_hosts = 'hosts'
+    tmp_hosts = 'hosts_env'
     env_hosts = 'hosts_env'
 
     before do
-      ENV['INVENTORY'] = tmp_hosts
+      ENV['INVENTORY'] = env_hosts
       create_file(tmp_playbook,'')
       create_file(tmp_hosts,'')
       @playbook, @inventoryfile = AnsibleSpec.load_ansiblespec()
@@ -839,8 +866,8 @@ EOF
       expect(@playbook).to eq tmp_playbook
     end
 
-    it "inventoryfile is #{tmp_hosts}" do
-      expect(@inventoryfile).to eq tmp_hosts
+    it "inventoryfile is #{env_hosts}" do
+      expect(@inventoryfile).to eq env_hosts
     end
 
     after do
@@ -850,21 +877,21 @@ EOF
     end
   end
 
-  context '異常系(環境変数INVENTORYがないので初期値を使う)' do
+  context '正常系(環境変数INVENTORYがないので初期値を使う)' do
     require 'yaml'
-    tmp_playbook = 'site.yml'
+    tmp_playbook = 'site_env.yml'
     tmp_hosts = 'hosts'
     env_playbook = 'site_env.yml'
 
     before do
-      ENV['PLAYBOOK'] = tmp_playbook
+      ENV['PLAYBOOK'] = env_playbook
       create_file(tmp_playbook,'')
       create_file(tmp_hosts,'')
       @playbook, @inventoryfile = AnsibleSpec.load_ansiblespec()
     end
 
-    it "playbook is #{tmp_playbook}" do
-      expect(@playbook).to eq tmp_playbook
+    it "playbook is #{env_playbook}" do
+      expect(@playbook).to eq env_playbook
     end
 
     it "inventoryfile is #{tmp_hosts}" do
@@ -878,7 +905,48 @@ EOF
     end
   end
 
-  context '異常系(環境変数INVENTORYがないので.ansiblespecを使う)' do
+  context '正常系(環境変数PLAYBOOKがないのでplaybookは.ansiblespecを使う)' do
+    require 'yaml'
+    tmp_ansiblespec = '.ansiblespec'
+    tmp_playbook = 'site_spec.yml'
+    tmp_hosts = 'hosts_spec'
+    env_playbook = 'site_env.yml'
+    env_hosts = 'hosts_env'
+
+    before do
+      ENV['INVENTORY'] = env_hosts
+      content = <<'EOF'
+---
+-
+  playbook: site_spec.yml
+EOF
+      create_file(tmp_ansiblespec,content)
+      create_file(tmp_playbook,'')
+      create_file(tmp_hosts,'')
+      create_file(env_playbook,'')
+      create_file(env_hosts,'')
+      @playbook, @inventoryfile = AnsibleSpec.load_ansiblespec()
+    end
+
+    it "playbook is #{tmp_playbook}" do
+      expect(@playbook).to eq tmp_playbook
+    end
+
+    it "inventoryfile is #{env_hosts}" do
+      expect(@inventoryfile).to eq env_hosts
+    end
+
+    after do
+      ENV.delete('INVENTORY')
+      File.delete(tmp_ansiblespec)
+      File.delete(tmp_playbook)
+      File.delete(tmp_hosts)
+      File.delete(env_playbook)
+      File.delete(env_hosts)
+    end
+  end
+
+  context '正常系(環境変数INVENTORYがないのでinventoryfileは.ansiblespecを使う)' do
     require 'yaml'
     tmp_ansiblespec = '.ansiblespec'
     tmp_playbook = 'site_spec.yml'
@@ -891,7 +959,6 @@ EOF
       content = <<'EOF'
 ---
 -
-  playbook: site_spec.yml
   inventory: hosts_spec
 EOF
       create_file(tmp_ansiblespec,content)
@@ -902,8 +969,8 @@ EOF
       @playbook, @inventoryfile = AnsibleSpec.load_ansiblespec()
     end
 
-    it "playbook is #{tmp_playbook}" do
-      expect(@playbook).to eq tmp_playbook
+    it "playbook is #{env_playbook}" do
+      expect(@playbook).to eq env_playbook
     end
 
     it "inventoryfile is #{tmp_hosts}" do
