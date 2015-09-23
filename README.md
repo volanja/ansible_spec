@@ -62,6 +62,10 @@ Example:
 
 ```
 $ PLAYBOOK=site.yml INVENTORY=hosts rake serverspec:Ansible-Sample-TDD
+or
+$ PLAYBOOK=site.yml rake serverspec:Ansible-Sample-TDD
+or
+$ INVENTORY=hosts rake serverspec:Ansible-Sample-TDD
 ```
 
 ## Inventory
