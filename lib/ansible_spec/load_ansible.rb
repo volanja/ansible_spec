@@ -82,11 +82,23 @@ module AnsibleSpec
   #       {"databases":{"hosts":["aaa.com","bbb.com"],"vars":{"a":true}}}
   # return {"databases"=>["aaa.com", "bbb.com"]}
   def self.get_dynamic_inventory(file)
-    so, se, st = Open3.capture3("./#{file}")
+    if file[0] == "/"
+      file_path = file
+    else
+      file_path = "./#{file}"
+    end
     res = Hash.new
-    Oj.load(so.to_s).each{|k,v|
-      res["#{k.to_s}"] = v['hosts']
-    }
+    so, se, st = Open3.capture3(file_path)
+    dyn_inv = Oj.load(so.to_s)
+
+    if dyn_inv.key?('_meta')
+      # assume we have an ec2.py created dynamic inventory
+      res = dyn_inv.tap{ |h| h.delete("_meta") }
+    else
+      dyn_inv.each{|k,v|
+        res["#{k.to_s}"] = v['hosts']
+      }
+    end
     return res
   end
 
