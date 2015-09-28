@@ -1,5 +1,9 @@
+# v0.2.2
+- Fix [#43 Enable to set only either of `PLAYBOOK` or `INVENTORY`.](https://github.com/volanja/ansible_spec/issues/43) by [akagisho](https://github.com/akagisho)
+- Fix [#45 ansible_spec cannot use ec2.py dynamic inventory](https://github.com/volanja/ansible_spec/issues/45) by [phiche](https://github.com/phiche)
+
 # v0.2.1
-- fix #27 check name on playbook
+- fix [#27 check name on playbook](https://github.com/volanja/ansible_spec/issues/27)
 - Add Test
   - 2.1.6
   - 2.2.2
@@ -10,7 +14,7 @@
   - 2.2.1
 
 # v0.2
-- fix #24 Support ENV
+- fix [#24 Support ENV](https://github.com/volanja/ansible_spec/issues/24)
 
 ```
 Example:
@@ -19,7 +23,7 @@ $ PLAYBOOK=site.yml INVENTORY=hosts rake serverspec:Ansible-Sample-TDD
 
 # v0.1.1
 
-fix #22
+fix [#22 NameError: uninitialized constant AnsibleSpec::Open3](https://github.com/volanja/ansible_spec/issues/22)
 
 
 # v0.1
