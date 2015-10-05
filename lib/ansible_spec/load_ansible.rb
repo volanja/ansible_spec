@@ -194,7 +194,7 @@ module AnsibleSpec
   # flatten roles (Issue 29)
   # param: Array
   #        e.g. ["nginx"]
-  #        e.g. [{"roles"=>"nginx"}]
+  #        e.g. [{"role"=>"nginx"}]
   #        e.g. [{"role"=>"nginx", "dir"=>"/opt/b", "port"=>5001}]
   # return: Array
   #         e.g.["nginx"]

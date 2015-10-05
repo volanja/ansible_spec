@@ -694,6 +694,65 @@ describe "name_exist?の実行" do
   end
 end
 
+
+describe "flatten_roleの実行" do
+  context '正常系 ["nginx"]' do
+    before do
+      @res = AnsibleSpec.flatten_role(["nginx"])
+    end
+
+    it 'res is array' do
+      expect(@res.instance_of?(Array)).to be_truthy
+    end
+
+    it 'nginx' do
+      expect(@res[0]).to eq 'nginx'
+    end
+  end
+
+  context '正常系 {"role"=>"nginx"}' do
+    before do
+      @res = AnsibleSpec.flatten_role([{"role"=>"nginx"}])
+    end
+
+    it 'res is array' do
+      expect(@res.instance_of?(Array)).to be_truthy
+    end
+
+    it 'nginx' do
+      expect(@res[0]).to eq 'nginx'
+    end
+  end
+
+  context '正常系 {"role"=>"nginx", "dir"=>"/opt/b", "port"=>5001}' do
+    before do
+      @res = AnsibleSpec.flatten_role([{"role"=>"nginx", "dir"=>"/opt/b", "port"=>5001}])
+    end
+
+    it 'res is array' do
+      expect(@res.instance_of?(Array)).to be_truthy
+    end
+
+    it 'nginx' do
+      expect(@res[0]).to eq 'nginx'
+    end
+  end
+
+  context '異常系 nil' do
+    before do
+      @res = AnsibleSpec.flatten_role([])
+    end
+
+    it 'res is array' do
+      expect(@res.instance_of?(Array)).to be_truthy
+    end
+
+    it 'nil' do
+      expect(@res[0]).to eq nil
+    end
+  end
+end
+
 describe "load_ansiblespecの実行" do
   context '正常系(環境変数PLAYBOOK)' do
     require 'yaml'
