@@ -200,11 +200,13 @@ module AnsibleSpec
   #         e.g.["nginx"]
   def self.flatten_role(roles)
     ret = Array.new
-    roles.each do |role|
-      if role.is_a?(String)
-        ret << role
-      elsif role.is_a?(Hash)
-        ret << role["role"] if role.has_key?("role")
+    if roles
+      roles.each do |role|
+        if role.is_a?(String)
+          ret << role
+        elsif role.is_a?(Hash)
+          ret << role["role"] if role.has_key?("role")
+        end
       end
     end
     return ret
