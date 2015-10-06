@@ -1,3 +1,6 @@
+# v0.2.3
+- Fix [#47 NoMethodError: undefined method 'each' for nil:NilClass if inventory has "roles"=>[]](https://github.com/volanja/ansible_spec/issues/47) by [phiche](https://github.com/phiche)
+
 # v0.2.2
 - Fix [#43 Enable to set only either of `PLAYBOOK` or `INVENTORY`.](https://github.com/volanja/ansible_spec/issues/43) by [akagisho](https://github.com/akagisho)
 - Fix [#45 ansible_spec cannot use ec2.py dynamic inventory](https://github.com/volanja/ansible_spec/issues/45) by [phiche](https://github.com/phiche)
