@@ -239,7 +239,7 @@ module AnsibleSpec
       elsif hosts.has_key?("#{var["hosts"]}")
         var["hosts"] = hosts["#{var["hosts"]}"]
       else
-        fail "no hosts matched"
+        puts "no hosts matched for #{var["hosts"]}"
       end
     end
     return properties
