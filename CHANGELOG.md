@@ -1,3 +1,6 @@
+# v0.2.4
+- Fix [#50 do not fail on no hosts matched](https://github.com/volanja/ansible_spec/pull/50) by [phiche](https://github.com/phiche)
+
 # v0.2.3
 - Fix [#47 NoMethodError: undefined method 'each' for nil:NilClass if inventory has "roles"=>[]](https://github.com/volanja/ansible_spec/issues/47) by [phiche](https://github.com/phiche)
 
