@@ -65,8 +65,9 @@ describe "load_targetsの実行" do
 
     it 'normal 192.168.0.1' do
       obj = @res['normal'][0]
-      expect(obj.instance_of?(String)).to be_truthy
-      expect(obj).to eq '192.168.0.1'
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['uri']).to eq '192.168.0.1'
+      expect(obj['port']).to eq 22
     end
     it 'normal 192.168.0.2 ansible_ssh_port=22' do
       obj = @res['normal'][1]
@@ -141,7 +142,9 @@ describe "get_propertiesの実行" do
 
     it 'normal 192.168.0.1' do
       expect(@res[0]['hosts'].instance_of?(Array)).to be_truthy
-      expect(@res[0]['hosts'][0]).to eq '192.168.0.1'
+      expect(@res[0]['hosts'][0]).to include({'name' => '192.168.0.1',
+                                              'uri' => '192.168.0.1',
+                                              'port' => 22})
     end
 
     it 'normal 192.168.0.2 ansible_ssh_port=22' do

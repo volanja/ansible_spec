@@ -26,22 +26,22 @@ module AnsibleSpec
         next
       end
 
-      #get host
+      # get host
       if group.empty? == false
-        host = Hash.new
-        # 1つのみ、かつ:を含まない場合
-        if line.split.count == 1 && !line.include?(":")
-          # 192.168.0.1
+        if res.has_key?(line)
           res["#{group}"] << line
           next
         elsif line.split.count == 1 && line.include?("[") && line.include?("]")
           # www[01:50].example.com
           # db-[a:f].example.com
           hostlist_expression(line,":").each{|h|
-            res["#{group}"] << h
+            res["#{group}"] << get_inventory_param(h)
           }
           next
         else
+          # 1つのみ、かつ:を含まない場合
+          # 192.168.0.1
+          # 192.168.0.1 ansible_ssh_host=127.0.0.1 ...
           res["#{group}"] << get_inventory_param(line)
           next
         end
