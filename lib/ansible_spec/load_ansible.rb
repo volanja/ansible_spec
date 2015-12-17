@@ -11,8 +11,10 @@ module AnsibleSpec
       return get_dynamic_inventory(file)
     end
     f = File.open(file).read
-    res = Hash.new
+    groups = Hash.new
     group = ''
+    hosts = Hash.new
+    hosts.default = Hash.new
     f.each_line{|line|
       line = line.chomp
       # skip
@@ -22,45 +24,56 @@ module AnsibleSpec
       # get group
       if line.start_with?('[') && line.end_with?(']')
         group = line.gsub('[','').gsub(']','')
-        res["#{group}"] = Array.new
+        groups["#{group}"] = Array.new
         next
       end
 
       # get host
+      host_name = line.split[0]
       if group.empty? == false
-        if res.has_key?(line)
-          res["#{group}"] << line
+        if groups.has_key?(line)
+          groups["#{group}"] << line
           next
-        elsif line.split.count == 1 && line.include?("[") && line.include?("]")
+        elsif host_name.include?("[") && host_name.include?("]")
           # www[01:50].example.com
           # db-[a:f].example.com
           hostlist_expression(line,":").each{|h|
-            res["#{group}"] << get_inventory_param(h)
+            host = hosts[h.split[0]]
+            groups["#{group}"] << get_inventory_param(h).merge(host)
           }
           next
         else
           # 1つのみ、かつ:を含まない場合
           # 192.168.0.1
           # 192.168.0.1 ansible_ssh_host=127.0.0.1 ...
-          res["#{group}"] << get_inventory_param(line)
+          host = hosts[host_name]
+          groups["#{group}"] << get_inventory_param(line).merge(host)
           next
+        end
+      else
+        if host_name.include?("[") && host_name.include?("]")
+          hostlist_expression(line, ":").each{|h|
+            hosts[h.split[0]] = get_inventory_param(h)
+          }
+        else
+          hosts[host_name] = get_inventory_param(line)
         end
       end
     }
 
     # parse children [group:children]
     search = Regexp.new(":children".to_s)
-    res.keys.each{|k|
+    groups.keys.each{|k|
       unless (k =~ search).nil?
         # get group parent & merge parent
-        res.merge!(get_parent(res,search,k))
+        groups.merge!(get_parent(groups,search,k))
         # delete group children
-        if res.has_key?("#{k}") && res.has_key?("#{k.gsub(search,'')}")
-          res.delete("#{k}")
+        if groups.has_key?("#{k}") && groups.has_key?("#{k.gsub(search,'')}")
+          groups.delete("#{k}")
         end
       end
     }
-    return res
+    return groups
   end
 
   # param  hash   {"server"=>["192.168.0.103"], "databases"=>["192.168.0.104"], "pg:children"=>["server", "databases"]}

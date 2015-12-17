@@ -128,10 +128,14 @@ EOF
     tmp_hosts = 'hosts'
     before do
       content = <<'EOF'
+node[01:20] ansible_ssh_port=2222
+
 [web]
 www[01:50].example.com
 [databases]
 db-[a:f].example.com
+[nodes]
+node[01:20]
 EOF
       create_file(tmp_hosts,content)
       @res = AnsibleSpec.load_targets(tmp_hosts)
@@ -142,7 +146,7 @@ EOF
     end
 
     it 'check 1 group' do
-      expect(@res.length).to eq 2
+      expect(@res.length).to eq 3
     end
 
     it 'check group name' do
@@ -165,6 +169,15 @@ EOF
         expect(@res['databases'][i]).to include ({'name' => "db-#{word}.example.com",
                                                   'uri' => "db-#{word}.example.com",
                                                   'port' => 22})
+      }
+    end
+
+    it 'node[01:20]' do
+      1.upto(20){|n|
+        leading_zero = n.to_s.rjust(2, '0')
+        expect(@res['nodes']["#{n - 1}".to_i]).to include({'name' => "node#{leading_zero} ansible_ssh_port=2222",
+                                                           'uri' => "node#{leading_zero}",
+                                                           'port' => 2222})
       }
     end
 
