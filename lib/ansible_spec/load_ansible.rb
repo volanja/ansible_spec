@@ -175,6 +175,26 @@ module AnsibleSpec
     return playbook, inventoryfile
   end
 
+  # param: role
+  # return: ["role1", "role2"]
+  def self.load_dependencies(role)
+    role_queue = [role]
+    deps = []
+    until role_queue.empty?
+      role = role_queue.pop()
+      path = File.join("./", "roles", role, "meta", "main.yml")
+
+      if File.exist?(path)
+        new_deps = YAML.load_file(path).fetch("dependencies", []).map { |h|
+          h["role"]
+        }
+        role_queue.concat(new_deps)
+        deps.concat(new_deps)
+      end
+    end
+    return deps
+  end
+
   # param: playbook
   # return: json
   #         {"name"=>"Ansible-Sample-TDD", "hosts"=>"server", "user"=>"root", "roles"=>["nginx", "mariadb"]}
