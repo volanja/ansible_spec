@@ -29,6 +29,8 @@ EOF
 EOF
 
   content_h = <<'EOF'
+node ansible_ssh_port=4444 ansible_ssh_host=192.168.1.55
+
 [normal]
 192.168.0.1
 192.168.0.2 ansible_ssh_port=22
@@ -36,8 +38,9 @@ EOF
 192.168.0.4 ansible_ssh_private_key_file=~/.ssh/id_rsa
 192.168.0.5 ansible_ssh_user=git
 jumper ansible_ssh_port=5555 ansible_ssh_host=192.168.1.50
-
+node
 EOF
+
   create_file(tmp_ansiblespec,content)
   create_file(tmp_playbook,content_p)
   create_file(tmp_hosts,content_h)
@@ -65,8 +68,9 @@ describe "load_targetsの実行" do
 
     it 'normal 192.168.0.1' do
       obj = @res['normal'][0]
-      expect(obj.instance_of?(String)).to be_truthy
-      expect(obj).to eq '192.168.0.1'
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['uri']).to eq '192.168.0.1'
+      expect(obj['port']).to eq 22
     end
     it 'normal 192.168.0.2 ansible_ssh_port=22' do
       obj = @res['normal'][1]
@@ -102,6 +106,14 @@ describe "load_targetsの実行" do
       expect(obj['name']).to eq 'jumper ansible_ssh_port=5555 ansible_ssh_host=192.168.1.50'
       expect(obj['uri']).to eq '192.168.1.50'
       expect(obj['port']).to eq 5555
+    end
+
+    it 'node ansible_ssh_port=4444 ansible_ssh_host=192.168.1.55' do
+      obj = @res['normal'][6]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['name']).to eq 'node ansible_ssh_port=4444 ansible_ssh_host=192.168.1.55'
+      expect(obj['uri']).to eq '192.168.1.55'
+      expect(obj['port']).to eq 4444
     end
 
     after do
@@ -141,7 +153,9 @@ describe "get_propertiesの実行" do
 
     it 'normal 192.168.0.1' do
       expect(@res[0]['hosts'].instance_of?(Array)).to be_truthy
-      expect(@res[0]['hosts'][0]).to eq '192.168.0.1'
+      expect(@res[0]['hosts'][0]).to include({'name' => '192.168.0.1',
+                                              'uri' => '192.168.0.1',
+                                              'port' => 22})
     end
 
     it 'normal 192.168.0.2 ansible_ssh_port=22' do

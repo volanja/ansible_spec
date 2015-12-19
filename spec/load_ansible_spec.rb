@@ -35,13 +35,19 @@ EOF
     end
 
     it 'exist 1st server' do
-      expect(@res['server'][0]).to eq '192.168.0.1'
+      expect(@res['server'][0]).to include({'uri' => '192.168.0.1',
+                                            'name' => '192.168.0.1',
+                                            'port' => 22})
     end
     it 'exist 2nd server' do
-      expect(@res['server'][1]).to eq '192.168.0.2'
+      expect(@res['server'][1]).to include({'uri' => '192.168.0.2',
+                                            'name' => '192.168.0.2',
+                                            'port' => 22})
     end
     it 'exist 3rd server' do
-      expect(@res['server'][2]).to eq 'example.com'
+      expect(@res['server'][2]).to include({'uri' => 'example.com',
+                                            'name' => 'example.com',
+                                            'port' => 22})
     end
     it 'not exist 4th server' do
       expect(@res['server'][3]).to eq nil
@@ -82,10 +88,14 @@ EOF
       expect(@res.key?('web')).to be_truthy
     end
     it 'exist 1st web' do
-      expect(@res['web'][0]).to eq '192.168.0.3'
+      expect(@res['web'][0]).to include({'name' => '192.168.0.3',
+                                         'uri' => '192.168.0.3',
+                                         'port' => 22})
     end
     it 'exist 2nd web' do
-      expect(@res['web'][1]).to eq '192.168.0.4'
+      expect(@res['web'][1]).to include({'name' => '192.168.0.4',
+                                         'uri' => '192.168.0.4',
+                                         'port' => 22})
     end
     it 'not exist 3rd web' do
       expect(@res['web'][2]).to eq nil
@@ -96,10 +106,14 @@ EOF
       expect(@res.key?('db')).to be_truthy
     end
     it 'exist 1st db' do
-      expect(@res['db'][0]).to eq '192.168.0.5'
+      expect(@res['db'][0]).to include({'name' => '192.168.0.5',
+                                        'uri' => '192.168.0.5',
+                                        'port' => 22})
     end
     it 'exist 2nd db' do
-      expect(@res['db'][1]).to eq '192.168.0.6'
+      expect(@res['db'][1]).to include({'name' => '192.168.0.6',
+                                        'uri' => '192.168.0.6',
+                                        'port' => 22})
     end
     it 'not exist 3rd db' do
       expect(@res['db'][2]).to eq nil
@@ -114,10 +128,14 @@ EOF
     tmp_hosts = 'hosts'
     before do
       content = <<'EOF'
+node[01:20] ansible_ssh_port=2222
+
 [web]
 www[01:50].example.com
 [databases]
 db-[a:f].example.com
+[nodes]
+node[01:20]
 EOF
       create_file(tmp_hosts,content)
       @res = AnsibleSpec.load_targets(tmp_hosts)
@@ -128,7 +146,7 @@ EOF
     end
 
     it 'check 1 group' do
-      expect(@res.length).to eq 2
+      expect(@res.length).to eq 3
     end
 
     it 'check group name' do
@@ -139,14 +157,27 @@ EOF
     it 'www[01:50].example.com' do
       1.upto(50){|n|
         leading_zero = n.to_s.rjust(2, '0')
-        expect(@res['web']["#{n - 1}".to_i]).to eq "www#{leading_zero}.example.com"
+        expect(@res['web']["#{n - 1}".to_i]).to include({'name' => "www#{leading_zero}.example.com",
+                                                         'uri' => "www#{leading_zero}.example.com",
+                                                         'port' => 22})
       }
     end
 
     it 'db-[a:f].example.com' do
       alphabet = [*'a'..'f'] # Array splat
       alphabet.each_with_index {|word, i|
-        expect(@res['databases'][i]).to eq "db-#{word}.example.com"
+        expect(@res['databases'][i]).to include ({'name' => "db-#{word}.example.com",
+                                                  'uri' => "db-#{word}.example.com",
+                                                  'port' => 22})
+      }
+    end
+
+    it 'node[01:20]' do
+      1.upto(20){|n|
+        leading_zero = n.to_s.rjust(2, '0')
+        expect(@res['nodes']["#{n - 1}".to_i]).to include({'name' => "node#{leading_zero} ansible_ssh_port=2222",
+                                                           'uri' => "node#{leading_zero}",
+                                                           'port' => 2222})
       }
     end
 
@@ -241,7 +272,9 @@ EOF
       expect(@res['server'][0]).not_to eq '192.168.0.10'
     end
     it 'exist 2nd server' do
-      expect(@res['server'][0]).to eq '192.168.0.11'
+      expect(@res['server'][0]).to include({'name' => '192.168.0.11',
+                                            'uri' => '192.168.0.11',
+                                            'port' => 22})
     end
 
     after do
@@ -275,10 +308,14 @@ EOF
       expect(@res.key?('web')).to be_truthy
     end
     it 'exist 1st web' do
-      expect(@res['web'][0]).to eq '192.168.0.3'
+      expect(@res['web'][0]).to include ({'name' => '192.168.0.3',
+                                          'uri' => '192.168.0.3',
+                                          'port' => 22})
     end
     it 'exist 2nd web' do
-      expect(@res['web'][1]).to eq '192.168.0.4'
+      expect(@res['web'][1]).to include ({'name' => '192.168.0.4',
+                                          'uri' => '192.168.0.4',
+                                          'port' => 22})
     end
 
     after do
@@ -323,8 +360,10 @@ EOF
 
     it 'pg 192.168.0.103' do
       obj = @res['pg'][0]
-      expect(obj.instance_of?(String)).to be_truthy
-      expect(obj).to eq '192.168.0.103'
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj).to include({'name' => '192.168.0.103',
+                              'uri' => '192.168.0.103',
+                              'port' => 22})
     end
 
     it 'pg 192.168.0.104 ansible_ssh_port=22' do
@@ -337,8 +376,10 @@ EOF
 
     it 'pg 192.168.0.105' do
       obj = @res['pg'][2]
-      expect(obj.instance_of?(String)).to be_truthy
-      expect(obj).to eq '192.168.0.105'
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj).to include({'name' => '192.168.0.105',
+                              'uri' => '192.168.0.105',
+                              'port' => 22})
     end
 
     it 'pg 192.168.0.106 ansible_ssh_port=5555' do
@@ -1156,8 +1197,12 @@ EOF
 
     it 'exist hosts' do
       expect(@res[0]['hosts'].instance_of?(Array)).to be_truthy
-      expect(@res[0]['hosts'][0]).to eq '192.168.0.103'
-      expect(@res[0]['hosts'][1]).to eq '192.168.0.104'
+      expect(@res[0]['hosts'][0]).to include({'name' => '192.168.0.103',
+                                              'uri' => '192.168.0.103',
+                                              'port' => 22})
+      expect(@res[0]['hosts'][1]).to include({'name' => '192.168.0.104',
+                                              'uri' => '192.168.0.104',
+                                              'port' => 22})
     end
 
     it 'exist user' do
@@ -1237,7 +1282,18 @@ EOF
 
     it 'exist hosts' do
       expect(@res[0]['hosts'].instance_of?(Array)).to be_truthy
-      expect(['192.168.0.103','192.168.0.104','192.168.0.105','192.168.0.106']).to match_array(@res[0]['hosts'])
+      expect([{'name' => '192.168.0.103',
+               'uri' => '192.168.0.103',
+               'port' => 22},
+              {'name' => '192.168.0.104',
+               'uri' => '192.168.0.104',
+               'port' => 22},
+              {'name' => '192.168.0.105',
+               'uri' => '192.168.0.105',
+               'port' => 22},
+              {'name' => '192.168.0.106',
+               'uri' => '192.168.0.106',
+               'port' => 22}]).to match_array(@res[0]['hosts'])
     end
 
     it 'exist user' do
