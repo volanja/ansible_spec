@@ -1,3 +1,6 @@
+# v0.2.5
+- Fix [#51 Handle hosts which are not assigned to any group] by [Gerrrr](https://github.com/Gerrrr)
+
 # v0.2.4
 - Fix [#50 do not fail on no hosts matched](https://github.com/volanja/ansible_spec/pull/50) by [phiche](https://github.com/phiche)
 
