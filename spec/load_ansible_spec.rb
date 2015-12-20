@@ -1,7 +1,12 @@
 # coding: utf-8
+require 'fileutils'
 require 'ansible_spec'
 
 def create_file(name,content)
+  dir = File.dirname(name)
+  unless File.directory?(dir)
+    FileUtils.mkdir_p(dir)
+  end
   File.open(name, 'w') do |f|
     f.puts content
   end
