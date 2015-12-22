@@ -21,9 +21,14 @@ namespace :serverspec do
         else
           ENV['TARGET_USER'] = property["user"]
         end
-        t.pattern = 'roles/{' + property["roles"].join(',') + '}/spec/*_spec.rb'
+
+        roles = property["roles"]
+        for role in property["roles"]
+          deps = AnsibleSpec.load_dependencies(role)
+          roles += deps
+        end
+        t.pattern = 'roles/{' + roles.join(',') + '}/spec/*_spec.rb'
       end
     end
   end
 end
-
