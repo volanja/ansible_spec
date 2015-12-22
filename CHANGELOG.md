@@ -1,3 +1,6 @@
+# v0.2.6
+- Merge [#53 Execute tests for dependent roles](https://github.com/volanja/ansible_spec/pull/53) by [Gerrrr](https://github.com/Gerrrr)
+
 # v0.2.5
 - Merge [#51 Handle hosts which are not assigned to any group](https://github.com/volanja/ansible_spec/pull/51) by [Gerrrr](https://github.com/Gerrrr)
 
