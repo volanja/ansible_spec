@@ -107,22 +107,21 @@ module AnsibleSpec
 
     if dyn_inv.key?('_meta')
       # assume we have an ec2.py created dynamic inventory
-      res = dyn_inv.tap{ |h| h.delete("_meta") }
-    else
-      dyn_inv.each{|k,v|
-        res["#{k.to_s}"] = Array.new unless res.has_key?("#{k.to_s}")
-        if v.is_a?(Array)
-          # {"webservers":["aaa.com","bbb.com"]}
-          v.each {|host|
-            res["#{k.to_s}"] << {"uri"=> host, "port"=> 22}
-          }
-        elsif v.has_key?("hosts") && v['hosts'].is_a?(Array)
-          v['hosts'].each {|host|
-            res["#{k.to_s}"] << {"uri"=> host, "port"=> 22}
-          }
-        end
-      }
+      dyn_inv = dyn_inv.tap{ |h| h.delete("_meta") }
     end
+    dyn_inv.each{|k,v|
+      res["#{k.to_s}"] = Array.new unless res.has_key?("#{k.to_s}")
+      if v.is_a?(Array)
+        # {"webservers":["aaa.com","bbb.com"]}
+        v.each {|host|
+          res["#{k.to_s}"] << {"uri"=> host, "port"=> 22}
+        }
+      elsif v.has_key?("hosts") && v['hosts'].is_a?(Array)
+        v['hosts'].each {|host|
+          res["#{k.to_s}"] << {"uri"=> host, "port"=> 22}
+        }
+      end
+    }
     return res
   end
 
