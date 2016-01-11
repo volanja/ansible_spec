@@ -13,8 +13,8 @@ namespace :serverspec do
       desc "Run serverspec for #{property["name"]}"
       RSpec::Core::RakeTask.new(property["name"].to_sym) do |t|
         puts "Run serverspec for #{property["name"]} to #{host}"
-        ENV['TARGET_HOST'] = host["uri"]
-        ENV['TARGET_PORT'] = host["port"].to_s
+        ENV['TARGET_HOST'] = host["uri"] || host
+        ENV['TARGET_PORT'] = (host["port"] || 22).to_s
         ENV['TARGET_PRIVATE_KEY'] = host["private_key"]
         unless host["user"].nil?
           ENV['TARGET_USER'] = host["user"]
