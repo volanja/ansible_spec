@@ -1,3 +1,7 @@
+# v0.2.7
+- Fix [#55 Connection fails where dynamic inventory has basic host list](https://github.com/volanja/ansible_spec/issues/55) by [temyers](https://github.com/temyers)
+- Merge [#59 Issue55 fail dynamic inventory](https://github.com/volanja/ansible_spec/pull/59)
+
 # v0.2.6
 - Merge [#53 Execute tests for dependent roles](https://github.com/volanja/ansible_spec/pull/53) by [Gerrrr](https://github.com/Gerrrr)
 
