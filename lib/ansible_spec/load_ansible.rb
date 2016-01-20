@@ -1,6 +1,7 @@
 require 'hostlist_expression'
 require 'oj'
 require 'open3'
+require 'yaml'
 
 module AnsibleSpec
   # param: inventory file of Ansible
@@ -287,4 +288,60 @@ module AnsibleSpec
     end
     return properties
   end
+
+  def self.get_variables(host, group_idx)
+    vars = {}
+    p = self.get_properties
+
+    # all group
+    vars_file = 'group_vars/all.yml'
+    if File.exist?(vars_file)
+      yaml = YAML.load_file(vars_file)
+      if yaml.kind_of?(Hash)
+        vars.merge!(yaml)
+      end
+    end
+
+    # each group vars
+    if p[group_idx].has_key?('group')
+      vars_file = "group_vars/#{p[group_idx]['group']}.yml"
+      if File.exist?(vars_file)
+        yaml = YAML.load_file(vars_file)
+        if yaml.kind_of?(Hash)
+          vars.merge!(yaml)
+        end
+      end
+    end
+
+    # each host vars
+    vars_file = "host_vars/#{host}.yml"
+    if File.exist?(vars_file)
+      yaml = YAML.load_file(vars_file)
+      if yaml.kind_of?(Hash)
+        vars.merge!(yaml)
+      end
+    end
+
+    # site vars
+    if p[group_idx].has_key?('vars')
+      if p[group_idx]['vars'].kind_of?(Hash)
+        vars.merge!(p[group_idx]['vars'])
+      end
+    end
+
+    # roles vars
+    p[group_idx]['roles'].each do |role|
+      vars_file = "roles/#{role}/vars/main.yml"
+      if File.exist?(vars_file)
+        yaml = YAML.load_file(vars_file)
+        if yaml.kind_of?(Hash)
+          vars.merge!(yaml)
+        end
+      end
+    end
+
+    return vars
+
+  end
+
 end
