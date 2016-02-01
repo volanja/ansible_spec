@@ -294,6 +294,17 @@ module AnsibleSpec
     vars = {}
     p = self.get_properties
 
+    # roles default
+    p[group_idx]['roles'].each do |role|
+      vars_file = "roles/#{role}/defaults/main.yml"
+      if File.exist?(vars_file)
+        yaml = YAML.load_file(vars_file)
+        if yaml.kind_of?(Hash)
+          vars.merge!(yaml)
+        end
+      end
+    end
+
     # all group
     vars_file = 'group_vars/all.yml'
     if File.exist?(vars_file)
