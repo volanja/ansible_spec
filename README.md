@@ -126,6 +126,59 @@ databases
 echo '{"databases": {"hosts": ["host1.example.com", "host2.example.com"],"vars":{"a": true}}}'
 ```
 
+## Variables
+
+Ansible variables supported by following condition.
+
+* Playbook's variables are supported. If same variable is defined in different places,
+  priority follows [Ansible order](http://docs.ansible.com/ansible/playbooks_variables.html#variable-precedence-where-should-i-put-a-variable).
+* Variables defined main.yml in role's tasks are not supported.
+* Inventry variables are not supported.
+* Facts are not supported.
+
+### Sample
+
+Support variables are in site.yml, group_vars, host_vars, roles.
+
+```
+├── site.yml
+├── group_vars
+│   ├── all.yml
+│   ├── dbserver.yml
+│   └── webserver.yml
+├── host_vars
+│   ├── 192.168.1.1.yml
+│   └── 192.168.1.2.yml
+└── roles
+    ├── apaches
+    │   └── vars
+    │       └── main.yml
+    └── mariadb
+        └── vars
+            └── main.yml
+
+```
+
+#### Define variable(site.yml)
+
+
+```
+- name: Ansible-Variable-Sample
+  hosts: webserver.yml
+  user: root
+  vars:
+    - www_port: 8080
+  roles:
+    - nginx
+```
+
+#### Spec file(roles/nginx/spec/nginx_spec.rb)
+
+```
+describe port(property['www_port']) do
+  it { should be_listening }
+end
+```
 
 # Sample
 ## Directory

@@ -1,0 +1,19 @@
+- name: group1
+  hosts: group1
+  connection: local
+  vars: 
+    site_var: "site"
+    role_var: "site"
+  roles:
+  - test
+  - test/nested
+
+- name: group2
+  hosts: group2
+  connection: local
+  vars: 
+    site_var: "site"
+    role_var: "site"
+  roles:
+  - test
+  - test/nested

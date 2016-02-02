@@ -1,5 +1,6 @@
 require 'serverspec'
 require 'net/ssh'
+require 'ansible_spec'
 
 set :backend, :ssh
 
@@ -34,3 +35,12 @@ set :ssh_options, options
 
 # Set PATH
 # set :path, '/sbin:/usr/local/sbin:$PATH'
+
+#
+# Set ansible variables to serverspec property
+#
+
+group_idx = ENV['TARGET_GROUP_INDEX'].to_i
+
+vars = AnsibleSpec.get_variables(host, group_idx)
+set_property vars
