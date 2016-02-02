@@ -1,3 +1,6 @@
+# v0.2.8
+- Merge [#60 Support ansible variable in playbook partially](https://github.com/volanja/ansible_spec/pull/60) by [okamototk](https://github.com/okamototk)
+
 # v0.2.7
 - Fix [#55 Connection fails where dynamic inventory has basic host list](https://github.com/volanja/ansible_spec/issues/55) by [temyers](https://github.com/temyers)
 - Merge [#59 Issue55 fail dynamic inventory](https://github.com/volanja/ansible_spec/pull/59)
