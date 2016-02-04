@@ -400,6 +400,30 @@ EOF
     end
   end
 
+  context 'Group before children' do
+    tmp_hosts = 'hosts'
+    before do
+      content_h = <<'EOF'
+[group:children]
+child
+
+[child]
+192.168.0.103
+EOF
+      create_file(tmp_hosts,content_h)
+      @res = AnsibleSpec.load_targets(tmp_hosts)
+    end
+
+    it 'res is hash' do
+      expect(@res.instance_of?(Hash)).to be_truthy
+    end
+
+    after do
+      File.delete(tmp_hosts)
+    end
+
+  end
+
 end
 
 describe "load_playbookの実行" do
