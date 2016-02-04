@@ -421,7 +421,32 @@ EOF
     after do
       File.delete(tmp_hosts)
     end
+  end
 
+  context 'Nested groups' do
+    tmp_hosts = 'hosts'
+    before do
+      content_h = <<'EOF'
+[child]
+192.168.0.1
+
+[parent:children]
+child
+
+[grandparent:children]
+parent
+EOF
+      create_file(tmp_hosts,content_h)
+      @res = AnsibleSpec.load_targets(tmp_hosts)
+    end
+
+    it 'res is hash' do
+      expect(@res.instance_of?(Hash)).to be_truthy
+    end
+
+    after do
+      File.delete(tmp_hosts)
+    end
   end
 
 end
