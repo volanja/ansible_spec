@@ -273,8 +273,7 @@ module AnsibleSpec
   def self.get_properties()
     playbook, inventoryfile = load_ansiblespec
 
-    #load inventry file
-    # inventory fileとplaybookのhostsをマッピングする。
+    # load inventory file and playbook hosts mapping
     hosts = load_targets(inventoryfile)
     properties = load_playbook(playbook)
     properties.each do |var|
@@ -285,6 +284,7 @@ module AnsibleSpec
         var["hosts"] = hosts["#{var["hosts"]}"]
       else
         puts "no hosts matched for #{var["hosts"]}"
+        var["hosts"] = []
       end
     end
     return properties
