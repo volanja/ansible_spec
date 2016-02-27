@@ -1320,4 +1320,54 @@ EOF
     end
   end
 
+  context 'Incorrect Case: Select invalid hostname' do
+    require 'yaml'
+    tmp_ansiblespec = '.ansiblespec'
+    tmp_playbook = 'site.yml'
+    tmp_hosts = 'hosts'
+
+    before do
+
+      content = <<'EOF'
+---
+-
+  playbook: site.yml
+  inventory: hosts
+EOF
+
+      content_p = <<'EOF'
+- name: Ansible-Sample-TDD
+  hosts: server
+  user: root
+  roles:
+    - nginx
+    - mariadb
+EOF
+
+      content_h = <<'EOF'
+# miss name of group
+[servers]
+192.168.0.103
+192.168.0.104
+EOF
+
+      create_file(tmp_ansiblespec,content)
+      create_file(tmp_playbook,content_p)
+      create_file(tmp_hosts,content_h)
+    end
+
+    it 'not exist hosts.' do
+      # output error messages
+      expect {AnsibleSpec.get_properties}.to output("no hosts matched for server\n").to_stdout
+      @res = AnsibleSpec.get_properties
+      expect(@res[0]['hosts'].instance_of?(Array)).to be_truthy
+      expect(@res[0]['hosts'].length).to eq 0
+    end
+
+    after do
+      File.delete(tmp_ansiblespec)
+      File.delete(tmp_playbook)
+      File.delete(tmp_hosts)
+    end
+  end
 end
