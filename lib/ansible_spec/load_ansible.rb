@@ -268,6 +268,26 @@ module AnsibleSpec
     end
   end
 
+  # param: hash
+  # param: variable file
+  def self.load_vars_file(vars, path)
+    vars_file = path
+    if File.exist?(vars_file)
+      yaml = YAML.load_file(vars_file)
+      if yaml.kind_of?(Hash)
+        vars.merge!(yaml)
+      end
+    else
+      vars_file = path+".yml"
+      if File.exist?(vars_file)
+        yaml = YAML.load_file(vars_file)
+        if yaml.kind_of?(Hash)
+          vars.merge!(yaml)
+        end
+      end
+    end
+  end
+
   # return: json
   # {"name"=>"Ansible-Sample-TDD", "hosts"=>["192.168.0.103"], "user"=>"root", "roles"=>["nginx", "mariadb"]}
   def self.get_properties()
@@ -306,33 +326,15 @@ module AnsibleSpec
     end
 
     # all group
-    vars_file = 'group_vars/all.yml'
-    if File.exist?(vars_file)
-      yaml = YAML.load_file(vars_file)
-      if yaml.kind_of?(Hash)
-        vars.merge!(yaml)
-      end
-    end
+    load_vars_file(vars ,'group_vars/all')
 
     # each group vars
     if p[group_idx].has_key?('group')
-      vars_file = "group_vars/#{p[group_idx]['group']}.yml"
-      if File.exist?(vars_file)
-        yaml = YAML.load_file(vars_file)
-        if yaml.kind_of?(Hash)
-          vars.merge!(yaml)
-        end
-      end
+      load_vars_file(vars ,"group_vars/#{p[group_idx]['group']}")
     end
 
     # each host vars
-    vars_file = "host_vars/#{host}.yml"
-    if File.exist?(vars_file)
-      yaml = YAML.load_file(vars_file)
-      if yaml.kind_of?(Hash)
-        vars.merge!(yaml)
-      end
-    end
+    load_vars_file(vars ,"host_vars/#{host}")
 
     # site vars
     if p[group_idx].has_key?('vars')
