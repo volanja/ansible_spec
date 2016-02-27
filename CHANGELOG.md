@@ -1,3 +1,6 @@
+# v0.2.9
+- Merge [#65 return an empty array when the group has no hosts in it](https://github.com/volanja/ansible_spec/pull/65) by [franmrl](https://github.com/franmrl)
+
 # v0.2.8
 - Merge [#60 Support ansible variable in playbook partially](https://github.com/volanja/ansible_spec/pull/60) by [okamototk](https://github.com/okamototk)
 
