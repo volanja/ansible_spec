@@ -19,11 +19,6 @@ keys = property['ansible_ssh_private_key_file'] || property['ansible_private_key
 # !Note: This pass variable will be used only to WinRM connection
 pass ||= property['ansible_ssh_pass'] || property['ansible_password'] || ENV['TARGET_PASSWORD']
 
-p "d1:user:#{user} ,ansible_user: #{property['ansible_user']}, ansible_ssh_user: #{property['ansible_ssh_user']}\n"
-p "d2:port:#{port} ,ansible_ssh_port: #{property['ansible_ssh_port']}, ansible_port: #{property['ansible_port']}\n"
-p "d3:keys:#{keys} ,ansible_ssh_private_key_file: #{property['ansible_ssh_private_key_file']}, ansible_private_key_file: #{property['ansible_private_key_file']}\n"
-p "d4:pass:#{pass} ,ansible_ssh_pass: #{property['ansible_ssh_pass']}, ansible_password: #{property['ansible_password']}\n"
-
 if property['ansible_connection'] != 'winrm'
 #
 # In the case of the unix system. 
