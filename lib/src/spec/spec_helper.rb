@@ -3,6 +3,15 @@ require 'net/ssh'
 require 'ansible_spec'
 require 'winrm'
 
+#
+# Set ansible variables to serverspec property
+#
+host = ENV['TARGET_HOST']
+
+group_idx = ENV['TARGET_GROUP_INDEX'].to_i
+vars = AnsibleSpec.get_variables(host, group_idx)
+set_property vars
+
 conn = ENV['TARGET_CONNECTION']
 
 if conn != 'winrm'
@@ -21,8 +30,6 @@ if conn != 'winrm'
   else
     set :sudo_password, ENV['SUDO_PASSWORD']
   end
-
-  host = ENV['TARGET_HOST']
 
   options = Net::SSH::Config.for(host)
 
@@ -77,12 +84,3 @@ else
   Specinfra.configuration.winrm = winrm
 
 end
-
-#
-# Set ansible variables to serverspec property
-#
-host = ENV['TARGET_HOST']
-
-group_idx = ENV['TARGET_GROUP_INDEX'].to_i
-vars = AnsibleSpec.get_variables(host, group_idx)
-set_property vars
