@@ -149,7 +149,7 @@ module AnsibleSpec
         host['user'] = value if key == "ansible_ssh_user"
         host['uri'] = value if key == "ansible_ssh_host"
         host['pass'] = value if key == "ansible_ssh_pass"
-        host['conn'] = value if key == "ansible_connection"
+        host['connection'] = value if key == "ansible_connection"
       end
     }
     return host

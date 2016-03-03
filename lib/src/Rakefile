@@ -23,7 +23,7 @@ namespace :serverspec do
           ENV['TARGET_USER'] = property["user"]
         end
         ENV['TARGET_PASSWORD'] = host["pass"]
-        ENV['TARGET_CONNECTION'] = host["conn"]
+        ENV['TARGET_CONNECTION'] = host["connection"]
 
         roles = property["roles"]
         for role in property["roles"]

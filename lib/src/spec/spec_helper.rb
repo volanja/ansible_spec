@@ -12,9 +12,9 @@ group_idx = ENV['TARGET_GROUP_INDEX'].to_i
 vars = AnsibleSpec.get_variables(host, group_idx)
 set_property vars
 
-conn = ENV['TARGET_CONNECTION']
+connection = ENV['TARGET_CONNECTION']
 
-if conn != 'winrm'
+if connection != 'winrm'
 #
 # OS type: UN*X
 #
