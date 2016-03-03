@@ -22,6 +22,8 @@ namespace :serverspec do
         else
           ENV['TARGET_USER'] = property["user"]
         end
+        ENV['TARGET_PASSWORD'] = host["pass"]
+        ENV['TARGET_CONNECTION'] = host["conn"]
 
         roles = property["roles"]
         for role in property["roles"]
