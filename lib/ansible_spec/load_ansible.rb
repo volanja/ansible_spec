@@ -268,6 +268,20 @@ module AnsibleSpec
     end
   end
 
+  def self.get_inventory()
+    playbook, inventoryfile = load_ansiblespec
+
+    require 'rubypython'
+    RubyPython.start
+    sys = RubyPython.import('sys')
+    sys.path.append(File.dirname(__FILE__) + "/../py")
+    py_ansible_spec = RubyPython.import('ansible_spec')
+
+    inventory = py_ansible_spec.load_ansible(inventoryfile)
+
+    return inventory
+  end
+
   # return: json
   # {"name"=>"Ansible-Sample-TDD", "hosts"=>["192.168.0.103"], "user"=>"root", "roles"=>["nginx", "mariadb"]}
   def self.get_properties()
