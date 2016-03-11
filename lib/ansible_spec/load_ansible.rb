@@ -291,6 +291,7 @@ module AnsibleSpec
   end
 
   def self.get_variables(host, group_idx)
+    playbook, inventoryfile = load_ansiblespec
     vars = {}
     p = self.get_properties
 
