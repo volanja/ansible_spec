@@ -305,6 +305,35 @@ module AnsibleSpec
       end
     end
 
+    # inventory vars
+    vars_file = File.dirname(inventoryfile)+"/group_vars/all"
+    if File.exist?(vars_file)
+      yaml = YAML.load_file(vars_file)
+      if yaml.kind_of?(Hash)
+        vars.merge!(yaml)
+      end
+    end
+
+    # inventory group vars
+    if p[group_idx].has_key?('group')
+      vars_file = File.dirname(inventoryfile)+"/group_vars/#{p[group_idx]['group']}.yml"
+      if File.exist?(vars_file)
+        yaml = YAML.load_file(vars_file)
+        if yaml.kind_of?(Hash)
+          vars.merge!(yaml)
+        end
+      end
+    end
+
+    # inventory host vars
+    vars_file = File.dirname(inventoryfile)+"/host_vars/#{host}.yml"
+    if File.exist?(vars_file)
+      yaml = YAML.load_file(vars_file)
+      if yaml.kind_of?(Hash)
+        vars.merge!(yaml)
+      end
+    end
+
     # all group
     vars_file = 'group_vars/all.yml'
     if File.exist?(vars_file)
