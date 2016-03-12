@@ -286,6 +286,7 @@ module AnsibleSpec
         end
       end
     end
+    return vars
   end
 
   # return: json
@@ -326,15 +327,15 @@ module AnsibleSpec
     end
 
     # all group
-    load_vars_file(vars ,'group_vars/all')
+    vars = load_vars_file(vars ,'group_vars/all')
 
     # each group vars
     if p[group_idx].has_key?('group')
-      load_vars_file(vars ,"group_vars/#{p[group_idx]['group']}")
+      vars = load_vars_file(vars ,"group_vars/#{p[group_idx]['group']}")
     end
 
     # each host vars
-    load_vars_file(vars ,"host_vars/#{host}")
+    vars = load_vars_file(vars ,"host_vars/#{host}")
 
     # site vars
     if p[group_idx].has_key?('vars')

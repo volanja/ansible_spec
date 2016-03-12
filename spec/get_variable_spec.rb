@@ -225,3 +225,33 @@ describe "get_variablesの実行" do
     end
   end
 end
+
+describe "load_vars_fileの実行" do
+  context 'Correct operation : without .yml extension' do
+  # https://github.com/volanja/ansible_spec/pull/66
+  # group_vars/xxx priority is higher than group_vars/xxx.yml.
+    before do
+      @current_dir = Dir.pwd()
+      Dir.chdir('spec/case/load_vars_file/group_all/')
+      vars = Hash.new
+      file = 'group_vars/all'
+      @res = AnsibleSpec.load_vars_file(vars, file)
+    end
+
+    it 'res is hash' do
+      expect(@res.instance_of?(Hash)).to be_truthy
+    end
+
+    it 'exist 1 pair in Hash' do
+      expect(@res.length).to eq 1
+    end
+
+    it 'exist each pair' do
+      expect(@res).to include({'role_var' => 'without .yml extension'})
+    end
+
+    after do
+      Dir.chdir(@current_dir)
+    end
+  end
+end
