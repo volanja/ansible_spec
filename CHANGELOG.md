@@ -1,3 +1,6 @@
+# v0.2.10
+- Merge [support group and host variables without yml extention.](https://github.com/volanja/ansible_spec/pull/66) by [okamototk](https://github.com/okamototk)
+
 # v0.2.9
 - Merge [#65 return an empty array when the group has no hosts in it](https://github.com/volanja/ansible_spec/pull/65) by [franmrl](https://github.com/franmrl)
 
