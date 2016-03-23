@@ -84,6 +84,13 @@ describe 'ssh' do
       expect(v.host).to eq 'db-b.example.com'
     end
 
+    it '192.168.1.3 ansible_connection=winrm ansible_ssh_port=5985 ansible_ssh_user=administrator ansible_ssh_pass=Passw0rd' do
+      v = @h["task_10"]
+      expect(v.host).to eq '192.168.1.3'
+      expect(v.user).to eq 'administrator'
+      expect(v.port).to eq '5985'
+    end
+
     after do
       delete_normality
     end
@@ -170,6 +177,7 @@ EOF
 jumper ansible_ssh_port=5555 ansible_ssh_host=192.168.1.50
 www[01:02].example.com
 db-[a:b].example.com
+192.168.1.3 ansible_connection=winrm ansible_ssh_port=5985 ansible_ssh_user=administrator ansible_ssh_pass=Passw0rd
 EOF
 
   File.open(tmp_ansiblespec, 'w') do |f|
