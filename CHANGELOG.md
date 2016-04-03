@@ -1,3 +1,6 @@
+- v0.2.11
+- Merge [Support Windows](https://github.com/volanja/ansible_spec/pull/68) by [takuyakawabuchi](https://github.com/takuyakawabuchi)
+
 # v0.2.10
 - Merge [support group and host variables without yml extention.](https://github.com/volanja/ansible_spec/pull/66) by [okamototk](https://github.com/okamototk)
 
