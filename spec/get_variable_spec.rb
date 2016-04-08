@@ -224,6 +224,36 @@ describe "get_variablesの実行" do
       Dir.chdir(@current_dir)
     end
   end
+  
+  context 'Correct operation : deep_merge' do
+    before do
+      @current_dir = Dir.pwd()
+      Dir.chdir('spec/case/get_variable/deep_merge')
+      @res = AnsibleSpec.get_variables('192.168.1.1', 0)
+    end
+
+    it 'res is hash' do
+      expect(@res.instance_of?(Hash)).to be_truthy
+    end
+
+    it 'exist 1 pair in Hash' do
+      expect(@res.length).to eq 1
+    end
+   
+    it 'exist each pair' do
+      expect(@res).to include({'merge_var' => {
+                                'keep'=>'role',
+                                'override'=>'site',
+                                'add'=>'site'
+                              }},
+                             )
+    end
+
+    after do
+      Dir.chdir(@current_dir)
+    end
+  end
+  
 end
 
 describe "load_vars_fileの実行" do

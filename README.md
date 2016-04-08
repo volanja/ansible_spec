@@ -47,14 +47,16 @@ customize the playbook and inventory using an `.ansiblespec` file.
 -
   playbook: site.yml
   inventory: hosts
+  hash_behaviour: merge
 ```
 
 ## [Optional] Environment variables
 
 You can use environment variables with the `rake` command. They are listed below.
 
-- `PLAYBOOK`   -- playbook name        (e.g. `site.yml`)
-- `INVENTORY`  -- inventory file name  (e.g. `hosts`)
+- `PLAYBOOK`       -- playbook name                                (e.g. `site.yml`)
+- `INVENTORY`      -- inventory file name                          (e.g. `hosts`)
+- `HASH_BEHAVIOUR` -- hash behaviour when duplicate hash variables (e.g. `merge`)
 
 Environment variables take precedence over the `.ansiblespec` file.
 
@@ -66,7 +68,12 @@ or
 $ PLAYBOOK=site.yml rake serverspec:Ansible-Sample-TDD
 or
 $ INVENTORY=hosts rake serverspec:Ansible-Sample-TDD
+or
+$ HASH_BEHAVIOUR=merge rake serverspec:Ansible-Sample-TDD
 ```
+
+HASH_BEHAVIOUR is same as Ansible's hash behaviour parameter. By default, 'replace'.
+See http://docs.ansible.com/ansible/intro_configuration.html#hash-behaviour.
 
 ## Inventory
 
