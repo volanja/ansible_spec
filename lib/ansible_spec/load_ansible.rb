@@ -3,7 +3,7 @@ require 'hostlist_expression'
 require 'oj'
 require 'open3'
 require 'yaml'
-require 'active_support/core_ext/hash'
+require 'ansible_spec/vendor/hash'
 
 module AnsibleSpec
   # param: inventory file of Ansible
