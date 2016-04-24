@@ -346,12 +346,42 @@ module AnsibleSpec
   end
 
   def self.get_variables(host, group_idx)
+    playbook, inventoryfile = load_ansiblespec
     vars = {}
     p = self.get_properties
 
     # roles default
     p[group_idx]['roles'].each do |role|
       vars = load_vars_file(vars ,"roles/#{role}/defaults/main.yml")
+    end
+
+    # inventory vars
+    vars_file = File.dirname(inventoryfile)+"/group_vars/all"
+    if File.exist?(vars_file)
+      yaml = YAML.load_file(vars_file)
+      if yaml.kind_of?(Hash)
+        vars.merge!(yaml)
+      end
+    end
+
+    # inventory group vars
+    if p[group_idx].has_key?('group')
+      vars_file = File.dirname(inventoryfile)+"/group_vars/#{p[group_idx]['group']}.yml"
+      if File.exist?(vars_file)
+        yaml = YAML.load_file(vars_file)
+        if yaml.kind_of?(Hash)
+          vars.merge!(yaml)
+        end
+      end
+    end
+
+    # inventory host vars
+    vars_file = File.dirname(inventoryfile)+"/host_vars/#{host}.yml"
+    if File.exist?(vars_file)
+      yaml = YAML.load_file(vars_file)
+      if yaml.kind_of?(Hash)
+        vars.merge!(yaml)
+      end
     end
 
     # all group
