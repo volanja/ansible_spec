@@ -1,3 +1,6 @@
+- v0.2.12
+- Merge [Support deep merge for variable](https://github.com/volanja/ansible_spec/pull/72) by [okamototk](https://github.com/okamototk)
+
 - v0.2.11
 - Merge [Support Windows](https://github.com/volanja/ansible_spec/pull/68) by [takuyakawabuchi](https://github.com/takuyakawabuchi)
 
