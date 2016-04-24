@@ -1,0 +1,9 @@
+- name: merge
+  hosts: merge
+  connection: local
+  vars:
+    merge_var:
+      override: "site"
+      add:      "site"
+  roles:
+  - test

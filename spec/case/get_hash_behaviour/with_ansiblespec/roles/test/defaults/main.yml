@@ -1,0 +1,4 @@
+---
+merge_var: 
+   keep:     "role"
+   override: "role"
