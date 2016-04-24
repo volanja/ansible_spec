@@ -179,19 +179,6 @@ module AnsibleSpec
     else
       inventoryfile = 'hosts'
     end
-    if ENV["HASH_BEHAVIOUR"]
-      @hash_behaviour = ENV["HASH_BEHAVIOUR"]
-    elsif y.is_a?(Array) && y[0]['hash_behaviour']
-      @hash_behaviour = y[0]['hash_behaviour']
-    else
-      @hash_behaviour = 'replace'
-    end
-    if !['replace','merge'].include?(@hash_behaviour)
-      puts 'Error: hash_behaviour "' + @hash_behaviour 
-         + '" should be "replace" or "merge" See https://github.com/volanja/ansible_spec'
-      exit 1
-    end
-
     if File.exist?(playbook) == false
       puts 'Error: ' + playbook + ' is not Found. create site.yml or ./.ansiblespec  See https://github.com/volanja/ansible_spec'
       exit 1
@@ -284,6 +271,27 @@ module AnsibleSpec
     end
   end
 
+  # param: none
+  # return: hash_behaviour
+  def self.get_hash_behaviour()
+    f = '.ansiblespec'
+    y = nil
+    if File.exist?(f)
+      y = YAML.load_file(f)
+    end
+    hash_behaviour = 'replace'
+    if ENV["HASH_BEHAVIOUR"]
+      hash_behaviour = ENV["HASH_BEHAVIOUR"]
+    elsif y.is_a?(Array) && y[0]['hash_behaviour']
+      hash_behaviour = y[0]['hash_behaviour']
+    end
+    if !['replace','merge'].include?(hash_behaviour)
+      puts "Error: hash_behaviour '" + hash_behaviour + "' should be 'replace' or 'merge' See https://github.com/volanja/ansible_spec"
+      exit 1
+    end
+    return hash_behaviour
+  end
+
   # param: hash
   # param: variable file
   # param: flag to extention
@@ -293,26 +301,23 @@ module AnsibleSpec
     vars_file = path
     if check_no_ext && !File.exist?(vars_file)
       vars_file = path+".yml"
-      if File.exist?(vars_file)
-        yaml = YAML.load_file(vars_file)
-        if yaml.kind_of?(Hash)
-          if @hash_behaviour=="merge"
-            vars.deep_merge!(yaml)
-          else
-            vars.merge!(yaml)
-          end
-        end
-      end
-    else
-      if File.exist?(vars_file)
-        yaml = YAML.load_file(vars_file)
-        if yaml.kind_of?(Hash)
-          if @hash_behaviour=="merge"
-            vars.deep_merge!(yaml)
-          else
-            vars.merge!(yaml)
-          end
-        end
+    end
+    if File.exist?(vars_file)
+      yaml = YAML.load_file(vars_file)
+      vars = merge_variables(vars, yaml)
+    end
+    return vars
+  end
+
+  # param: target hash
+  # param: be merged hash
+  def self.merge_variables(vars, hash)
+    hash_behaviour = get_hash_behaviour()
+    if hash.kind_of?(Hash)
+      if hash_behaviour=="merge"
+        vars.deep_merge!(hash)
+      else
+        vars.merge!(hash)
       end
     end
     return vars
@@ -362,13 +367,7 @@ module AnsibleSpec
 
     # site vars
     if p[group_idx].has_key?('vars')
-      if p[group_idx]['vars'].kind_of?(Hash)
-        if @hash_behaviour=="merge"
-          vars.deep_merge!(p[group_idx]['vars'])
-        else
-          vars.merge!(p[group_idx]['vars'])
-        end
-      end
+      vars = merge_variables(vars, p[group_idx]['vars'])
     end
 
     # roles vars
@@ -379,5 +378,4 @@ module AnsibleSpec
     return vars
 
   end
-
 end
