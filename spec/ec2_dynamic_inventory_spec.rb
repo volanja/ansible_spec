@@ -18,8 +18,8 @@ EOF
       expect(@res.instance_of?(Hash)).to be_truthy
     end
 
-    it 'contains 2 groups' do
-      expect(@res.length).to eq 2
+    it 'contains 3 groups' do
+      expect(@res.length).to eq 3
     end
 
     it 'contains key tag_some_other_key1' do
@@ -68,8 +68,8 @@ EOF
       expect(@res.instance_of?(Hash)).to be_truthy
     end
 
-    it 'contains 1 groups' do
-      expect(@res.length).to eq 1
+    it 'contains 2 groups' do
+      expect(@res.length).to eq 2
     end
 
     it 'contains key tag_Name_sample_app' do

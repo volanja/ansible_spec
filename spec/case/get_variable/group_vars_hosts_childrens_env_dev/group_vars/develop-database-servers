@@ -1,0 +1,2 @@
+mysql_version: "5.7.12"
+mysql_dependencies_libs: ["foo-v2","bar-v2"]

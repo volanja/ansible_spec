@@ -1,0 +1,30 @@
+#- name: install-logcollect-libs
+#  hosts:
+#    - web-servers
+#    - database-servers
+#    - application-servers
+#  connection: local
+#  roles:
+#  - test
+
+- name: install-nginx
+  hosts:
+    - web-servers
+  connection: local
+  roles:
+  - test
+
+#- name: install-java
+#  hosts:
+#    - application-servers
+#  connection: local
+#  roles:
+#  - test
+#
+#- name: install-mysql
+#  hosts:
+#    - database-servers
+#  connection: local
+#  roles:
+#  - test
+

@@ -1,6 +1,7 @@
 # coding: utf-8
 require 'fileutils'
 require 'ansible_spec'
+require 'pp'
 
 def create_file(name,content)
   dir = File.dirname(name)
@@ -1191,8 +1192,8 @@ EOF
       expect(@res[0].instance_of?(Hash)).to be_truthy
     end
 
-    it 'check 5 group' do
-      expect(@res[0].length).to eq 5
+    it 'check 6 group' do
+      expect(@res[0].length).to eq 6
     end
 
     it 'exist name' do
@@ -1276,8 +1277,8 @@ EOF
       expect(@res[0].instance_of?(Hash)).to be_truthy
     end
 
-    it 'check 5 group' do
-      expect(@res[0].length).to eq 5
+    it 'check 6 group' do
+      expect(@res[0].length).to eq 6
     end
 
     it 'exist name' do

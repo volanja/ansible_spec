@@ -142,8 +142,8 @@ describe "get_propertiesの実行" do
       expect(@res[0].instance_of?(Hash)).to be_truthy
     end
 
-    it 'check 5 group' do
-      expect(@res[0].length).to eq 5
+    it 'check 6 group' do
+      expect(@res[0].length).to eq 6
     end
 
     it 'exist name' do

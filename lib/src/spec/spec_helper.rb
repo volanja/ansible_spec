@@ -7,9 +7,10 @@ require 'winrm'
 # Set ansible variables to serverspec property
 #
 host = ENV['TARGET_HOST']
+hosts = ENV["TARGET_HOSTS"]
 
 group_idx = ENV['TARGET_GROUP_INDEX'].to_i
-vars = AnsibleSpec.get_variables(host, group_idx)
+vars = AnsibleSpec.get_variables(host, group_idx,hosts)
 set_property vars
 
 connection = ENV['TARGET_CONNECTION']
