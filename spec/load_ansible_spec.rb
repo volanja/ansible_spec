@@ -1,7 +1,6 @@
 # coding: utf-8
 require 'fileutils'
 require 'ansible_spec'
-require 'pp'
 
 def create_file(name,content)
   dir = File.dirname(name)
@@ -1460,6 +1459,90 @@ EOF
       expect(@res[0]['roles'].instance_of?(Array)).to be_truthy
       expect(@res[0]['roles'][0]).to eq 'nginx'
       expect(@res[0]['roles'][1]).to eq 'mariadb'
+    end
+
+    after do
+      File.delete(tmp_ansiblespec)
+      File.delete(tmp_playbook)
+      File.delete(tmp_hosts)
+    end
+  end
+
+  context '正常系 (hosts 複数指定)ホストがグループにない場合タスクをスキップ' do
+    require 'yaml'
+    tmp_ansiblespec = '.ansiblespec'
+    tmp_playbook = 'site.yml'
+    tmp_hosts = 'hosts'
+
+    before do
+
+      content = <<'EOF'
+---
+-
+  playbook: site.yml
+  inventory: hosts
+EOF
+
+      content_p = <<'EOF'
+- name: Ansible-Sample-TDD-1
+  hosts:
+    - server
+  user: root
+  roles:
+    - role: nginx
+    - role: mariadb
+- name: Ansible-Sample-TDD-3-None-Servers
+  hosts:
+    - server3
+  user: root
+  roles:
+    - role: nginx
+    - role: mariadb
+- name: Ansible-Sample-TDD-2
+  hosts:
+    - server2
+  user: root
+  roles:
+    - role: nginx
+    - role: mariadb
+EOF
+
+      content_h = <<'EOF'
+[server]
+192.168.0.103
+192.168.0.104
+[server3]
+[server2]
+192.168.0.105
+192.168.0.106
+EOF
+
+      create_file(tmp_ansiblespec,content)
+      create_file(tmp_playbook,content_p)
+      create_file(tmp_hosts,content_h)
+      @res = AnsibleSpec.get_properties
+    end
+
+    it 'res is array' do
+      expect(@res.instance_of?(Array)).to be_truthy
+    end
+
+    it 'res[0] is hash' do
+      expect(@res[0].instance_of?(Hash)).to be_truthy
+    end
+
+    it 'check 6 group' do
+      expect(@res[0].length).to eq 6
+    end
+
+    it 'exist name' do
+      expect(@res[0].key?('name')).to be_truthy
+      expect(@res[0]['name']).to eq 'Ansible-Sample-TDD-1'
+	  # if empty host in target groups(hosts), skip task.
+      #expect(@res[1].key?('name')).to be_truthy
+      #expect(@res[1]['name']).to eq 'Ansible-Sample-TDD-3-None-Servers'
+      expect(@res[1].key?('name')).to be_truthy
+      expect(@res[1]['name']).to eq 'Ansible-Sample-TDD-2'
     end
 
     after do

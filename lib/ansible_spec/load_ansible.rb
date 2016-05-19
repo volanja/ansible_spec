@@ -352,7 +352,8 @@ module AnsibleSpec
           end
         end 
         if var["hosts"].size == 0 
-          puts "no hosts matched for #{var["hosts"]}"
+          properties = properties.compact.reject{|e| e["hosts"].length == 0}
+          #puts "#{var["name"]} roles no hosts matched for #{var["hosts"]}"
         end
       else
         puts "no hosts matched for #{var["hosts"]}"
