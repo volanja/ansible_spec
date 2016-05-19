@@ -1,0 +1,5 @@
+---
+-
+  playbook: site.yml
+  inventory: dynamic_inventory.sh
+#  hash_behaviour: replace

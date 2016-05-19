@@ -1191,8 +1191,8 @@ EOF
       expect(@res[0].instance_of?(Hash)).to be_truthy
     end
 
-    it 'check 5 group' do
-      expect(@res[0].length).to eq 5
+    it 'check 6 group' do
+      expect(@res[0].length).to eq 6
     end
 
     it 'exist name' do
@@ -1276,8 +1276,8 @@ EOF
       expect(@res[0].instance_of?(Hash)).to be_truthy
     end
 
-    it 'check 5 group' do
-      expect(@res[0].length).to eq 5
+    it 'check 6 group' do
+      expect(@res[0].length).to eq 6
     end
 
     it 'exist name' do
@@ -1362,6 +1362,187 @@ EOF
       @res = AnsibleSpec.get_properties
       expect(@res[0]['hosts'].instance_of?(Array)).to be_truthy
       expect(@res[0]['hosts'].length).to eq 0
+    end
+
+    after do
+      File.delete(tmp_ansiblespec)
+      File.delete(tmp_playbook)
+      File.delete(tmp_hosts)
+    end
+  end
+
+  context '正常系 (hosts 複数指定)' do
+    require 'yaml'
+    tmp_ansiblespec = '.ansiblespec'
+    tmp_playbook = 'site.yml'
+    tmp_hosts = 'hosts'
+
+    before do
+
+      content = <<'EOF'
+---
+-
+  playbook: site.yml
+  inventory: hosts
+EOF
+
+      content_p = <<'EOF'
+- name: Ansible-Sample-TDD
+  hosts:
+    -  server
+    -  server2
+  user: root
+  roles:
+    - nginx
+    - mariadb
+EOF
+
+      content_h = <<'EOF'
+[server]
+192.168.0.103
+192.168.0.104
+[server2]
+192.168.0.105
+192.168.0.106
+EOF
+
+      create_file(tmp_ansiblespec,content)
+      create_file(tmp_playbook,content_p)
+      create_file(tmp_hosts,content_h)
+      @res = AnsibleSpec.get_properties
+    end
+
+    it 'res is array' do
+      expect(@res.instance_of?(Array)).to be_truthy
+    end
+
+    it 'res[0] is hash' do
+      expect(@res[0].instance_of?(Hash)).to be_truthy
+    end
+
+    it 'check 6 group' do
+      expect(@res[0].length).to eq 6
+    end
+
+    it 'exist name' do
+      expect(@res[0].key?('name')).to be_truthy
+      expect(@res[0]['name']).to eq 'Ansible-Sample-TDD'
+    end
+
+    it 'exist hosts' do
+      expect(@res[0]['hosts'].instance_of?(Array)).to be_truthy
+      expect([{'name' => '192.168.0.103',
+               'uri' => '192.168.0.103',
+               'port' => 22,
+               'hosts'=>'server'},
+              {'name' => '192.168.0.104',
+               'uri' => '192.168.0.104',
+               'port' => 22,
+               'hosts'=>'server'},
+              {'name' => '192.168.0.105',
+               'uri' => '192.168.0.105',
+               'port' => 22,
+               'hosts'=>'server2'},
+              {'name' => '192.168.0.106',
+               'uri' => '192.168.0.106',
+               'port' => 22,
+               'hosts'=>'server2'}]).to match_array(@res[0]['hosts'])
+    end
+
+    it 'exist user' do
+      expect(@res[0].key?('user')).to be_truthy
+      expect(@res[0]['user']).to eq 'root'
+    end
+
+    it 'exist roles' do
+      expect(@res[0].key?('roles')).to be_truthy
+      expect(@res[0]['roles'].instance_of?(Array)).to be_truthy
+      expect(@res[0]['roles'][0]).to eq 'nginx'
+      expect(@res[0]['roles'][1]).to eq 'mariadb'
+    end
+
+    after do
+      File.delete(tmp_ansiblespec)
+      File.delete(tmp_playbook)
+      File.delete(tmp_hosts)
+    end
+  end
+
+  context '正常系 (hosts 複数指定)ホストがグループにない場合タスクをスキップ' do
+    require 'yaml'
+    tmp_ansiblespec = '.ansiblespec'
+    tmp_playbook = 'site.yml'
+    tmp_hosts = 'hosts'
+
+    before do
+
+      content = <<'EOF'
+---
+-
+  playbook: site.yml
+  inventory: hosts
+EOF
+
+      content_p = <<'EOF'
+- name: Ansible-Sample-TDD-1
+  hosts:
+    - server
+  user: root
+  roles:
+    - role: nginx
+    - role: mariadb
+- name: Ansible-Sample-TDD-3-None-Servers
+  hosts:
+    - server3
+  user: root
+  roles:
+    - role: nginx
+    - role: mariadb
+- name: Ansible-Sample-TDD-2
+  hosts:
+    - server2
+  user: root
+  roles:
+    - role: nginx
+    - role: mariadb
+EOF
+
+      content_h = <<'EOF'
+[server]
+192.168.0.103
+192.168.0.104
+[server3]
+[server2]
+192.168.0.105
+192.168.0.106
+EOF
+
+      create_file(tmp_ansiblespec,content)
+      create_file(tmp_playbook,content_p)
+      create_file(tmp_hosts,content_h)
+      @res = AnsibleSpec.get_properties
+    end
+
+    it 'res is array' do
+      expect(@res.instance_of?(Array)).to be_truthy
+    end
+
+    it 'res[0] is hash' do
+      expect(@res[0].instance_of?(Hash)).to be_truthy
+    end
+
+    it 'check 6 group' do
+      expect(@res[0].length).to eq 6
+    end
+
+    it 'exist name' do
+      expect(@res[0].key?('name')).to be_truthy
+      expect(@res[0]['name']).to eq 'Ansible-Sample-TDD-1'
+	  # if empty host in target groups(hosts), skip task.
+      #expect(@res[1].key?('name')).to be_truthy
+      #expect(@res[1]['name']).to eq 'Ansible-Sample-TDD-3-None-Servers'
+      expect(@res[1].key?('name')).to be_truthy
+      expect(@res[1]['name']).to eq 'Ansible-Sample-TDD-2'
     end
 
     after do

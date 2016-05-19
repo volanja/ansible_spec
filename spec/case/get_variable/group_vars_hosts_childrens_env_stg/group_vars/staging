@@ -1,0 +1,5 @@
+foo: "foofoo-staging"
+bar: ["bar1-staging", "bar2-staging", "bar3-staging"]
+env_name: "staging"
+
+my_common_libs_version: "1.1"

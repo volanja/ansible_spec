@@ -18,12 +18,13 @@ EOF
       expect(@res.instance_of?(Hash)).to be_truthy
     end
 
-    it 'exist 1 group' do
-      expect(@res.length).to eq 1
+    it 'exist 2 group' do
+      expect(@res.length).to eq 2
     end
 
     it 'exist group' do
       expect(@res.key?('databases')).to be_truthy
+      expect(@res.key?('hosts_childrens')).to be_truthy
     end
 
     it 'databases host1.example.com' do
@@ -54,12 +55,13 @@ EOF
       expect(@res.instance_of?(Hash)).to be_truthy
     end
 
-    it 'exist 1 group' do
-      expect(@res.length).to eq 1
+    it 'exist 2 group' do
+      expect(@res.length).to eq 2
     end
 
     it 'exist group' do
       expect(@res.key?('databases')).to be_truthy
+      expect(@res.key?('hosts_childrens')).to be_truthy
     end
 
     it 'databases host1.example.com' do
@@ -96,12 +98,13 @@ EOF
       expect(@res.instance_of?(Hash)).to be_truthy
     end
 
-    it 'exist 1 group' do
-      expect(@res.length).to eq 1
+    it 'exist 2 group' do
+      expect(@res.length).to eq 2
     end
 
     it 'exist group' do
       expect(@res.key?('webservers')).to be_truthy
+      expect(@res.key?('hosts_childrens')).to be_truthy
     end
 
     it 'databases host1.example.com' do

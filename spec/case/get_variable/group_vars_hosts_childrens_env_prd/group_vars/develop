@@ -1,0 +1,5 @@
+foo: "foofoo-develop"
+bar: ["bar1-develop", "bar2-develop", "bar3-develop"]
+env_name: "develop"
+
+my_common_libs_version: "1.2"

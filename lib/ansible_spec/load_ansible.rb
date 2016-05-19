@@ -108,6 +108,10 @@ module AnsibleSpec
     so, se, st = Open3.capture3(file_path)
     dyn_inv = Oj.load(so.to_s)
 
+    res["hosts_childrens"] = dyn_inv.select do |property, value|
+      value.instance_of?(Hash) && value.has_key?("children")
+    end
+
     if dyn_inv.key?('_meta')
       # assume we have an ec2.py created dynamic inventory
       dyn_inv = dyn_inv.tap{ |h| h.delete("_meta") }
@@ -332,11 +336,25 @@ module AnsibleSpec
     hosts = load_targets(inventoryfile)
     properties = load_playbook(playbook)
     properties.each do |var|
+      var["hosts_childrens"] = hosts["hosts_childrens"]
       var["group"] = var["hosts"]
       if var["hosts"].to_s == "all"
         var["hosts"] = hosts.values.flatten
       elsif hosts.has_key?("#{var["hosts"]}")
         var["hosts"] = hosts["#{var["hosts"]}"]
+      elsif var["hosts"].instance_of?(Array)
+        tmp_host = var["hosts"]
+        var["hosts"] = []
+        tmp_host.each do |v|
+          if hosts.has_key?("#{v}")
+            hosts["#{v}"].map {|target_server| target_server["hosts"] = v}
+            var["hosts"].concat hosts["#{v}"]
+          end
+        end 
+        if var["hosts"].size == 0 
+          properties = properties.compact.reject{|e| e["hosts"].length == 0}
+          #puts "#{var["name"]} roles no hosts matched for #{var["hosts"]}"
+        end
       else
         puts "no hosts matched for #{var["hosts"]}"
         var["hosts"] = []
@@ -345,7 +363,14 @@ module AnsibleSpec
     return properties
   end
 
-  def self.get_variables(host, group_idx)
+  def self.find_group_vars_file(hosts_childrens, hosts)
+      target_host = hosts_childrens.select { |key, value|
+        value["children"].include?(hosts)
+      }
+      target_host.keys[0]
+  end
+
+  def self.get_variables(host, group_idx, hosts=nil)
     vars = {}
     p = self.get_properties
 
@@ -373,6 +398,18 @@ module AnsibleSpec
     # roles vars
     p[group_idx]['roles'].each do |role|
       vars = load_vars_file(vars ,"roles/#{role}/vars/main.yml")
+    end
+
+    # multiple host and children dependencies group vars
+    unless hosts.nil?
+      hosts_childrens = p[group_idx]["hosts_childrens"]
+      next_find_target = hosts
+      while(!next_find_target.nil? && hosts_childrens.size > 0)
+        vars = load_vars_file(vars ,"group_vars/#{next_find_target}", true)
+        group_vars_file = find_group_vars_file(hosts_childrens,next_find_target)
+        next_find_target = group_vars_file
+        hosts_childrens.delete(group_vars_file)
+      end
     end
 
     return vars
