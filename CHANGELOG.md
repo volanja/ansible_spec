@@ -1,10 +1,10 @@
-- v0.2.13
+# v0.2.13
 - Merge [Dynamic Inventory use multiple hosts, lookup group children dependency group_vars.](https://github.com/volanja/ansible_spec/pull/73) by [guyon](https://github.com/guyon)
 
-- v0.2.12
+# v0.2.12
 - Merge [Support deep merge for variable](https://github.com/volanja/ansible_spec/pull/72) by [okamototk](https://github.com/okamototk)
 
-- v0.2.11
+# v0.2.11
 - Merge [Support Windows](https://github.com/volanja/ansible_spec/pull/68) by [takuyakawabuchi](https://github.com/takuyakawabuchi)
 
 # v0.2.10
