@@ -401,7 +401,7 @@ module AnsibleSpec
     end
 
     # multiple host and children dependencies group vars
-    unless hosts.nil?
+    unless hosts.nil? || p[group_idx]["hosts_childrens"].nil?
       hosts_childrens = p[group_idx]["hosts_childrens"]
       next_find_target = hosts
       while(!next_find_target.nil? && hosts_childrens.size > 0)
