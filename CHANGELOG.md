@@ -1,3 +1,6 @@
+# v0.2.14
+- Merge [Fix NoMethodError at get_variables](https://github.com/volanja/ansible_spec/pull/75) by [hico-horiuchi](https://github.com/hico-horiuchi)
+
 # v0.2.13
 - Merge [Dynamic Inventory use multiple hosts, lookup group children dependency group_vars.](https://github.com/volanja/ansible_spec/pull/73) by [guyon](https://github.com/guyon)
 
