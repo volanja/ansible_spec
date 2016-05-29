@@ -13,6 +13,7 @@ module AnsibleSpec
     safe_create_spec_helper
     safe_create_rakefile
     safe_create_ansiblespec
+    safe_create_rspec
   end
 
 
@@ -38,6 +39,14 @@ module AnsibleSpec
     content = File.open(File.dirname(__FILE__) + "/../lib/src/.ansiblespec").read
     safe_touch(".ansiblespec")
     File.open(".ansiblespec", 'w') do |f|
+      f.puts content
+    end
+  end
+
+  def self.safe_create_rspec
+    content = File.open(File.dirname(__FILE__) + "/../lib/src/.rspec").read
+    safe_touch(".rspec")
+    File.open(".rspec", 'w') do |f|
       f.puts content
     end
   end
