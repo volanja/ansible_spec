@@ -34,6 +34,7 @@ $ ansiblespec-init
     create  spec/spec_helper.rb
     create  Rakefile
     create  .ansiblespec
+    create  .rspec
 ```
 
 ## [Optional] `.ansiblespec`
@@ -194,6 +195,7 @@ sample is [here](https://github.com/volanja/ansible-sample-tdd)
 ```
 .
 ├── .ansiblespec                 # Create file (use Serverspec). read above section.
+├── .rspec                       # Create file (use Serverspec). read RSpec Doc.
 ├── README.md
 ├── hosts                        # use Ansible and Serverspec if .ansiblespec is not exist.
 ├── site.yml                     # use Ansible and Serverspec if .ansiblespec is not exist.

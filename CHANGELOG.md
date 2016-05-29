@@ -1,3 +1,6 @@
+# v0.2.15
+- Merge [Add .rspec when run `ansiblespec-init`](https://github.com/volanja/ansible_spec/pull/76) by volanja
+
 # v0.2.14
 - Merge [Fix NoMethodError at get_variables](https://github.com/volanja/ansible_spec/pull/75) by [hico-horiuchi](https://github.com/hico-horiuchi)
 
