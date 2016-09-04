@@ -30,6 +30,7 @@ EOF
 
   content_h = <<'EOF'
 node ansible_ssh_port=4444 ansible_ssh_host=192.168.1.55
+node1 ansible_port=4444 ansible_host=192.168.1.55
 
 [normal]
 192.168.0.1
@@ -39,6 +40,11 @@ node ansible_ssh_port=4444 ansible_ssh_host=192.168.1.55
 192.168.0.5 ansible_ssh_user=git
 jumper ansible_ssh_port=5555 ansible_ssh_host=192.168.1.50
 node
+# Ansible 2.0
+192.168.10.2 ansible_port=2222
+192.168.10.5 ansible_user=git
+jumper2 ansible_port=5555 ansible_host=192.168.10.50
+node1
 EOF
 
   create_file(tmp_ansiblespec,content)
@@ -116,6 +122,35 @@ describe "load_targetsの実行" do
       expect(obj['port']).to eq 4444
     end
 
+    it '192.168.10.2 ansible_port=2222' do
+      obj = @res['normal'][7]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['uri']).to eq '192.168.10.2'
+      expect(obj['port']).to eq 2222
+    end
+
+    it '192.168.10.5 ansible_user=git' do
+      obj = @res['normal'][8]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['uri']).to eq '192.168.10.5'
+      expect(obj['user']).to eq 'git'
+    end
+
+    it 'jumper2 ansible_port=5555 ansible_host=192.168.10.50' do
+      obj = @res['normal'][9]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['name']).to eq 'jumper2 ansible_port=5555 ansible_host=192.168.10.50'
+      expect(obj['uri']).to eq '192.168.10.50'
+      expect(obj['port']).to eq 5555
+    end
+
+    it 'node1 ansible_port=4444 ansible_host=192.168.1.55' do
+      obj = @res['normal'][10]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['name']).to eq 'node1 ansible_port=4444 ansible_host=192.168.1.55'
+      expect(obj['uri']).to eq '192.168.1.55'
+      expect(obj['port']).to eq 4444
+    end
     after do
       File.delete(tmp_hosts)
     end

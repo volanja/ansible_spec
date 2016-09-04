@@ -91,6 +91,27 @@ describe 'ssh' do
       expect(v.port).to eq '5985'
     end
 
+    it '192.168.10.2 ansible_port=2222' do
+      v = @h["task_11"]
+      expect(v.user).to eq 'root'
+      expect(v.host).to eq '192.168.10.2'
+      expect(v.port).to eq '2222'
+    end
+
+    it '192.168.10.5 ansible_user=git' do
+      v = @h["task_12"]
+      expect(v.user).to eq 'git'
+      expect(v.host).to eq '192.168.10.5'
+      expect(v.port).to eq '22'
+    end
+
+    it 'jumper2 ansible_port=5555 ansible_host=192.168.10.50' do
+      v = @h["task_13"]
+      expect(v.user).to eq 'root'
+      expect(v.host).to eq '192.168.10.50'
+      expect(v.port).to eq '5555'
+    end
+
     after do
       delete_normality
     end
@@ -178,6 +199,10 @@ jumper ansible_ssh_port=5555 ansible_ssh_host=192.168.1.50
 www[01:02].example.com
 db-[a:b].example.com
 192.168.1.3 ansible_connection=winrm ansible_ssh_port=5985 ansible_ssh_user=administrator ansible_ssh_pass=Passw0rd
+# Ansible 2.0
+192.168.10.2 ansible_port=2222
+192.168.10.5 ansible_user=git
+jumper2 ansible_port=5555 ansible_host=192.168.10.50
 EOF
 
   File.open(tmp_ansiblespec, 'w') do |f|
