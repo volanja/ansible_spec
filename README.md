@@ -11,9 +11,9 @@ and playbooks. You can test multiple roles and multiple hosts.
 
 - Supports [Serverspec](http://serverspec.org/) v2
 - Supports special host variables
-  - `ansible_ssh_port`
-  - `ansible_ssh_user`
-  - `ansible_ssh_host`
+  - `ansible_ssh_port` or `ansible_port`
+  - `ansible_ssh_user` or `ansible_user`
+  - `ansible_ssh_host` or `ansible_host`
   - `ansible_ssh_private_key_file`
 - Supports [host patterns/ranges](http://docs.ansible.com/intro_inventory.html#hosts-and-groups) -- e.g.: `www[01:50].example.com`
 - Supports Ansible [dynamic inventory sources](http://docs.ansible.com/ansible/intro_dynamic_inventory.html)
@@ -81,10 +81,10 @@ See http://docs.ansible.com/ansible/intro_configuration.html#hash-behaviour.
 Inventory files can:
 
 - use standard ansible parameters
-  - `ansible_ssh_port`
-  - `ansible_ssh_user`
-  - `ansible_ssh_private_key`
-  - `ansible_ssh_host`
+  - `ansible_ssh_port` or `ansible_port`
+  - `ansible_ssh_user` or `ansible_user`
+  - `ansible_ssh_host` or `ansible_host`
+  - `ansible_ssh_private_key_file`
 - define hosts as expressions. `host-[1:3]` would expand into `host-1`,`host-2`,`host-3`
 - Group Children
 - Use [dynamic inventory sources](http://docs.ansible.com/intro_dynamic_inventory.html)
@@ -106,6 +106,10 @@ Inventory files can:
 192.168.0.5 ansible_ssh_user=git
 # use port 5555 & host 192.168.1.50
 jumper ansible_ssh_port=5555 ansible_ssh_host=192.168.1.50
+# Ansible 2.0
+192.168.10.2 ansible_port=2222
+192.168.10.5 ansible_user=git
+jumper2 ansible_port=5555 ansible_host=192.168.10.50
 
 [web]
 # www1.example.com to www99.example.com

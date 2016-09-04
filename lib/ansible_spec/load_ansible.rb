@@ -150,10 +150,10 @@ module AnsibleSpec
         host['uri'] = v
       else
         key,value = v.split("=")
-        host['port'] = value.to_i if key == "ansible_ssh_port"
+        host['port'] = value.to_i if key == "ansible_ssh_port" or key == "ansible_port"
         host['private_key'] = value if key == "ansible_ssh_private_key_file"
-        host['user'] = value if key == "ansible_ssh_user"
-        host['uri'] = value if key == "ansible_ssh_host"
+        host['user'] = value if key == "ansible_ssh_user" or key == "ansible_user"
+        host['uri'] = value if key == "ansible_ssh_host" or key == "ansible_host"
         host['pass'] = value if key == "ansible_ssh_pass"
         host['connection'] = value if key == "ansible_connection"
       end
