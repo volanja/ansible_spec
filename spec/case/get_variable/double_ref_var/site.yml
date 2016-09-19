@@ -1,0 +1,7 @@
+- name: group1
+  hosts: group1
+  connection: local
+  roles:
+  - test
+  vars:
+    myvar: "{{ myvar_ingroupvar }}"

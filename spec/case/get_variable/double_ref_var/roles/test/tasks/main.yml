@@ -1,0 +1,5 @@
+- name: echo1
+  shell: echo {{ myvar }}
+
+- name: echo2
+  shell: echo {{ myvar_ingroupvar }}
