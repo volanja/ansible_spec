@@ -36,7 +36,12 @@ namespace :serverspec do
           deps = AnsibleSpec.load_dependencies(role)
           roles += deps
         end
-        t.pattern = 'roles/{' + roles.join(',') + '}/spec/*_spec.rb'
+        case host["connection"]
+        when "kitchen-test"
+          t.pattern = 'test/integration/default/serverspec/{' + roles.join(',') + '}*_spec.rb'
+        else
+          t.pattern = 'roles/{' + roles.join(',') + '}/spec/*_spec.rb'
+        end
       end
     end
   end

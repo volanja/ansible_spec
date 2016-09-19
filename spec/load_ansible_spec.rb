@@ -1289,15 +1289,19 @@ EOF
       expect(@res[0]['hosts'].instance_of?(Array)).to be_truthy
       expect([{'name' => '192.168.0.103',
                'uri' => '192.168.0.103',
+               'connection' => 'ssh',
                'port' => 22},
               {'name' => '192.168.0.104',
                'uri' => '192.168.0.104',
+               'connection' => 'ssh',
                'port' => 22},
               {'name' => '192.168.0.105',
                'uri' => '192.168.0.105',
+               'connection' => 'ssh',
                'port' => 22},
               {'name' => '192.168.0.106',
                'uri' => '192.168.0.106',
+               'connection' => 'ssh',
                'port' => 22}]).to match_array(@res[0]['hosts'])
     end
 
@@ -1433,18 +1437,22 @@ EOF
       expect(@res[0]['hosts'].instance_of?(Array)).to be_truthy
       expect([{'name' => '192.168.0.103',
                'uri' => '192.168.0.103',
+               'connection' => 'ssh',
                'port' => 22,
                'hosts'=>'server'},
               {'name' => '192.168.0.104',
                'uri' => '192.168.0.104',
+               'connection' => 'ssh',
                'port' => 22,
                'hosts'=>'server'},
               {'name' => '192.168.0.105',
                'uri' => '192.168.0.105',
+               'connection' => 'ssh',
                'port' => 22,
                'hosts'=>'server2'},
               {'name' => '192.168.0.106',
                'uri' => '192.168.0.106',
+               'connection' => 'ssh',
                'port' => 22,
                'hosts'=>'server2'}]).to match_array(@res[0]['hosts'])
     end

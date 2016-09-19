@@ -15,7 +15,8 @@ set_property vars
 
 connection = ENV['TARGET_CONNECTION']
 
-if connection != 'winrm'
+case connection
+when 'ssh'
 #
 # OS type: UN*X
 #
@@ -50,7 +51,7 @@ if connection != 'winrm'
 
   # Set PATH
   # set :path, '/sbin:/usr/local/sbin:$PATH'
-else
+when 'winrm'
 #
 # OS type: Windows
 #
@@ -84,4 +85,6 @@ else
   winrm.set_timeout 300 # 5 minutes max timeout for any operation
   Specinfra.configuration.winrm = winrm
 
+when 'kitchen-test'
+  set :backend, :exec
 end

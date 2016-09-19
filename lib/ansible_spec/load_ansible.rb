@@ -139,6 +139,7 @@ module AnsibleSpec
     # 初期値
     host['name'] = line
     host['port'] = 22
+    host['connection'] = 'ssh'
     if line.include?(":") # 192.168.0.1:22
       host['uri']  = line.split(":")[0]
       host['port'] = line.split(":")[1].to_i
@@ -155,7 +156,8 @@ module AnsibleSpec
         host['user'] = value if key == "ansible_ssh_user" or key == "ansible_user"
         host['uri'] = value if key == "ansible_ssh_host" or key == "ansible_host"
         host['pass'] = value if key == "ansible_ssh_pass"
-        host['connection'] = value if key == "ansible_connection"
+        #host['connection'] = value if key == "ansible_connection"
+        host['connection'] = get_connection(key,value)
       end
     }
     return host
@@ -274,6 +276,24 @@ module AnsibleSpec
       return site.has_key?("name") ? true : false
     end
   end
+
+  # param: none
+  # return: conection
+  def self.get_connection(k,v)
+    f = '.ansiblespec'
+    y = nil
+    if File.exist?(f)
+      y = YAML.load_file(f)
+    end
+    if y.is_a?(Array) && y[0]['kitchen-test']
+      conn = 'kitchen-test'
+      return
+    end
+    if k == "ansible_connection"
+      conn = v
+    end
+  end
+
 
   # param: none
   # return: hash_behaviour
