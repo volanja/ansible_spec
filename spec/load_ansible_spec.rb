@@ -1560,3 +1560,129 @@ EOF
     end
   end
 end
+
+describe "get_connectionの実行" do
+  context '正常系(.ansible_specでtest-kitchenがなく、sshが指定されている)' do
+    require 'yaml'
+    tmp_ansiblespec = '.ansiblespec'
+    tmp_playbook = 'site.yml'
+    tmp_hosts = 'hosts'
+
+    before do
+
+      content = <<'EOF'
+---
+-
+  playbook: site.yml
+  inventory: hosts
+EOF
+      create_file(tmp_ansiblespec,content)
+      create_file(tmp_playbook,'')
+      create_file(tmp_hosts,'')
+      @res = AnsibleSpec.get_connection('ansible_connection', 'ssh')
+    end
+
+    it "ansible_connection should be ssh" do
+      expect(@res).to eq 'ssh'
+    end
+
+    after do
+      File.delete(tmp_ansiblespec)
+      File.delete(tmp_playbook)
+      File.delete(tmp_hosts)
+    end
+  end
+
+  context '正常系(test-kitchen: true)' do
+    require 'yaml'
+    tmp_ansiblespec = '.ansiblespec'
+    tmp_playbook = 'site.yml'
+    tmp_hosts = 'hosts'
+
+    before do
+
+      content = <<'EOF'
+---
+-
+  playbook: site.yml
+  inventory: hosts
+  test-kitchen: true
+EOF
+      create_file(tmp_ansiblespec,content)
+      create_file(tmp_playbook,'')
+      create_file(tmp_hosts,'')
+      @res = AnsibleSpec.get_connection('ansible_connection', 'ssh')
+    end
+
+    it "ansible_connection should be test-kitchen" do
+      expect(@res).to eq 'test-kitchen'
+    end
+
+    after do
+      File.delete(tmp_ansiblespec)
+      File.delete(tmp_playbook)
+      File.delete(tmp_hosts)
+    end
+  end
+  context '正常系(test-kitchen: false)' do
+    require 'yaml'
+    tmp_ansiblespec = '.ansiblespec'
+    tmp_playbook = 'site.yml'
+    tmp_hosts = 'hosts'
+
+    before do
+
+      content = <<'EOF'
+---
+-
+  playbook: site.yml
+  inventory: hosts
+  test-kitchen: false
+EOF
+      create_file(tmp_ansiblespec,content)
+      create_file(tmp_playbook,'')
+      create_file(tmp_hosts,'')
+      @res = AnsibleSpec.get_connection('ansible_connection', 'ssh')
+    end
+
+    it "ansible_connection should be ssh" do
+      expect(@res).to eq 'ssh'
+    end
+
+    after do
+      File.delete(tmp_ansiblespec)
+      File.delete(tmp_playbook)
+      File.delete(tmp_hosts)
+    end
+  end
+  context '正常系(引数がない)' do
+    require 'yaml'
+    tmp_ansiblespec = '.ansiblespec'
+    tmp_playbook = 'site.yml'
+    tmp_hosts = 'hosts'
+
+    before do
+
+      content = <<'EOF'
+---
+-
+  playbook: site.yml
+  inventory: hosts
+EOF
+      create_file(tmp_ansiblespec,content)
+      create_file(tmp_playbook,'')
+      create_file(tmp_hosts,'')
+      @res = AnsibleSpec.get_connection('', '')
+    end
+
+    it "ansible_connection should be ssh" do
+      expect(@res).to eq 'ssh'
+    end
+
+    after do
+      File.delete(tmp_ansiblespec)
+      File.delete(tmp_playbook)
+      File.delete(tmp_hosts)
+    end
+  end
+end

@@ -13,6 +13,7 @@ group_idx = ENV['TARGET_GROUP_INDEX'].to_i
 vars = AnsibleSpec.get_variables(host, group_idx,hosts)
 set_property vars
 
+connection ||= 'ssh'
 connection = ENV['TARGET_CONNECTION']
 
 case connection
@@ -85,6 +86,6 @@ when 'winrm'
   winrm.set_timeout 300 # 5 minutes max timeout for any operation
   Specinfra.configuration.winrm = winrm
 
-when 'kitchen-test'
+when 'test-kitchen'
   set :backend, :exec
 end

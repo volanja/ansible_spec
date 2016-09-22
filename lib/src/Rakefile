@@ -37,7 +37,7 @@ namespace :serverspec do
           roles += deps
         end
         case host["connection"]
-        when "kitchen-test"
+        when "test-kitchen"
           t.pattern = 'test/integration/default/serverspec/{' + roles.join(',') + '}*_spec.rb'
         else
           t.pattern = 'roles/{' + roles.join(',') + '}/spec/*_spec.rb'

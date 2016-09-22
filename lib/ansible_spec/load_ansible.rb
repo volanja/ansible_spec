@@ -156,7 +156,6 @@ module AnsibleSpec
         host['user'] = value if key == "ansible_ssh_user" or key == "ansible_user"
         host['uri'] = value if key == "ansible_ssh_host" or key == "ansible_host"
         host['pass'] = value if key == "ansible_ssh_pass"
-        #host['connection'] = value if key == "ansible_connection"
         host['connection'] = get_connection(key,value)
       end
     }
@@ -282,16 +281,19 @@ module AnsibleSpec
   def self.get_connection(k,v)
     f = '.ansiblespec'
     y = nil
+    conn = 'ssh'
     if File.exist?(f)
       y = YAML.load_file(f)
-    end
-    if y.is_a?(Array) && y[0]['kitchen-test']
-      conn = 'kitchen-test'
-      return
+      if y.is_a?(Array) && y[0]['test-kitchen'] == true
+        conn = 'test-kitchen'
+        return conn
+      end
     end
     if k == "ansible_connection"
       conn = v
+      return conn
     end
+    return conn
   end
 
 
