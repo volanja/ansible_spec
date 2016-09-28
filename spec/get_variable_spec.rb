@@ -465,4 +465,31 @@ describe "load_vars_fileの実行" do
       Dir.chdir(@current_dir)
     end
   end
+
+  context 'Correct operation : vars in directory' do
+    before do
+      @current_dir = Dir.pwd()
+      Dir.chdir('spec/case/load_vars_file/vars_dir/')
+      vars = Hash.new
+      file = 'group_vars/all'
+      @res = AnsibleSpec.load_vars_file(vars, file)
+    end
+
+    it 'res is hash' do
+      expect(@res.instance_of?(Hash)).to be_truthy
+    end
+
+    it 'exist 1 pair in Hash' do
+      expect(@res.length).to eq 2
+    end
+
+    it 'exist each pair' do
+      expect(@res).to include({'var1' => 'val1'})
+      expect(@res).to include({'var2' => 'val2'})
+    end
+
+    after do
+      Dir.chdir(@current_dir)
+    end
+  end
 end
