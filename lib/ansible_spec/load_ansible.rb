@@ -221,7 +221,7 @@ module AnsibleSpec
 
     # e.g. comment-out
     if playbook === false
-      puts 'Error: No data in site.yml'
+      puts 'Error: No data in #{f}'
       exit
     end
     properties = Array.new
