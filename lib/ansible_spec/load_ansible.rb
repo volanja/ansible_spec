@@ -204,7 +204,7 @@ module AnsibleSpec
 
       if File.exist?(path)
         new_deps = YAML.load_file(path).fetch("dependencies", []).map { |h|
-          h["role"]
+          h["role"] || h
         }
         role_queue.concat(new_deps)
         deps.concat(new_deps)

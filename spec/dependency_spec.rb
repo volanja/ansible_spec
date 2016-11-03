@@ -35,7 +35,7 @@ EOF
 ---
 dependencies:
 - { role: dep1 }
-- { role: dep2 }
+- dep2
 EOF
 
   dep1_meta_content = <<'EOF'
