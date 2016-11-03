@@ -307,8 +307,14 @@ module AnsibleSpec
       vars_file = path+".yml"
     end
     if File.exist?(vars_file)
-      yaml = YAML.load_file(vars_file)
-      vars = merge_variables(vars, yaml)
+      if File.directory?(vars_file)
+        Dir.glob(File.join(vars_file, '*')).each { |f|
+          vars = load_vars_file(vars, f)
+	}
+      else
+        yaml = YAML.load_file(vars_file)
+        vars = merge_variables(vars, yaml)
+      end
     end
     return vars
   end
