@@ -1,3 +1,13 @@
+# v0.2.16
+- Merge [#88 fix nil dependencies](https://github.com/volanja/ansible_spec/pull/88) by [developerinlondon](https://github.com/developerinlondon)
+- Merge [#87 added .DS_Store to gitignore](https://github.com/volanja/ansible_spec/pull/87) by [developerinlondon](https://github.com/developerinlondon)
+- Merge [#85 #84 modify variable expansion](https://github.com/volanja/ansible_spec/pull/85) by volanja
+- Merge [#84 On errors print the playbook name](https://github.com/volanja/ansible_spec/pull/84) by [agx](https://github.com/agx)
+- Merge [#83 Handle "simple" role dependencies](https://github.com/volanja/ansible_spec/pull/83) by [agx](https://github.com/agx)
+- Merge [#82 Handle directories with vars as well](https://github.com/volanja/ansible_spec/pull/82) by [agx](https://github.com/agx)
+- Merge [#78 should use json v1.8.3 at ruby 1.9.3](https://github.com/volanja/ansible_spec/pull/78) by volanja
+- Merge [#77 support ansible_host, ansible_user, ansible_port](https://github.com/volanja/ansible_spec/pull/77) by volanja
+
 # v0.2.15
 - Merge [Add .rspec when run `ansiblespec-init`](https://github.com/volanja/ansible_spec/pull/76) by volanja
 
