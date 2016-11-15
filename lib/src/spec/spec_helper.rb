@@ -32,7 +32,11 @@ if connection != 'winrm'
     set :sudo_password, ENV['SUDO_PASSWORD']
   end
 
-  options = Net::SSH::Config.for(host)
+  unless ENV['SSH_CONFIG_FILE']
+    options = Net::SSH::Config.for(host)
+  else
+    options = Net::SSH::Config.for(host, files=[ENV['SSH_CONFIG_FILE']])
+  end
 
   options[:user] ||= ENV['TARGET_USER']
   options[:port] ||= ENV['TARGET_PORT']
