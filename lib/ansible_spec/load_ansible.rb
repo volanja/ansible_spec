@@ -241,7 +241,7 @@ module AnsibleSpec
     if name_exist?(properties)
       return properties
     else
-      fail "Please insert name on playbook"
+      fail "Please insert name on playbook '#{f}'"
     end
   end
 
@@ -273,8 +273,8 @@ module AnsibleSpec
   #         true: name is exist on playbook
   #         false: name is not exist on playbook
   def self.name_exist?(array)
-    array.each do |site|
-      return site.has_key?("name") ? true : false
+    array.all? do |site|
+      site.has_key?("name")
     end
   end
 
