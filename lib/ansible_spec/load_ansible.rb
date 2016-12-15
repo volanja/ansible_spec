@@ -3,6 +3,7 @@ require 'hostlist_expression'
 require 'oj'
 require 'open3'
 require 'yaml'
+require 'inifile'
 require 'ansible_spec/vendor/hash'
 
 module AnsibleSpec
@@ -423,5 +424,46 @@ module AnsibleSpec
 
     return vars
 
+  end
+
+  class AnsibleCfg
+    def initialize
+      @cfg = self.class.load_ansible_cfg
+    end
+
+    def roles_path
+      rp = (self.get('defaults', 'roles_path') or '').split(':')
+      rp << 'roles'  # Roles is always searched
+    end
+
+    class << self
+      def find_ansible_cfgs()
+        files = []
+        ["/etc/ansible/ansible.cfg",
+         File.expand_path("~/.ansible.cfg"),
+         "./ansible.cfg",
+         ENV["ANSIBLE_CFG"],
+        ].each do |f|
+          files << f if f and File.exists? f
+        end
+      end
+
+      def load_ansible_cfg()
+        cfg = IniFile.new
+        self.find_ansible_cfgs.each do |file|
+          cfg = cfg.merge(IniFile.new :filename => file)
+        end
+        cfg.to_h
+      end
+    end
+
+    def get(section, key)
+      s = @cfg[section]
+      if s
+        return s[key]
+      else
+        return nil
+      end
+    end
   end
 end
