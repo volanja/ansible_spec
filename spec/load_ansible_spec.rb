@@ -701,7 +701,7 @@ EOF
     end
 
     it 'exitする' do
-      expect{ AnsibleSpec.load_playbook(tmp_pb) }.to raise_error("Please insert name on playbook")
+      expect{ AnsibleSpec.load_playbook(tmp_pb) }.to raise_error("Please insert name on playbook 'playbook'")
     end
 
     after do
