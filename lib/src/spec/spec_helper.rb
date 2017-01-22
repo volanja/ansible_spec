@@ -11,6 +11,7 @@ hosts = ENV["TARGET_HOSTS"]
 
 group_idx = ENV['TARGET_GROUP_INDEX'].to_i
 vars = AnsibleSpec.get_variables(host, group_idx,hosts)
+ssh_config_file = AnsibleSpec.get_ssh_config_file
 set_property vars
 
 connection = ENV['TARGET_CONNECTION']
@@ -32,7 +33,11 @@ if connection != 'winrm'
     set :sudo_password, ENV['SUDO_PASSWORD']
   end
 
-  options = Net::SSH::Config.for(host)
+  unless ssh_config_file
+    options = Net::SSH::Config.for(host)
+  else
+    options = Net::SSH::Config.for(host,files=[ssh_config_file])
+  end
 
   options[:user] ||= ENV['TARGET_USER']
   options[:port] ||= ENV['TARGET_PORT']

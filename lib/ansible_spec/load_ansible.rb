@@ -300,6 +300,33 @@ module AnsibleSpec
     return hash_behaviour
   end
 
+  # param: none
+  # return: file path
+  def self.get_ssh_config_file()
+    ssh_config_file = nil
+
+    cfg = AnsibleSpec::AnsibleCfg.new
+    ssh_args = cfg.get('ssh_connection', 'ssh_args')
+    if ssh_args
+      array = ssh_args.split(" ")
+      if array.index("-F") && array[array.index("-F") + 1]
+        ssh_config_file = array[array.index("-F") + 1]
+      end
+    end
+
+    if ENV["SSH_CONFIG_FILE"]
+      ssh_config_file = ENV["SSH_CONFIG_FILE"]
+    end
+
+    return nil if ssh_config_file.nil?
+
+    if File.exist?(ssh_config_file)
+      return ssh_config_file
+    else
+      return nil
+    end
+  end
+
   # param: hash
   # param: variable file
   # param: flag to extention
