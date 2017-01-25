@@ -58,6 +58,9 @@ You can use environment variables with the `rake` command. They are listed below
 - `PLAYBOOK`       -- playbook name                                (e.g. `site.yml`)
 - `INVENTORY`      -- inventory file name                          (e.g. `hosts`)
 - `HASH_BEHAVIOUR` -- hash behaviour when duplicate hash variables (e.g. `merge`)
+- `SSH_CONFIG_FILE` -- ssh configuration file path (e.g. `ssh_config`)  
+`SSH_CONFIG_FILE` take precedence over the path at ssh_args( -F "filename") in [ssh_connection] section of ansible.cfg
+
 
 Environment variables take precedence over the `.ansiblespec` file.
 
@@ -169,6 +172,14 @@ Support variables are in site.yml, group_vars, host_vars, roles.
         └── vars
             └── main.yml
 
+```
+
+**Note:** Parse roledirs from ansible.cfg. This allows us to find specs that are not under ./roles.
+
+```
+# ansible.cfg
+[defaults]
+roles_path = moreroles
 ```
 
 #### Define variable(site.yml)

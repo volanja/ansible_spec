@@ -1,3 +1,11 @@
+# v0.2.17
+- Merge [#90 Check if all array elements have a name](https://github.com/volanja/ansible_spec/pull/90) by [agx](https://github.com/agx)
+- Merge [#91 Parse roledirs from ansible.cfg](https://github.com/volanja/ansible_spec/pull/91) by [agx](https://github.com/agx)
+- Merge [#92 should use winrm < v2.1.1 at ruby 1.9.3](https://github.com/volanja/ansible_spec/pull/92) by volanja
+- Merge [#93 #89 use ENV['SSH_CONFIG_FILE'] or ssh_args at ansible_cfg](https://github.com/volanja/ansible_spec/pull/93) by volanja  
+Original idea [#89 set a option, it can select file of SSH-configration](https://github.com/volanja/ansible_spec/pull/89) by [gigathlete](https://github.com/gigathlete)
+- Merge [add test at ruby 2.4.0 & 2.3.3 & 2.2.6 (drop test 2.3.1 & 2.2.5)](https://github.com/volanja/ansible_spec/pull/94) by volanja
+
 # v0.2.16
 - Merge [#88 fix nil dependencies](https://github.com/volanja/ansible_spec/pull/88) by [developerinlondon](https://github.com/developerinlondon)
 - Merge [#87 added .DS_Store to gitignore](https://github.com/volanja/ansible_spec/pull/87) by [developerinlondon](https://github.com/developerinlondon)
