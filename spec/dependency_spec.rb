@@ -87,3 +87,26 @@ EOF
     File.delete(tmp_webapp_meta)
   end
 end
+
+describe "load_dependencies from alternative dir" do
+  tmp_webapp_meta = 'more_roles/webapp/meta/main.yml'
+
+  webapp_meta_content = <<'EOF'
+---
+dependencies:
+ - foo
+EOF
+
+  before do
+    create_file(tmp_webapp_meta, webapp_meta_content)
+    @deps = AnsibleSpec.load_dependencies("webapp", "more_roles")
+  end
+
+  it 'should correctly resolve deps in additional role dirs' do
+    expect(@deps).to eq ["foo"]
+  end
+
+  after do
+    File.delete(tmp_webapp_meta)
+  end
+end
