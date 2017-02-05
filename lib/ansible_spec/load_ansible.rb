@@ -196,12 +196,12 @@ module AnsibleSpec
 
   # param: role
   # return: ["role1", "role2"]
-  def self.load_dependencies(role)
+  def self.load_dependencies(role, rolepath='roles')
     role_queue = [role]
     deps = []
     until role_queue.empty?
       role = role_queue.pop()
-      path = File.join("./", "roles", role, "meta", "main.yml")
+      path = File.join(rolepath, role, "meta", "main.yml")
 
       if File.exist?(path)
         dependencies = YAML.load_file(path).fetch("dependencies", [])
