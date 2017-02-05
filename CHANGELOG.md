@@ -1,3 +1,6 @@
+# v0.2.18
+- Merge [#96 Handle roles_path for role dependencies as well](https://github.com/volanja/ansible_spec/pull/96) by [agx](https://github.com/agx)
+
 # v0.2.17
 - Merge [#90 Check if all array elements have a name](https://github.com/volanja/ansible_spec/pull/90) by [agx](https://github.com/agx)
 - Merge [#91 Parse roledirs from ansible.cfg](https://github.com/volanja/ansible_spec/pull/91) by [agx](https://github.com/agx)
