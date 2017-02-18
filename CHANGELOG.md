@@ -1,3 +1,7 @@
+# v0.2.19
+- Merge [#98 delete directory('roles','more_roles') after execute rpsec](https://github.com/volanja/ansible_spec/pull/98) by volanja
+- Merge [#97 Add local connection test path](https://github.com/volanja/ansible_spec/pull/97) by [mtoriumi](https://github.com/mtoriumi)
+
 # v0.2.18
 - Merge [#96 Handle roles_path for role dependencies as well](https://github.com/volanja/ansible_spec/pull/96) by [agx](https://github.com/agx)
 
