@@ -63,6 +63,7 @@ EOF
     File.delete(tmp_playbook)
     File.delete(tmp_webapp_meta)
     File.delete(tmp_dep1_meta)
+    FileUtils.rm_r(tmp_webapp_meta.split("/")[0])
   end
 end
 
@@ -85,6 +86,7 @@ EOF
 
   after do
     File.delete(tmp_webapp_meta)
+    FileUtils.rm_r(tmp_webapp_meta.split("/")[0])
   end
 end
 
@@ -108,5 +110,6 @@ EOF
 
   after do
     File.delete(tmp_webapp_meta)
+    FileUtils.rm_r(tmp_webapp_meta.split("/")[0])
   end
 end
