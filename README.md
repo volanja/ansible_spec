@@ -48,6 +48,7 @@ customize the playbook and inventory using an `.ansiblespec` file.
 -
   playbook: site.yml
   inventory: hosts
+  vars_dirs_path: inventories/staging
   hash_behaviour: merge
 ```
 
@@ -55,9 +56,10 @@ customize the playbook and inventory using an `.ansiblespec` file.
 
 You can use environment variables with the `rake` command. They are listed below.
 
-- `PLAYBOOK`       -- playbook name                                (e.g. `site.yml`)
-- `INVENTORY`      -- inventory file name                          (e.g. `hosts`)
-- `HASH_BEHAVIOUR` -- hash behaviour when duplicate hash variables (e.g. `merge`)
+- `PLAYBOOK`        -- playbook name                                (e.g. `site.yml`)
+- `INVENTORY`       -- inventory file name                          (e.g. `hosts`)
+- `VARS_DIRS_PATH`  -- directory path containing the group_vars and host_vars directories (e.g. `inventories/staging`)
+- `HASH_BEHAVIOUR`  -- hash behaviour when duplicate hash variables (e.g. `merge`)
 - `SSH_CONFIG_FILE` -- ssh configuration file path (e.g. `ssh_config`)  
 `SSH_CONFIG_FILE` take precedence over the path at ssh_args( -F "filename") in [ssh_connection] section of ansible.cfg
 
@@ -72,6 +74,8 @@ or
 $ PLAYBOOK=site.yml rake serverspec:Ansible-Sample-TDD
 or
 $ INVENTORY=hosts rake serverspec:Ansible-Sample-TDD
+or
+$ VARS_DIRS_PATH=inventories/staging rake serverspec:Ansible-Sample-TDD
 or
 $ HASH_BEHAVIOUR=merge rake serverspec:Ansible-Sample-TDD
 ```
@@ -148,7 +152,7 @@ Ansible variables supported by following condition.
 * Playbook's variables are supported. If same variable is defined in different places,
   priority follows [Ansible order](http://docs.ansible.com/ansible/playbooks_variables.html#variable-precedence-where-should-i-put-a-variable).
 * Variables defined main.yml in role's tasks are not supported.
-* Inventry variables are not supported.
+* Inventory variables are not supported.
 * Facts are not supported.
 
 ### Sample
@@ -174,7 +178,46 @@ Support variables are in site.yml, group_vars, host_vars, roles.
 
 ```
 
-**Note:** Parse roledirs from ansible.cfg. This allows us to find specs that are not under ./roles.
+and (e.g. when `vars_dirs_path: inventories/staging`)
+
+```
+├── site.yml
+├── inventories
+│   ├── development
+|   |   ├── group_vars
+|   |   │   ├── all.yml
+|   |   │   ├── dbserver.yml
+|   |   │   └── webserver.yml
+|   |   └── host_vars
+|   |       ├── 192.168.1.1.yml
+|   |       └── 192.168.1.2.yml
+│   ├── production
+|   |   ├── group_vars
+|   |   │   ├── all.yml
+|   |   │   ├── dbserver.yml
+|   |   │   └── webserver.yml
+|   |   └── host_vars
+|   |       ├── 192.168.10.1.yml
+|   |       └── 192.168.10.2.yml
+│   └── staging
+|       ├── group_vars
+|       │   ├── all.yml
+|       │   ├── dbserver.yml
+|       │   └── webserver.yml
+|       └── host_vars
+|           ├── 192.168.20.1.yml
+|           └── 192.168.20.2.yml
+└── roles
+    ├── apaches
+    │   └── vars
+    │       └── main.yml
+    └── mariadb
+        └── vars
+            └── main.yml
+
+```
+
+**Note:** Parse role dirs from ansible.cfg. This allows us to find specs that are not under ./roles.
 
 ```
 # ansible.cfg

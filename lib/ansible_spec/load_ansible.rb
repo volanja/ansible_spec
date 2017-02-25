@@ -205,7 +205,7 @@ module AnsibleSpec
 
       if File.exist?(path)
         dependencies = YAML.load_file(path).fetch("dependencies", [])
-        unless dependencies.nil? 
+        unless dependencies.nil?
           new_deps = dependencies.map { |h|
             h["role"] || h
           }
@@ -387,8 +387,8 @@ module AnsibleSpec
             hosts["#{v}"].map {|target_server| target_server["hosts"] = v}
             var["hosts"].concat hosts["#{v}"]
           end
-        end 
-        if var["hosts"].size == 0 
+        end
+        if var["hosts"].size == 0
           properties = properties.compact.reject{|e| e["hosts"].length == 0}
           #puts "#{var["name"]} roles no hosts matched for #{var["hosts"]}"
         end
@@ -398,6 +398,24 @@ module AnsibleSpec
       end
     end
     return properties
+  end
+
+  # param: none
+  # return: vars_dirs_path
+  def self.get_vars_dirs_path()
+    f = '.ansiblespec'
+    y = nil
+    if File.exist?(f)
+      y = YAML.load_file(f)
+    end
+    if ENV["VARS_DIRS_PATH"]
+      vars_dirs_path = ENV["VARS_DIRS_PATH"]
+    elsif y.is_a?(Array) && y[0]['vars_dirs_path']
+      vars_dirs_path = y[0]['vars_dirs_path']
+    else
+      vars_dirs_path = ''
+    end
+    return vars_dirs_path
   end
 
   def self.find_group_vars_file(hosts_childrens, hosts)
@@ -416,16 +434,22 @@ module AnsibleSpec
       vars = load_vars_file(vars ,"roles/#{role}/defaults/main.yml")
     end
 
+    # get parent directory of group_vars and host_vars directories
+    vars_dirs_path = get_vars_dirs_path
+    if vars_dirs_path != ''
+      vars_dirs_path = "#{vars_dirs_path}/"
+    end
+
     # all group
-    vars = load_vars_file(vars ,'group_vars/all', true)
+    vars = load_vars_file(vars ,"#{vars_dirs_path}group_vars/all", true)
 
     # each group vars
     if p[group_idx].has_key?('group')
-      vars = load_vars_file(vars ,"group_vars/#{p[group_idx]['group']}", true)
+      vars = load_vars_file(vars ,"#{vars_dirs_path}group_vars/#{p[group_idx]['group']}", true)
     end
 
     # each host vars
-    vars = load_vars_file(vars ,"host_vars/#{host}", true)
+    vars = load_vars_file(vars ,"#{vars_dirs_path}host_vars/#{host}", true)
 
     # site vars
     if p[group_idx].has_key?('vars')
@@ -442,7 +466,7 @@ module AnsibleSpec
       hosts_childrens = p[group_idx]["hosts_childrens"]
       next_find_target = hosts
       while(!next_find_target.nil? && hosts_childrens.size > 0)
-        vars = load_vars_file(vars ,"group_vars/#{next_find_target}", true)
+        vars = load_vars_file(vars ,"#{vars_dirs_path}group_vars/#{next_find_target}", true)
         group_vars_file = find_group_vars_file(hosts_childrens,next_find_target)
         next_find_target = group_vars_file
         hosts_childrens.delete(group_vars_file)
