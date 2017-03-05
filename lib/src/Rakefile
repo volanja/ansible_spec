@@ -12,8 +12,8 @@ desc "Run serverspec to all test"
 task :all => "serverspec:all"
 
 namespace :serverspec do
-  task :all => properties.map {|v| 'serverspec:' + v["name"] }
   properties = properties.compact.reject{|e| e["hosts"].length == 0}
+  task :all => properties.map {|v| 'serverspec:' + v["name"] }
   properties.each_with_index.map do |property, index|
     property["hosts"].each do |host|
       desc "Run serverspec for #{property["name"]}"
