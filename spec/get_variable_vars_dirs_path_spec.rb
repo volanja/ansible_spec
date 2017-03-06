@@ -11,7 +11,7 @@ describe "Run get_variables" do
 
     before do
       @current_dir = Dir.pwd()
-      Dir.chdir('spec/case/get_variable/inventories_env_group_host_hosts/')
+      Dir.chdir('spec/case/get_variable/inventories_env_group_all/')
       ENV["PLAYBOOK"] = tmp_playbook
       ENV["INVENTORY"] = tmp_inventory_file
       ENV["VARS_DIRS_PATH"] = tmp_vars_dirs_path
@@ -29,9 +29,9 @@ describe "Run get_variables" do
     it 'exist each pair' do
       expect(@res).to include({'role_var' => 'group all'},
                               {'site_var' => 'group all'},
-                              {'host_var'=>'group all'},
-                              {'group_var'=>'group all'},
-                              {'group_all_var'=>'group all'}
+                              {'host_var' => 'group all'},
+                              {'group_var' => 'group all'},
+                              {'group_all_var' => 'group all'}
                              )
     end
 
@@ -51,7 +51,7 @@ describe "Run get_variables" do
 
     before do
       @current_dir = Dir.pwd()
-      Dir.chdir('spec/case/get_variable/inventories_env_group_host_hosts/')
+      Dir.chdir('spec/case/get_variable/inventories_env_group_each_vars/')
       ENV["PLAYBOOK"] = tmp_playbook
       ENV["INVENTORY"] = tmp_inventory_file
       ENV["VARS_DIRS_PATH"] = tmp_vars_dirs_path
@@ -69,9 +69,9 @@ describe "Run get_variables" do
     it 'exist each pair' do
       expect(@res).to include({'role_var' => 'group1'},
                               {'site_var' => 'group1'},
-                              {'host_var'=>'group1'},
-                              {'group_var'=>'group1'},
-                              {'group_all_var'=>'group all'}
+                              {'host_var' => 'group1'},
+                              {'group_var' => 'group1'},
+                              {'group_all_var' => 'group all'}
                              )
     end
 
@@ -91,7 +91,7 @@ describe "Run get_variables" do
 
     before do
       @current_dir = Dir.pwd()
-      Dir.chdir('spec/case/get_variable/inventories_env_group_host_hosts/')
+      Dir.chdir('spec/case/get_variable/inventories_env_host_vars/')
       ENV["PLAYBOOK"] = tmp_playbook
       ENV["INVENTORY"] = tmp_inventory_file
       ENV["VARS_DIRS_PATH"] = tmp_vars_dirs_path
@@ -107,9 +107,9 @@ describe "Run get_variables" do
     end
 
     it 'exist each pair' do
-      expect(@res).to include({'role_var' => 'host role_var'},  # in host_var/192.168.2.1.yml
-                              {'site_var' => 'host site_var'},  # in host_var/192.168.2.1.yml
-                              {'host_var'=>'host 192.168.2.1'}, # in host_var/192.168.2.1.yml
+      expect(@res).to include({'role_var' => 'host role_var'},   # in host_var/192.168.2.1.yml
+                              {'site_var' => 'host site_var'},   # in host_var/192.168.2.1.yml
+                              {'host_var' => 'host 192.168.2.1'} # in host_var/192.168.2.1.yml
                              )
     end
 
@@ -129,7 +129,7 @@ describe "Run get_variables" do
 
     before do
       @current_dir = Dir.pwd()
-      Dir.chdir('spec/case/get_variable/inventories_env_group_host_hosts/')
+      Dir.chdir('spec/case/get_variable/inventories_env_host_vars/')
       ENV["PLAYBOOK"] = tmp_playbook
       ENV["INVENTORY"] = tmp_inventory_file
       ENV["VARS_DIRS_PATH"] = tmp_vars_dirs_path
@@ -145,9 +145,9 @@ describe "Run get_variables" do
     end
 
     it 'exist each pair' do
-      expect(@res).to include({'role_var' => 'host role_var'},  # in host_var/192.168.2.2.yml
-                              {'site_var' => 'host site_var'},  # in host_var/192.168.2.2.yml
-                              {'host_var'=>'host 192.168.2.2'}, # in host_var/192.168.2.2.yml
+      expect(@res).to include({'role_var' => 'host role_var'},   # in host_var/192.168.2.2.yml
+                              {'site_var' => 'host site_var'},   # in host_var/192.168.2.2.yml
+                              {'host_var' => 'host 192.168.2.2'} # in host_var/192.168.2.2.yml
                              )
     end
 
@@ -165,7 +165,7 @@ describe "Run get_variables" do
 
     before do
       @current_dir = Dir.pwd()
-      Dir.chdir('spec/case/get_variable/inventories_env_group_host_hosts/')
+      Dir.chdir('spec/case/get_variable/inventories_env_group_all/')
       content = <<'EOF'
 ---
 -
@@ -188,9 +188,9 @@ EOF
     it 'exist each pair' do
       expect(@res).to include({'role_var' => 'group all'},
                               {'site_var' => 'group all'},
-                              {'host_var'=>'group all'},
-                              {'group_var'=>'group all'},
-                              {'group_all_var'=>'group all'}
+                              {'host_var' => 'group all'},
+                              {'group_var' => 'group all'},
+                              {'group_all_var' => 'group all'}
                              )
     end
 
@@ -206,7 +206,7 @@ EOF
 
     before do
       @current_dir = Dir.pwd()
-      Dir.chdir('spec/case/get_variable/inventories_env_group_host_hosts/')
+      Dir.chdir('spec/case/get_variable/inventories_env_group_each_vars/')
       content = <<'EOF'
 ---
 -
@@ -229,9 +229,9 @@ EOF
     it 'exist each pair' do
       expect(@res).to include({'role_var' => 'group1'},
                               {'site_var' => 'group1'},
-                              {'host_var'=>'group1'},
-                              {'group_var'=>'group1'},
-                              {'group_all_var'=>'group all'}
+                              {'host_var' => 'group1'},
+                              {'group_var' => 'group1'},
+                              {'group_all_var' => 'group all'}
                              )
     end
 
@@ -247,7 +247,7 @@ EOF
 
     before do
       @current_dir = Dir.pwd()
-      Dir.chdir('spec/case/get_variable/inventories_env_group_host_hosts/')
+      Dir.chdir('spec/case/get_variable/inventories_env_host_vars/')
       content = <<'EOF'
 ---
 -
@@ -268,9 +268,9 @@ EOF
     end
 
     it 'exist each pair' do
-      expect(@res).to include({'role_var' => 'host role_var'},  # in host_var/192.168.2.1.yml
-                              {'site_var' => 'host site_var'},  # in host_var/192.168.2.1.yml
-                              {'host_var'=>'host 192.168.2.1'}, # in host_var/192.168.2.1.yml
+      expect(@res).to include({'role_var' => 'host role_var'},   # in host_var/192.168.2.1.yml
+                              {'site_var' => 'host site_var'},   # in host_var/192.168.2.1.yml
+                              {'host_var' => 'host 192.168.2.1'} # in host_var/192.168.2.1.yml
                              )
     end
 
@@ -286,7 +286,7 @@ EOF
 
     before do
       @current_dir = Dir.pwd()
-      Dir.chdir('spec/case/get_variable/inventories_env_group_host_hosts/')
+      Dir.chdir('spec/case/get_variable/inventories_env_host_vars/')
       content = <<'EOF'
 ---
 -
@@ -307,9 +307,9 @@ EOF
     end
 
     it 'exist each pair' do
-      expect(@res).to include({'role_var' => 'host role_var'},  # in host_var/192.168.2.2.yml
-                              {'site_var' => 'host site_var'},  # in host_var/192.168.2.2.yml
-                              {'host_var'=>'host 192.168.2.2'}, # in host_var/192.168.2.2.yml
+      expect(@res).to include({'role_var' => 'host role_var'},   # in host_var/192.168.2.2.yml
+                              {'site_var' => 'host site_var'},   # in host_var/192.168.2.2.yml
+                              {'host_var' => 'host 192.168.2.2'} # in host_var/192.168.2.2.yml
                              )
     end
 

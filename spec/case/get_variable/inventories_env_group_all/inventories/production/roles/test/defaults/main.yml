@@ -1,0 +1,4 @@
+---
+role_var: 'role_var in roles default'
+site_var: 'site_var in roles default'
+host_var: 'host_var in roles default'
