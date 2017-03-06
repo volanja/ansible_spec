@@ -11,7 +11,7 @@ describe "Run get_variables" do
 
     before do
       @current_dir = Dir.pwd()
-      Dir.chdir('spec/case/get_variable/inventories_env_group_host_hosts/'
+      Dir.chdir('spec/case/get_variable/inventories_env_group_host_hosts/')
       ENV["PLAYBOOK"] = tmp_playbook
       ENV["INVENTORY"] = tmp_inventory_file
       ENV["VARS_DIRS_PATH"] = tmp_vars_dirs_path
@@ -165,7 +165,7 @@ describe "Run get_variables" do
 
     before do
       @current_dir = Dir.pwd()
-      Dir.chdir('spec/case/get_variable/inventories_env_group_host_hosts/'
+      Dir.chdir('spec/case/get_variable/inventories_env_group_host_hosts/')
       content = <<'EOF'
 ---
 -
@@ -206,7 +206,7 @@ EOF
 
     before do
       @current_dir = Dir.pwd()
-      Dir.chdir('spec/case/get_variable/inventories_env_group_host_hosts/'
+      Dir.chdir('spec/case/get_variable/inventories_env_group_host_hosts/')
       content = <<'EOF'
 ---
 -
@@ -247,7 +247,7 @@ EOF
 
     before do
       @current_dir = Dir.pwd()
-      Dir.chdir('spec/case/get_variable/inventories_env_group_host_hosts/'
+      Dir.chdir('spec/case/get_variable/inventories_env_group_host_hosts/')
       content = <<'EOF'
 ---
 -
@@ -286,7 +286,7 @@ EOF
 
     before do
       @current_dir = Dir.pwd()
-      Dir.chdir('spec/case/get_variable/inventories_env_group_host_hosts/'
+      Dir.chdir('spec/case/get_variable/inventories_env_group_host_hosts/')
       content = <<'EOF'
 ---
 -
