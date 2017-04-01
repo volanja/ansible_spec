@@ -88,11 +88,7 @@ module AnsibleSpec
     k_parent = k.gsub(search,'')
     arry = Array.new
     hash["#{k}"].each{|group|
-      if hash["#{group}"]
-        arry = arry + hash["#{group}"]
-      elsif hash["#{group['name']}"]
-        arry = arry + hash["#{group['name']}"]
-      end
+      arry = arry + hash["#{group}"]
     }
     h = Hash.new
     h["#{k_parent}"] = arry
