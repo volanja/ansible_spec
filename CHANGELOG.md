@@ -1,3 +1,8 @@
+# v0.2.20
+- Merge [#101 Added feature set path to group_vars and host_vars](https://github.com/volanja/ansible_spec/pull/101) by [rbramwell](https://github.com/rbramwell)
+- Merge [#99 Unbreak 'serverspec:all' if groups with no hosts exist](https://github.com/volanja/ansible_spec/pull/99) by [agx](https://github.com/agx)
+
+
 # v0.2.19
 - Merge [#98 delete directory('roles','more_roles') after execute rpsec](https://github.com/volanja/ansible_spec/pull/98) by volanja
 - Merge [#97 Add local connection test path](https://github.com/volanja/ansible_spec/pull/97) by [mtoriumi](https://github.com/mtoriumi)
