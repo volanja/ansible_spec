@@ -233,7 +233,7 @@ module AnsibleSpec
       if site.has_key?("include")
           YAML.load_file(site["include"]).each { |site|
             properties.push site
-	}
+          }
       else
         properties.push site
       end

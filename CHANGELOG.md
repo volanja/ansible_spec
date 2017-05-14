@@ -1,3 +1,6 @@
+# v0.2.21
+- Merge [#103 Parse the full included playbook](https://github.com/volanja/ansible_spec/pull/103) by [agx](https://github.com/agx)
+
 # v0.2.20
 - Merge [#101 Added feature set path to group_vars and host_vars](https://github.com/volanja/ansible_spec/pull/101) by [rbramwell](https://github.com/rbramwell)
 - Merge [#99 Unbreak 'serverspec:all' if groups with no hosts exist](https://github.com/volanja/ansible_spec/pull/99) by [agx](https://github.com/agx)
