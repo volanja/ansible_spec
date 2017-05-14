@@ -591,6 +591,12 @@ EOF
   user: nginx
   roles:
     - nginx
+
+- name: Ansible-Nginx2
+  hosts: proxies
+  user: nginx
+  roles:
+   - nginx-proxy
 EOF
       create_file(tmp_inc,content_inc)
 
@@ -600,6 +606,11 @@ EOF
     it 'res is array' do
       expect(@res.instance_of?(Array)).to be_truthy
     end
+
+    it 'res has three groups' do
+      expect(@res.length).to eq 3
+    end
+
 
     it 'res is hash' do
       expect(@res[0].instance_of?(Hash)).to be_truthy
@@ -659,6 +670,12 @@ EOF
       expect(@res[1]['roles'].instance_of?(Array)).to be_truthy
       expect(@res[1]['roles'][0]).to eq 'nginx'
     end
+
+    it 'exist name' do
+      expect(@res[2].key?('name')).to be_truthy
+      expect(@res[2]['name']).to eq 'Ansible-Nginx2'
+    end
+
     after do
       File.delete(tmp_pb)
       File.delete(tmp_inc)
