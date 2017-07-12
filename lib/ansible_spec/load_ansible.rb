@@ -21,6 +21,7 @@ module AnsibleSpec
     hosts.default = Hash.new
     f.each_line{|line|
       line = line.chomp
+      line.gsub!(" ", "") 
       # skip
       next if line.start_with?('#') #comment
       next if line.empty? == true   #null
@@ -88,6 +89,9 @@ module AnsibleSpec
     k_parent = k.gsub(search,'')
     arry = Array.new
     hash["#{k}"].each{|group|
+      if (group.class != String)
+        group = group["name"]
+      end
       arry = arry + hash["#{group}"]
     }
     h = Hash.new
