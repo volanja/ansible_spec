@@ -459,7 +459,13 @@ module AnsibleSpec
 
     # site vars
     if p[group_idx].has_key?('vars')
-      vars = merge_variables(vars, p[group_idx]['vars'])
+      if p[group_idx]['vars'].class == Array
+        for hash in p[group_idx]['vars']
+          vars = merge_variables(vars, hash)
+        end
+      else
+        vars = merge_variables(vars, p[group_idx]['vars'])
+      end
     end
 
     # roles vars
