@@ -1,3 +1,6 @@
+# v0.2.22
+- Merge [#111 fix sudo directive for after Ansible 1.9](https://github.com/volanja/ansible_spec/pull/111) by [katsuhisa91](https://github.com/katsuhisa91)
+
 # v0.2.21
 - Merge [#103 Parse the full included playbook](https://github.com/volanja/ansible_spec/pull/103) by [agx](https://github.com/agx)
 
