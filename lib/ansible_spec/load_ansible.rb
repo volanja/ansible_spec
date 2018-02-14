@@ -151,6 +151,8 @@ module AnsibleSpec
         host['uri'] = v
       else
         key,value = v.split("=")
+        # ensure superfluous quotes are removed
+        value.gsub! /'|"/, ''
         host['port'] = value.to_i if key == "ansible_ssh_port" or key == "ansible_port"
         host['private_key'] = value if key == "ansible_ssh_private_key_file"
         host['user'] = value if key == "ansible_ssh_user" or key == "ansible_user"
