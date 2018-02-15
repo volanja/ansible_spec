@@ -46,7 +46,7 @@ describe 'ssh' do
       expect(v.keys).to eq '~/.ssh/id_rsa'
     end
 
-    it '192.168.0.5 ansible_ssh_user=git' do
+    it '192.168.0.5 ansible_ssh_user=\'git\'' do
       v = @h["task_4"]
       expect(v.user).to eq 'git'
       expect(v.host).to eq '192.168.0.5'
@@ -194,14 +194,14 @@ EOF
 192.168.0.2 ansible_ssh_port=22
 192.168.0.3:5309
 192.168.0.4 ansible_ssh_private_key_file=~/.ssh/id_rsa
-192.168.0.5 ansible_ssh_user=git
+192.168.0.5 ansible_ssh_user='git'
 jumper ansible_ssh_port=5555 ansible_ssh_host=192.168.1.50
 www[01:02].example.com
 db-[a:b].example.com
 192.168.1.3 ansible_connection=winrm ansible_ssh_port=5985 ansible_ssh_user=administrator ansible_ssh_pass=Passw0rd
 # Ansible 2.0
 192.168.10.2 ansible_port=2222
-192.168.10.5 ansible_user=git
+192.168.10.5 ansible_user="git"
 jumper2 ansible_port=5555 ansible_host=192.168.10.50
 EOF
 
