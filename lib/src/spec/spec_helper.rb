@@ -40,9 +40,9 @@ when 'ssh'
     options = Net::SSH::Config.for(host,files=[ssh_config_file])
   end
 
-  options[:user] = ENV['TARGET_USER']
-  options[:port] = ENV['TARGET_PORT']
-  options[:keys] = ENV['TARGET_PRIVATE_KEY']
+  options[:user] = ENV['TARGET_USER'] || options[:user]
+  options[:port] = ENV['TARGET_PORT'] || options[:port]
+  options[:keys] = ENV['TARGET_PRIVATE_KEY'] || options[:keys]
 
   set :host,        options[:host_name] || host
   set :ssh_options, options
