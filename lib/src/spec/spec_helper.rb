@@ -34,15 +34,16 @@ when 'ssh'
     set :become_password, ENV['BECOME_PASSWORD']
   end
 
-  unless ssh_config_file
-    options = Net::SSH::Config.for(host)
-  else
-    options = Net::SSH::Config.for(host,files=[ssh_config_file])
-  end
+  options = Net::SSH::Config.for(host)
 
-  options[:user] ||= ENV['TARGET_USER']
-  options[:port] ||= ENV['TARGET_PORT']
-  options[:keys] ||= ENV['TARGET_PRIVATE_KEY']
+  options[:user] = ENV['TARGET_USER'] || options[:user]
+  options[:port] = ENV['TARGET_PORT'] || options[:port]
+  options[:keys] = ENV['TARGET_PRIVATE_KEY'] || options[:keys]
+
+  if ssh_config_file
+    from_config_file = Net::SSH::Config.for(host,files=[ssh_config_file])
+    options.merge!(from_config_file)
+  end
 
   set :host,        options[:host_name] || host
   set :ssh_options, options
