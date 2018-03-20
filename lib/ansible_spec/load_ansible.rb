@@ -234,6 +234,10 @@ module AnsibleSpec
           YAML.load_file(site["include"]).each { |site|
             properties.push site
           }
+      elsif site.has_key?("import_playbook")
+          YAML.load_file(site["import_playbook"]).each { |site|
+            properties.push site
+          }
       else
         properties.push site
       end
