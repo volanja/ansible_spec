@@ -576,13 +576,13 @@ EOF
       tmp_pb = 'site.yml'
       tmp_inc = 'nginx.yml'
       before do
-        content_pb = <<'EOF'
+        content_pb = <<"EOF"  # ヒアドキュメント内で変数展開する時は""(double quote)で囲む。
 - name: Ansible-Sample-TDD
   hosts: server
   user: root
   roles:
     - mariadb
-- include: nginx.yml
+- #{action}: nginx.yml
 EOF
         create_file(tmp_pb,content_pb)
 
