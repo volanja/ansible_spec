@@ -1,3 +1,7 @@
+# v0.2.23
+- Merge [#115 Support import_playbook](https://github.com/volanja/ansible_spec/pull/115) by [seiji](https://github.com/seiji)
+- Merge [#113 Make ENV variables override SSH config file options](https://github.com/volanja/ansible_spec/pull/113) by [Jonnymcc](https://github.com/Jonnymcc)
+
 # v0.2.22
 - Merge [#111 fix sudo directive for after Ansible 1.9](https://github.com/volanja/ansible_spec/pull/111) by [katsuhisa91](https://github.com/katsuhisa91)
 
