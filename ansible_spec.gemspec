@@ -28,5 +28,6 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "oj"
   gem.add_runtime_dependency "winrm"
   gem.add_runtime_dependency "inifile"
+  gem.add_runtime_dependency "ansible-vault"
 
 end
