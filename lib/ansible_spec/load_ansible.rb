@@ -5,6 +5,7 @@ require 'open3'
 require 'yaml'
 require 'inifile'
 require 'ansible_spec/vendor/hash'
+require 'ansible/vault'
 
 module AnsibleSpec
   # param: inventory file of Ansible
@@ -347,9 +348,18 @@ module AnsibleSpec
       if File.directory?(vars_file)
         Dir.glob(File.join(vars_file, '*')).each { |f|
           vars = load_vars_file(vars, f)
-	}
+	      }
       else
-        yaml = YAML.load_file(vars_file)
+        if Ansible::Vault.encrypted?(vars_file)
+          cfg = AnsibleSpec::AnsibleCfg.new
+          vault_password_file = cfg.get('defaults', 'vault_password_file')
+          if vault_password_file
+            vault_password = File.open(vault_password_file).read.chomp
+            yaml = YAML.load(Ansible::Vault.read(path: vars_file, password: vault_password))
+            end
+        else
+          yaml = YAML.load_file(vars_file)
+        end
         vars = merge_variables(vars, yaml)
       end
     end
