@@ -356,7 +356,7 @@ module AnsibleSpec
           if vault_password_file
             vault_password = File.open(vault_password_file).read.chomp
             yaml = YAML.load(Ansible::Vault.read(path: vars_file, password: vault_password))
-            end
+          end
         else
           yaml = YAML.load_file(vars_file)
         end
