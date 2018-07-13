@@ -291,6 +291,40 @@ describe "get_hash_behaviourの実行" do
     end
   end
 
+  context 'Correct operation : resolve variables' do
+    before do
+      @current_dir = Dir.pwd()
+      Dir.chdir('spec/case/get_variable/resolve_variables/')
+      @res = AnsibleSpec.get_variables('192.168.1.1', 0)
+    end
+  
+    it 'res is hash' do
+      expect(@res.instance_of?(Hash)).to be_truthy
+    end
+  
+    it 'exists five pairs in Hash' do
+      expect(@res.length).to eq 11
+    end
+  
+    it 'exist all pairs' do
+      expect(@res).to include({'var_nested_one_1' => 'val_nested_one'})
+      expect(@res).to include({'var_nested_one_2' => 'val_nested_one'})
+      expect(@res).to include({'var_nested_two_1' => 'val_nested_two'})
+      expect(@res).to include({'var_nested_two_2' => 'val_nested_two'})
+      expect(@res).to include({'var_nested_two_3' => 'val_nested_two'})
+      expect(@res).to include({'var_nested_hash_1' => 'val_hash'})
+      expect(@res).to include({'var_nested_hash_2' => {'key' => 'val_hash'}})
+      expect(@res).to include({'var_nested_array_1' => 'val_array'})
+      expect(@res).to include({'var_nested_array_2' => ['val_array']})
+      expect(@res).to include({'var_nested_array_hash_1' => 'val_array_hash'})
+      expect(@res).to include({'var_nested_array_hash_2' => [{'key' => 'val_array_hash'}]})
+    end
+  
+    after do
+      Dir.chdir(@current_dir)
+    end
+  end  
+
   context 'Correct operation : mistake word in ENV["HASH_BEHAVIOUR"]' do
     before do
       ENV["HASH_BEHAVIOUR"] = 'mistake_word'
