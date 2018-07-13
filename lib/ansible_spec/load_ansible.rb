@@ -430,6 +430,21 @@ module AnsibleSpec
       }
       target_host.keys[0]
   end
+  
+  def self.resolve_variables(vars, max_level=100)
+    vars_yaml = vars.to_yaml
+    level = 0
+    begin
+      found_template = false
+      level += 1
+      vars_yaml.gsub!(/{{.*?}}/) do |template|
+        found_template = true
+        extracted = template.gsub(/{{\s*(.*?)\s*}}/, '\1')
+        vars[extracted]
+      end
+    end while found_template and level <= max_level
+    return YAML.load(vars_yaml)
+  end
 
   def self.get_variables(host, group_idx, hosts=nil)
     vars = {}
@@ -479,7 +494,7 @@ module AnsibleSpec
       end
     end
 
-    return vars
+    return resolve_variables(vars)
 
   end
 
