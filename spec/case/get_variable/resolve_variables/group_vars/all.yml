@@ -20,3 +20,5 @@ var_nested_array_hash_2:
 
 var_nested_whitespace_1: val_nested_whitespace
 var_nested_whitespace_2: "{{var_nested_whitespace_1  }}"
+
+var_missingtarget_2: "{{ var_missingtarget_1 }}"
