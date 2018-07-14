@@ -302,8 +302,8 @@ describe "get_hash_behaviourの実行" do
       expect(@res.instance_of?(Hash)).to be_truthy
     end
   
-    it 'exists five pairs in Hash' do
-      expect(@res.length).to eq 13
+    it 'exist fourteen pairs in Hash' do
+      expect(@res.length).to eq 14
     end
   
     it 'exist all pairs' do
@@ -320,6 +320,7 @@ describe "get_hash_behaviourの実行" do
       expect(@res).to include({'var_nested_array_hash_2' => [{'key' => 'val_array_hash'}]})
       expect(@res).to include({'var_nested_whitespace_1' => 'val_nested_whitespace'})
       expect(@res).to include({'var_nested_whitespace_2' => 'val_nested_whitespace'})
+      expect(@res).to include({'var_missingtarget_2' => '{{ var_missingtarget_1 }}'})
     end
   
     after do
@@ -529,29 +530,4 @@ describe "load_vars_fileの実行" do
     end
   end
 
-  context 'Correct operation : vaults in directory' do
-    before do
-      @current_dir = Dir.pwd()
-      Dir.chdir('spec/case/load_vars_file/vault_dir/')
-      vars = Hash.new
-      file = 'group_vars/all'
-      @res = AnsibleSpec.load_vars_file(vars, file)
-    end
-
-    it 'res is hash' do
-      expect(@res.instance_of?(Hash)).to be_truthy
-    end
-
-    it 'exists one pair in Hash' do
-      expect(@res.length).to eq 1
-    end
-
-    it 'exists the pair' do
-      expect(@res).to include({'vault_var' => 'val'})
-    end
-
-    after do
-      Dir.chdir(@current_dir)
-    end
-  end
 end

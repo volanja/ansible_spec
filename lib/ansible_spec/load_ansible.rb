@@ -430,7 +430,12 @@ module AnsibleSpec
       }
       target_host.keys[0]
   end
-  
+
+  def self.print_exception(exception, explicit)
+    puts "[#{explicit ? 'EXPLICIT' : 'INEXPLICIT'}] #{exception.class}: #{exception.message}"
+    puts exception.backtrace.join("\n")
+  end
+ 
   # query replace jinja2 templates with target values 
   # param: hash (cf. result self.get_variables)
   # param: number of iterations if found_template
@@ -446,7 +451,6 @@ module AnsibleSpec
       # replace in-place (gsub!)
       # use non-greedy regex (.*?)
       vars_yaml.gsub!(/{{.*?}}/) do |template|
-        found_template = true
 
         # grab target variable
         # ignore whitespaces (\s*)
@@ -454,7 +458,16 @@ module AnsibleSpec
         target = template.gsub(/{{\s*(.*?)\s*}}/, '\1')
         
         # lookup value of target variable
-        vars[target]
+        value = vars[target]
+        
+        # return lookup value if it exists
+        # or leave template alone  
+        if value.nil? 
+          template
+        else 
+          found_template = true
+          value
+        end
       end
     end while found_template and level <= max_level
     return YAML.load(vars_yaml)
