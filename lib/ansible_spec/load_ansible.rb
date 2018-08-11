@@ -431,11 +431,6 @@ module AnsibleSpec
       target_host.keys[0]
   end
 
-  def self.print_exception(exception, explicit)
-    puts "[#{explicit ? 'EXPLICIT' : 'INEXPLICIT'}] #{exception.class}: #{exception.message}"
-    puts exception.backtrace.join("\n")
-  end
- 
   # query replace jinja2 templates with target values 
   # param: hash (cf. result self.get_variables)
   # param: number of iterations if found_template
