@@ -347,7 +347,7 @@ module AnsibleSpec
       if File.directory?(vars_file)
         Dir.glob(File.join(vars_file, '*')).each { |f|
           vars = load_vars_file(vars, f)
-	}
+	      }
       else
         yaml = YAML.load_file(vars_file)
         vars = merge_variables(vars, yaml)
@@ -431,6 +431,43 @@ module AnsibleSpec
       target_host.keys[0]
   end
 
+  # query replace jinja2 templates with target values 
+  # param: hash (cf. result self.get_variables)
+  # param: number of iterations if found_template
+  # return: hash
+  def self.resolve_variables(vars, max_level=100)
+    vars_yaml = vars.to_yaml
+    level = 0
+    begin
+      found_template = false
+      level += 1
+
+      # query replace jinja2 templates in yaml
+      # replace in-place (gsub!)
+      # use non-greedy regex (.*?)
+      vars_yaml.gsub!(/{{.*?}}/) do |template|
+
+        # grab target variable
+        # ignore whitespaces (\s*)
+        # use non-greedy regex (.*?)
+        target = template.gsub(/{{\s*(.*?)\s*}}/, '\1')
+        
+        # lookup value of target variable
+        value = vars[target]
+        
+        # return lookup value if it exists
+        # or leave template alone  
+        if value.nil? 
+          template
+        else 
+          found_template = true
+          value
+        end
+      end
+    end while found_template and level <= max_level
+    return YAML.load(vars_yaml)
+  end
+
   def self.get_variables(host, group_idx, hosts=nil)
     vars = {}
     p = self.get_properties
@@ -479,7 +516,7 @@ module AnsibleSpec
       end
     end
 
-    return vars
+    return resolve_variables(vars)
 
   end
 

@@ -14,11 +14,11 @@ describe "get_variablesの実行" do
       expect(@res.instance_of?(Hash)).to be_truthy
     end
 
-    it 'exist 3 pair in Hash' do
+    it 'exist three pairs in Hash' do
       expect(@res.length).to eq 3
     end
 
-    it 'exist each pair' do
+    it 'exists each pair' do
       expect(@res).to include({'role_var' => 'role_var in roles default'},
                               {'site_var' => 'site_var in roles default'},
                               {'host_var'=>'host_var in roles default'},
@@ -41,11 +41,11 @@ describe "get_variablesの実行" do
       expect(@res.instance_of?(Hash)).to be_truthy
     end
 
-    it 'exist 5 pair in Hash' do
+    it 'exist five pairs in Hash' do
       expect(@res.length).to eq 5
     end
 
-    it 'exist each pair' do
+    it 'exists each pair' do
       expect(@res).to include({'role_var' => 'group all'},
                               {'site_var' => 'group all'},
                               {'host_var'=>'group all'},
@@ -70,11 +70,11 @@ describe "get_variablesの実行" do
       expect(@res.instance_of?(Hash)).to be_truthy
     end
 
-    it 'exist 5 pair in Hash' do
+    it 'exist five pairs in Hash' do
       expect(@res.length).to eq 5
     end
 
-    it 'exist each pair' do
+    it 'exists each pair' do
       expect(@res).to include({'role_var' => 'group1'},
                               {'site_var' => 'group1'},
                               {'host_var'=>'group1'},
@@ -99,11 +99,11 @@ describe "get_variablesの実行" do
       expect(@res.instance_of?(Hash)).to be_truthy
     end
 
-    it 'exist 3 pair in Hash' do
+    it 'exist three pairs in Hash' do
       expect(@res.length).to eq 3
     end
 
-    it 'exist each pair' do
+    it 'exists each pair' do
       expect(@res).to include({'role_var' => 'host role_var'},  # in host_var/192.168.1.1.yml
                               {'site_var' => 'host site_var'},  # in host_var/192.168.1.1.yml
                               {'host_var'=>'host 192.168.1.1'}, # in host_var/192.168.1.1.yml
@@ -126,11 +126,11 @@ describe "get_variablesの実行" do
       expect(@res.instance_of?(Hash)).to be_truthy
     end
 
-    it 'exist 3 pair in Hash' do
+    it 'exist three pairs in Hash' do
       expect(@res.length).to eq 3
     end
 
-    it 'exist each pair' do
+    it 'exists each pair' do
       expect(@res).to include({'role_var' => 'host role_var'},  # in host_var/192.168.1.2.yml
                               {'site_var' => 'host site_var'},  # in host_var/192.168.1.2.yml
                               {'host_var'=>'host 192.168.1.2'}, # in host_var/192.168.1.2.yml
@@ -153,11 +153,11 @@ describe "get_variablesの実行" do
       expect(@res.instance_of?(Hash)).to be_truthy
     end
 
-    it 'exist 2 pair in Hash' do
+    it 'exist two pairs in Hash' do
       expect(@res.length).to eq 2
     end
 
-    it 'exist each pair' do
+    it 'exists each pair' do
       expect(@res).to include({'role_var' => 'site'},
                               {'site_var' => 'site'})
     end
@@ -178,11 +178,11 @@ describe "get_variablesの実行" do
       expect(@res.instance_of?(Hash)).to be_truthy
     end
 
-    it 'exist 5 pair in Hash' do
+    it 'exist five pairs in Hash' do
       expect(@res.length).to eq 5
     end
 
-    it 'exist each pair' do
+    it 'exists each pair' do
       expect(@res).to include({'role_var' => 'site'}, # site.yml
                               {'site_var' => 'site'}, # site.yml
                               {'host_var'=>'host 192.168.1.1'}, # in host_var/192.168.1.1.yml
@@ -207,11 +207,11 @@ describe "get_variablesの実行" do
       expect(@res.instance_of?(Hash)).to be_truthy
     end
 
-    it 'exist 5 pair in Hash' do
+    it 'exist five pairs in Hash' do
       expect(@res.length).to eq 5
     end
 
-    it 'exist each pair' do
+    it 'exists each pair' do
       expect(@res).to include({'role_var' => 'role'}, # in roles/test/vars/main.yml
                               {'site_var' => 'site'}, # site.yml
                               {'host_var'=>'host 192.168.1.1'}, # in host_var/192.168.1.1.yml
@@ -236,11 +236,11 @@ describe "get_variablesの実行" do
       expect(@res.instance_of?(Hash)).to be_truthy
     end
 
-    it 'exist 1 pair in Hash' do
+    it 'exists one pair in Hash' do
       expect(@res.length).to eq 1
     end
    
-    it 'exist each pair' do
+    it 'exists the pair' do
       expect(@res).to include({'merge_var' => {
                                 'keep'=>'role',
                                 'override'=>'site',
@@ -290,6 +290,43 @@ describe "get_hash_behaviourの実行" do
       Dir.chdir(@current_dir)
     end
   end
+
+  context 'Correct operation : resolve variables' do
+    before do
+      @current_dir = Dir.pwd()
+      Dir.chdir('spec/case/get_variable/resolve_variables/')
+      @res = AnsibleSpec.get_variables('192.168.1.1', 0)
+    end
+  
+    it 'res is hash' do
+      expect(@res.instance_of?(Hash)).to be_truthy
+    end
+  
+    it 'exist fourteen pairs in Hash' do
+      expect(@res.length).to eq 14
+    end
+  
+    it 'exist all pairs' do
+      expect(@res).to include({'var_nested_one_1' => 'val_nested_one'})
+      expect(@res).to include({'var_nested_one_2' => 'val_nested_one'})
+      expect(@res).to include({'var_nested_two_1' => 'val_nested_two'})
+      expect(@res).to include({'var_nested_two_2' => 'val_nested_two'})
+      expect(@res).to include({'var_nested_two_3' => 'val_nested_two'})
+      expect(@res).to include({'var_nested_hash_1' => 'val_hash'})
+      expect(@res).to include({'var_nested_hash_2' => {'key' => 'val_hash'}})
+      expect(@res).to include({'var_nested_array_1' => 'val_array'})
+      expect(@res).to include({'var_nested_array_2' => ['val_array']})
+      expect(@res).to include({'var_nested_array_hash_1' => 'val_array_hash'})
+      expect(@res).to include({'var_nested_array_hash_2' => [{'key' => 'val_array_hash'}]})
+      expect(@res).to include({'var_nested_whitespace_1' => 'val_nested_whitespace'})
+      expect(@res).to include({'var_nested_whitespace_2' => 'val_nested_whitespace'})
+      expect(@res).to include({'var_missingtarget_2' => '{{ var_missingtarget_1 }}'})
+    end
+  
+    after do
+      Dir.chdir(@current_dir)
+    end
+  end  
 
   context 'Correct operation : mistake word in ENV["HASH_BEHAVIOUR"]' do
     before do
@@ -390,7 +427,7 @@ describe 'merge_variablesの実行' do
       expect(@res.instance_of?(Hash)).to be_truthy
     end
 
-    it 'exist 1 pair in Hash' do
+    it 'exists one pair in Hash' do
       expect(@res.length).to eq 1
     end
 
@@ -425,11 +462,11 @@ describe "load_vars_fileの実行" do
       expect(@res.instance_of?(Hash)).to be_truthy
     end
 
-    it 'exist 1 pair in Hash' do
+    it 'exist one pair in Hash' do
       expect(@res.length).to eq 1
     end
 
-    it 'exist each pair' do
+    it 'exists the pair' do
       expect(@res).to include({'role_var' => 'without .yml extension'})
     end
 
@@ -453,11 +490,11 @@ describe "load_vars_fileの実行" do
       expect(@res.instance_of?(Hash)).to be_truthy
     end
 
-    it 'exist 1 pair in Hash' do
+    it 'exists one pair in Hash' do
       expect(@res.length).to eq 1
     end
 
-    it 'exist each pair' do
+    it 'exists the pair' do
       expect(@res).to include({'role_var' => 'without .yml extension'})
     end
 
@@ -479,11 +516,11 @@ describe "load_vars_fileの実行" do
       expect(@res.instance_of?(Hash)).to be_truthy
     end
 
-    it 'exist 1 pair in Hash' do
+    it 'exist two pairs in Hash' do
       expect(@res.length).to eq 2
     end
 
-    it 'exist each pair' do
+    it 'exists each pair' do
       expect(@res).to include({'var1' => 'val1'})
       expect(@res).to include({'var2' => 'val2'})
     end
@@ -492,4 +529,5 @@ describe "load_vars_fileの実行" do
       Dir.chdir(@current_dir)
     end
   end
+
 end
