@@ -1,3 +1,6 @@
+# v0.2.24
+- Merge [#117 Feature resolve variables](https://github.com/volanja/ansible_spec/pull/117) by [RebelCodeBase](https://github.com/RebelCodeBase)
+
 # v0.2.23
 - Merge [#115 Support import_playbook](https://github.com/volanja/ansible_spec/pull/115) by [seiji](https://github.com/seiji)
 - Merge [#113 Make ENV variables override SSH config file options](https://github.com/volanja/ansible_spec/pull/113) by [Jonnymcc](https://github.com/Jonnymcc)
