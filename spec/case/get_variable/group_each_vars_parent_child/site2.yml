@@ -1,0 +1,6 @@
+- name: group2
+  hosts: group2
+  connection: local
+  roles:
+  - test
+  - test/nested

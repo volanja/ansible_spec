@@ -254,6 +254,114 @@ describe "get_variablesの実行" do
     end
   end
 
+  context 'Correct operation : group vars for group1 hosts ' do
+    before do
+      @current_dir = Dir.pwd()
+      Dir.chdir('spec/case/get_variable/group_each_vars_parent_child/')
+      ENV["PLAYBOOK"] = 'site1.yml'
+      ENV["INVENTORY"] = 'hosts'
+      ENV["VARS_DIRS_PATH"] = ''
+      @res = AnsibleSpec.get_variables("192.168.1.1", 0, "group1")
+    end
+
+    it 'res is hash' do
+      expect(@res.instance_of?(Hash)).to be_truthy
+    end
+
+    it 'exist 6 pair in Hash' do
+      expect(@res.length).to eq 6
+    end
+
+    it 'exist each pair' do
+      expect(@res).to include( {"role_var"=>"group1"},
+                               {"site_var"=>"group1"},
+                               {"host_var"=>"group1"},
+                               {"group_var"=>"group1"},
+                               {"group_var_parent"=>"parentgroup"},
+                               {"group_all_var"=>"group all"}
+                             )
+    end
+
+    after do
+      ENV.delete('PLAYBOOK')
+      ENV.delete('INVENTORY')
+      ENV.delete('VARS_DIRS_PATH')
+      Dir.chdir(@current_dir)
+    end
+  end
+
+  context 'Correct operation : group vars for group2 hosts ' do
+    before do
+      @current_dir = Dir.pwd()
+      Dir.chdir('spec/case/get_variable/group_each_vars_parent_child/')
+      ENV["PLAYBOOK"] = 'site2.yml'
+      ENV["INVENTORY"] = 'hosts'
+      ENV["VARS_DIRS_PATH"] = ''
+      @res = AnsibleSpec.get_variables("192.168.1.2", 0, "group2")
+    end
+
+    it 'res is hash' do
+      expect(@res.instance_of?(Hash)).to be_truthy
+    end
+
+    it 'exist 6 pair in Hash' do
+      expect(@res.length).to eq 6
+    end
+
+    it 'exist each pair' do
+      expect(@res).to include( {"role_var"=>"group2"},
+                               {"site_var"=>"group2"},
+                               {"host_var"=>"group2"},
+                               {"group_var"=>"group2"},
+                               {"group_var_parent"=>"parentgroup"},
+                               {"group_all_var"=>"group all"}
+                             )
+    end
+
+    after do
+      ENV.delete('PLAYBOOK')
+      ENV.delete('INVENTORY')
+      ENV.delete('VARS_DIRS_PATH')
+      Dir.chdir(@current_dir)
+    end
+  end
+
+  context 'Correct operation : group vars for parentgroup hosts ' do
+    before do
+      @current_dir = Dir.pwd()
+      Dir.chdir('spec/case/get_variable/group_each_vars_parent_child/')
+      ENV["PLAYBOOK"] = 'site3.yml'
+      ENV["INVENTORY"] = 'hosts'
+      ENV["VARS_DIRS_PATH"] = ''
+      @res = AnsibleSpec.get_variables("192.168.1.1", 0, "parentgroup")
+    end
+
+    it 'res is hash' do
+      expect(@res.instance_of?(Hash)).to be_truthy
+    end
+
+    it 'exist 6 pair in Hash' do
+      expect(@res.length).to eq 6
+    end
+
+    it 'exist each pair' do
+      expect(@res).to include( {"role_var"=>"parentgroup"},
+                               {"site_var"=>"parentgroup"},
+                               {"host_var"=>"parentgroup"},
+                               {"group_var"=>"parentgroup"},
+                               {"group_var_parent"=>"parentgroup"},
+                               {"group_all_var"=>"group all"}
+                             )
+    end
+
+    after do
+      ENV.delete('PLAYBOOK')
+      ENV.delete('INVENTORY')
+      ENV.delete('VARS_DIRS_PATH')
+      Dir.chdir(@current_dir)
+    end
+  end
+
 end
 
 describe "get_hash_behaviourの実行" do
