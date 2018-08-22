@@ -400,6 +400,43 @@ EOF
     end
   end
 
+  context 'load_targets:Return groups parent child relationships' do
+    tmp_hosts = 'hosts'
+    before do
+      content_h = <<'EOF'
+[server]
+192.168.0.103
+192.168.0.104 ansible_ssh_port=22
+
+[databases]
+192.168.0.105
+192.168.0.106 ansible_ssh_port=5555
+
+[pg:children]
+server
+databases
+EOF
+      create_file(tmp_hosts,content_h)
+      @res = AnsibleSpec.load_targets(tmp_hosts, return_type='groups_parent_child_relationships')
+    end
+
+    it 'res is hash' do
+      expect(@res.instance_of?(Hash)).to be_truthy
+    end
+
+    it 'exist 1 group parent child relationship in Hash' do
+      expect(@res.length).to eq 1
+    end
+
+    it 'exist each pair' do
+      expect(@res).to include({"pg"=>["server", "databases"]})
+    end
+
+    after do
+      File.delete(tmp_hosts)
+    end
+  end
+
 end
 
 describe "load_playbookの実行" do
