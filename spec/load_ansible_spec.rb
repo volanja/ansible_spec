@@ -400,7 +400,193 @@ EOF
     end
   end
 
-  context 'load_targets:Return groups parent child relationships' do
+  context 'load_targets:Test invalid return_type' do
+    tmp_hosts = 'hosts'
+    content_excpetion_msg = "Variable return_type must be value 'groups' or 'groups_parent_child_relationships'"
+    before do
+      content_h = <<'EOF'
+[server]
+192.168.0.103
+192.168.0.104 ansible_ssh_port=22
+
+[databases]
+192.168.0.105
+192.168.0.106 ansible_ssh_port=5555
+
+[pg:children]
+server
+databases
+EOF
+      create_file(tmp_hosts,content_h)
+      begin
+        @res = AnsibleSpec.load_targets(tmp_hosts, return_type='some_invalid_option')
+      rescue ArgumentError => e
+        @res = e.message
+      end
+    end
+
+    it 'res is string' do
+      expect(@res.instance_of?(String)).to be_truthy
+    end
+
+    it 'exist 1 string' do
+      expect(@res.length).to eq content_excpetion_msg.length
+    end
+
+    it 'exist string' do
+      expect(@res).to include(content_excpetion_msg)
+    end
+
+    after do
+      File.delete(tmp_hosts)
+    end
+  end
+
+  context 'load_targets:Return groups; default return_type (="groups")' do
+    tmp_hosts = 'hosts'
+    before do
+      content_h = <<'EOF'
+[server]
+192.168.0.103
+192.168.0.104 ansible_ssh_port=22
+
+[databases]
+192.168.0.105
+192.168.0.106 ansible_ssh_port=5555
+
+[pg:children]
+server
+databases
+EOF
+      create_file(tmp_hosts,content_h)
+      @res = AnsibleSpec.load_targets(tmp_hosts)
+    end
+
+    it 'res is hash' do
+      expect(@res.instance_of?(Hash)).to be_truthy
+    end
+
+    it 'exist 1 group' do
+      expect(@res.length).to eq 3
+    end
+
+    it 'exist group' do
+      expect(@res.key?('server')).to be_truthy
+      expect(@res.key?('databases')).to be_truthy
+      expect(@res.key?('pg')).to be_truthy
+      expect(@res.key?('pg:children')).not_to be_truthy
+    end
+
+    it 'pg 192.168.0.103' do
+      obj = @res['pg'][0]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj).to include({'name' => '192.168.0.103',
+                              'uri' => '192.168.0.103',
+                              'port' => 22})
+    end
+
+    it 'pg 192.168.0.104 ansible_ssh_port=22' do
+      obj = @res['pg'][1]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['name']).to eq '192.168.0.104 ansible_ssh_port=22'
+      expect(obj['uri']).to eq '192.168.0.104'
+      expect(obj['port']).to eq 22
+    end
+
+    it 'pg 192.168.0.105' do
+      obj = @res['pg'][2]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj).to include({'name' => '192.168.0.105',
+                              'uri' => '192.168.0.105',
+                              'port' => 22})
+    end
+
+    it 'pg 192.168.0.106 ansible_ssh_port=5555' do
+      obj = @res['pg'][3]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['name']).to eq '192.168.0.106 ansible_ssh_port=5555'
+      expect(obj['uri']).to eq '192.168.0.106'
+      expect(obj['port']).to eq 5555
+    end
+
+    after do
+      File.delete(tmp_hosts)
+    end
+  end
+
+  context 'load_targets:Return groups; return_type="groups"' do
+    tmp_hosts = 'hosts'
+    before do
+      content_h = <<'EOF'
+[server]
+192.168.0.103
+192.168.0.104 ansible_ssh_port=22
+
+[databases]
+192.168.0.105
+192.168.0.106 ansible_ssh_port=5555
+
+[pg:children]
+server
+databases
+EOF
+      create_file(tmp_hosts,content_h)
+      @res = AnsibleSpec.load_targets(tmp_hosts, return_type='groups')
+    end
+
+    it 'res is hash' do
+      expect(@res.instance_of?(Hash)).to be_truthy
+    end
+
+    it 'exist 1 group' do
+      expect(@res.length).to eq 3
+    end
+
+    it 'exist group' do
+      expect(@res.key?('server')).to be_truthy
+      expect(@res.key?('databases')).to be_truthy
+      expect(@res.key?('pg')).to be_truthy
+      expect(@res.key?('pg:children')).not_to be_truthy
+    end
+
+    it 'pg 192.168.0.103' do
+      obj = @res['pg'][0]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj).to include({'name' => '192.168.0.103',
+                              'uri' => '192.168.0.103',
+                              'port' => 22})
+    end
+
+    it 'pg 192.168.0.104 ansible_ssh_port=22' do
+      obj = @res['pg'][1]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['name']).to eq '192.168.0.104 ansible_ssh_port=22'
+      expect(obj['uri']).to eq '192.168.0.104'
+      expect(obj['port']).to eq 22
+    end
+
+    it 'pg 192.168.0.105' do
+      obj = @res['pg'][2]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj).to include({'name' => '192.168.0.105',
+                              'uri' => '192.168.0.105',
+                              'port' => 22})
+    end
+
+    it 'pg 192.168.0.106 ansible_ssh_port=5555' do
+      obj = @res['pg'][3]
+      expect(obj.instance_of?(Hash)).to be_truthy
+      expect(obj['name']).to eq '192.168.0.106 ansible_ssh_port=5555'
+      expect(obj['uri']).to eq '192.168.0.106'
+      expect(obj['port']).to eq 5555
+    end
+
+    after do
+      File.delete(tmp_hosts)
+    end
+  end
+
+  context 'load_targets:Return groups parent child relationships; return_type="groups_parent_child_relationships"' do
     tmp_hosts = 'hosts'
     before do
       content_h = <<'EOF'
