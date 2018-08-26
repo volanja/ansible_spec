@@ -88,12 +88,11 @@ module AnsibleSpec
       end
     }
 
+    return_value = groups # default
     if return_type == 'groups'
       return_value = groups
     elsif return_type == 'groups_parent_child_relationships'
       return_value = groups_parent_child_relationships
-    else
-      return_value = groups
     end
 
     return return_value
