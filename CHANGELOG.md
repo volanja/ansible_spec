@@ -1,3 +1,6 @@
+# v0.2.25
+- Merge [#118 Incorporate group parent child relationships into variable assignment hierarchy](https://github.com/volanja/ansible_spec/pull/118) by [rbramwell](https://github.com/rbramwell)
+
 # v0.2.24
 - Merge [#117 Feature resolve variables](https://github.com/volanja/ansible_spec/pull/117) by [RebelCodeBase](https://github.com/RebelCodeBase)
 
