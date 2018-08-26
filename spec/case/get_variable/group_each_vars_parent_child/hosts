@@ -1,0 +1,13 @@
+[group1]
+192.168.1.1
+
+[group2]
+192.168.1.2
+
+[all]
+192.168.1.1
+192.168.1.2
+
+[parentgroup:children]
+group1
+group2

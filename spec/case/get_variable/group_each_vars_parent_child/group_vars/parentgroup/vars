@@ -1,0 +1,5 @@
+role_var:  "parentgroup"
+site_var:  "parentgroup"
+host_var:  "parentgroup"
+group_var: 'parentgroup'
+group_var_parent: 'parentgroup'
