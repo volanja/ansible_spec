@@ -366,22 +366,37 @@ module AnsibleSpec
       if File.directory?(vars_file)
         Dir.glob(File.join(vars_file, '*')).each { |f|
           vars = load_vars_file(vars, f)
-	      }
+        }
       else
-        if Ansible::Vault.encrypted?(vars_file)
-          cfg = AnsibleSpec::AnsibleCfg.new
-          vault_password_file = cfg.get('defaults', 'vault_password_file')
-          if vault_password_file
-            vault_password = File.open(vault_password_file).read.chomp
-            yaml = YAML.load(Ansible::Vault.read(path: vars_file, password: vault_password))
+        # you can use Ansible::Vault when use ruby 2.1.0 and higher.
+        # Ansible::Vault support Ruby 2.1.0 and higher.
+        if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.1')
+          if Ansible::Vault.encrypted?(vars_file)
+            yaml = load_encrypted_file(vars_file)
+          else
+            yaml = YAML.load_file(vars_file)
           end
+          vars = merge_variables(vars, yaml)
         else
+          # Ruby 1.9 and 2.0
           yaml = YAML.load_file(vars_file)
+          vars = merge_variables(vars, yaml)
         end
-        vars = merge_variables(vars, yaml)
       end
     end
     return vars
+  end
+
+  # param: variable file
+  # return: be merged hash
+  def self.load_encrypted_file(vars_file)
+    cfg = AnsibleSpec::AnsibleCfg.new
+    vault_password_file = cfg.get('defaults', 'vault_password_file')
+    if vault_password_file
+      vault_password = File.open(vault_password_file).read.chomp
+      yaml = YAML.load(Ansible::Vault.read(path: vars_file, password: vault_password))
+    end
+    return yaml
   end
 
   # param: target hash
