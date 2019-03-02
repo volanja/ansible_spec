@@ -13,3 +13,8 @@ if Gem::Version.new(RUBY_VERSION.dup) <= Gem::Version.new('1.9.3')
   # winrm 2.1.1 dropped Ruby 1.9 support.
   gem 'winrm', '< 2.1.1'
 end
+
+if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.1')
+  # Ansible::Vault support Ruby 2.1.0 and higher.
+  gem 'ansible-vault'
+end
