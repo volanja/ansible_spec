@@ -9,9 +9,15 @@ require 'ansible/vault'
 
 module AnsibleSpec
   # param: inventory file of Ansible
+  # param: return_type 'groups' or 'groups_parent_child_relationships'
   # return: Hash {"group" => ["192.168.0.1","192.168.0.2"]}
   # return: Hash {"group" => [{"name" => "192.168.0.1","uri" => "192.168.0.1", "port" => 22},...]}
-  def self.load_targets(file)
+  # return: Hash {"pg" => ["server", "databases"]}
+  def self.load_targets(file, return_type = 'groups')
+    if not ['groups', 'groups_parent_child_relationships'].include?(return_type)
+      raise ArgumentError, "Variable return_type must be value 'groups' or 'groups_parent_child_relationships'"
+    end
+
     if File.executable?(file)
       return get_dynamic_inventory(file)
     end
@@ -68,8 +74,12 @@ module AnsibleSpec
 
     # parse children [group:children]
     search = Regexp.new(":children".to_s)
+    groups_parent_child_relationships = Hash.new
     groups.keys.each{|k|
       unless (k =~ search).nil?
+        # get parent child relationships
+        k_parent = k.gsub(search,'')
+        groups_parent_child_relationships["#{k_parent}"] = groups["#{k}"]
         # get group parent & merge parent
         groups.merge!(get_parent(groups,search,k))
         # delete group children
@@ -78,7 +88,15 @@ module AnsibleSpec
         end
       end
     }
-    return groups
+
+    return_value = groups # default
+    if return_type == 'groups'
+      return_value = groups
+    elsif return_type == 'groups_parent_child_relationships'
+      return_value = groups_parent_child_relationships
+    end
+
+    return return_value
   end
 
   # param  hash   {"server"=>["192.168.0.103"], "databases"=>["192.168.0.104"], "pg:children"=>["server", "databases"]}
@@ -441,6 +459,43 @@ module AnsibleSpec
       target_host.keys[0]
   end
 
+  # query replace jinja2 templates with target values 
+  # param: hash (cf. result self.get_variables)
+  # param: number of iterations if found_template
+  # return: hash
+  def self.resolve_variables(vars, max_level=100)
+    vars_yaml = vars.to_yaml
+    level = 0
+    begin
+      found_template = false
+      level += 1
+
+      # query replace jinja2 templates in yaml
+      # replace in-place (gsub!)
+      # use non-greedy regex (.*?)
+      vars_yaml.gsub!(/{{.*?}}/) do |template|
+
+        # grab target variable
+        # ignore whitespaces (\s*)
+        # use non-greedy regex (.*?)
+        target = template.gsub(/{{\s*(.*?)\s*}}/, '\1')
+        
+        # lookup value of target variable
+        value = vars[target]
+        
+        # return lookup value if it exists
+        # or leave template alone  
+        if value.nil? 
+          template
+        else 
+          found_template = true
+          value
+        end
+      end
+    end while found_template and level <= max_level
+    return YAML.load(vars_yaml)
+  end
+
   def self.get_variables(host, group_idx, hosts=nil)
     vars = {}
     p = self.get_properties
@@ -461,7 +516,21 @@ module AnsibleSpec
 
     # each group vars
     if p[group_idx].has_key?('group')
-      vars = load_vars_file(vars ,"#{vars_dirs_path}group_vars/#{p[group_idx]['group']}", true)
+      # get groups parent child relationships
+      playbook, inventoryfile = load_ansiblespec
+      groups_rels = load_targets(inventoryfile, return_type='groups_parent_child_relationships')
+      # get parental lineage
+      g = p[group_idx]['group']
+      groups_stack = Array.new
+      groups_stack << g
+      groups_rels.keys.each{|k|
+        groups_stack << k if (groups_rels[k].include?(g))
+      }
+      # get vars from parents groups then child group
+      groups_parents_then_child = groups_stack.reverse.flatten
+      groups_parents_then_child.each{|group|
+        vars = load_vars_file(vars ,"#{vars_dirs_path}group_vars/#{group}", true)
+      }
     end
 
     # each host vars
@@ -489,7 +558,7 @@ module AnsibleSpec
       end
     end
 
-    return vars
+    return resolve_variables(vars)
 
   end
 

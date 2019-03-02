@@ -1,0 +1,24 @@
+---
+var_nested_one_1: 'val_nested_one'
+var_nested_one_2: "{{ var_nested_one_1 }}"
+
+var_nested_two_1: 'val_nested_two'
+var_nested_two_2: "{{ var_nested_two_1 }}"
+var_nested_two_3: "{{ var_nested_two_2 }}"
+
+var_nested_hash_1: 'val_hash'
+var_nested_hash_2:
+  key: "{{ var_nested_hash_1 }}"
+
+var_nested_array_1: 'val_array'
+var_nested_array_2:
+  - "{{ var_nested_array_1 }}"
+
+var_nested_array_hash_1: 'val_array_hash'
+var_nested_array_hash_2:
+  - key: "{{ var_nested_array_hash_1 }}"
+
+var_nested_whitespace_1: val_nested_whitespace
+var_nested_whitespace_2: "{{var_nested_whitespace_1  }}"
+
+var_missingtarget_2: "{{ var_missingtarget_1 }}"
