@@ -5,7 +5,9 @@ require 'open3'
 require 'yaml'
 require 'inifile'
 require 'ansible_spec/vendor/hash'
-require 'ansible/vault'
+if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.1')
+  require 'ansible/vault'
+end
 
 module AnsibleSpec
   # param: inventory file of Ansible
