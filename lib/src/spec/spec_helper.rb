@@ -23,15 +23,16 @@ when 'ssh'
 #
   set :backend, :ssh
 
+  # Ansible use `BECOME`, But Serverspec use `SUDO`.
   if ENV['ASK_BECOME_PASSWORD']
     begin
       require 'highline/import'
     rescue LoadError
       fail "highline is not available. Try installing it."
     end
-    set :become_password, ask("Enter become password: ") { |q| q.echo = false }
+    set :sudo_password, ask("Enter become password: ") { |q| q.echo = false }
   else
-    set :become_password, ENV['BECOME_PASSWORD']
+    set :sudo_password, ENV['BECOME_PASSWORD']
   end
 
   options = Net::SSH::Config.for(host)
@@ -48,8 +49,8 @@ when 'ssh'
   set :host,        options[:host_name] || host
   set :ssh_options, options
 
-  # Disable become
-  # set :become, false
+  # Disable become (Serverspec use sudo)
+  # set :disable_sudo, true
 
 
   # Set environment variables
