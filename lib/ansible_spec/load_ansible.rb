@@ -161,6 +161,7 @@ module AnsibleSpec
     # 初期値
     host['name'] = line
     host['port'] = 22
+    host['connection'] = "ssh"
     if line.include?(":") # 192.168.0.1:22
       host['uri']  = line.split(":")[0]
       host['port'] = line.split(":")[1].to_i
