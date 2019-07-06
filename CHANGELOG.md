@@ -1,3 +1,10 @@
+# v0.3
+- Support Ansible Vault  (Run Ruby 2.1.0 and higher.)
+ - Merge [#116 Feature ansible vault](https://github.com/volanja/ansible_spec/pull/116) by [RebelCodeBase](https://github.com/RebelCodeBase)
+ - Merge [#123 skip test at unsupported version ref ansible vault](https://github.com/volanja/ansible_spec/pull/123) by volanja
+
+And Some Bug Fixed. See [Milestone v0.3](https://github.com/volanja/ansible_spec/milestone/13?closed=1)
+
 # v0.2.25
 - Merge [#118 Incorporate group parent child relationships into variable assignment hierarchy](https://github.com/volanja/ansible_spec/pull/118) by [rbramwell](https://github.com/rbramwell)
 
