@@ -1,4 +1,5 @@
 language: ruby
+dist: trusty  # work at Ubuntu 14.04 for install Ruby 1.9.3
 sudo: false
 rvm:
   - 1.9.3
