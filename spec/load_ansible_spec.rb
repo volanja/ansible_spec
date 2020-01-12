@@ -1801,4 +1801,72 @@ EOF
       File.delete(tmp_hosts)
     end
   end
+
+  context 'Issue 126 Array Error' do
+    require 'yaml'
+    tmp_ansiblespec = '.ansiblespec'
+    tmp_playbook = 'site.yml'
+    tmp_hosts = 'hosts'
+
+    before do
+
+      content = <<'EOF'
+---
+-
+  playbook: site.yml
+  inventory: hosts
+EOF
+
+      content_p = <<'EOF'
+- name: Ansible-Sample-TDD-1
+  hosts:
+    - server
+  user: root
+  roles:
+    - role: nginx
+EOF
+
+      content_h = <<'EOF'
+[server]
+host1
+ host2
+host3	
+	host4
+	host5	
+EOF
+
+      create_file(tmp_ansiblespec,content)
+      create_file(tmp_playbook,content_p)
+      create_file(tmp_hosts,content_h)
+      @res = AnsibleSpec.get_properties
+    end
+
+    it 'check 5 hosts' do
+      expect(@res[0]["hosts"].length).to eq 5
+    end
+
+    it 'check host1' do
+      expect(@res[0]["hosts"][0]["name"]).to eq "host1"
+    end
+
+    it 'check host2' do
+      expect(@res[0]["hosts"][1]["name"]).to eq "host2" #not " host2"
+    end
+    it 'check host3' do
+      expect(@res[0]["hosts"][2]["name"]).to eq "host3" #not "host3\t"
+    end
+    it 'check host4' do
+      expect(@res[0]["hosts"][3]["name"]).to eq "host4" #not "\thost4"
+    end
+
+    it 'check host5' do
+      expect(@res[0]["hosts"][4]["name"]).to eq "host5" #not "\thost5\t"
+    end
+
+    after do
+      File.delete(tmp_ansiblespec)
+      File.delete(tmp_playbook)
+      File.delete(tmp_hosts)
+    end
+  end
 end
