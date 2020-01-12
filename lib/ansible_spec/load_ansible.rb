@@ -29,7 +29,7 @@ module AnsibleSpec
     hosts = Hash.new
     hosts.default = Hash.new
     f.each_line{|line|
-      line = line.chomp
+      line = line.strip
       # skip
       next if line.start_with?('#') #comment
       next if line.empty? == true   #null
