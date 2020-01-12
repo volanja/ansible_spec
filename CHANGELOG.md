@@ -1,3 +1,6 @@
+# v0.3.1
+- Fix [#126 no implicit conversion of nil into Array Error when process get_parent](https://github.com/volanja/ansible_spec/issues/126) by [shogos3](https://github.com/shogos3)
+
 # v0.3
 - Support Ansible Vault  (Run Ruby 2.1.0 and higher.)
  - Merge [#116 Feature ansible vault](https://github.com/volanja/ansible_spec/pull/116) by [RebelCodeBase](https://github.com/RebelCodeBase)
