@@ -9,7 +9,7 @@ if Gem::Version.new(RUBY_VERSION.dup) < Gem::Version.new('2.0.0')
 end
 
 if Gem::Version.new(RUBY_VERSION.dup) <= Gem::Version.new('1.9.3')
-  gem 'json', '~> 1.8.3'
+  # gem 'json', '~> 1.8.3'
   # winrm 2.1.1 dropped Ruby 1.9 support.
   gem 'winrm', '< 2.1.1'
 end
