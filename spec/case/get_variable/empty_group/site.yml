@@ -1,0 +1,9 @@
+---
+- name: playbook_a
+  hosts: group_a
+  roles:
+    - role_a
+- name: playbook_b
+  hosts: group_b
+  roles:
+    - role_b

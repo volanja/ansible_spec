@@ -362,6 +362,45 @@ describe "get_variablesの実行" do
     end
   end
 
+  # Fixed a problem that there is a gap between Index passed from Rakefile when empty group exists. by #135
+  # cat hosts
+  # [group_a]  #no host
+  # [group_b]
+  # localhost.localdomain ansible_ssh_private_key_file=~/.ssh/id_rsa
+
+  context 'Correct operation : empty group PR #135 ' do
+    before do
+      @current_dir = Dir.pwd()
+      Dir.chdir('spec/case/get_variable/empty_group')
+      ENV["PLAYBOOK"] = 'site.yml'
+      ENV["INVENTORY"] = 'hosts'
+      ENV["VARS_DIRS_PATH"] = ''
+      @res = AnsibleSpec.get_variables("localhost.localdomain", 0)
+    end
+
+    it 'res is hash' do
+      expect(@res.instance_of?(Hash)).to be_truthy
+    end
+
+    it 'exist 1 pair in Hash' do
+      expect(@res.length).to eq 1
+    end
+
+    it 'get correct variable' do
+      expect(@res).to eq("group_b_var" => "fuga")
+    end
+
+    it 'not get incorrect variables' do
+      expect(@res).not_to eq("group_a_var" => "hoge")
+    end
+
+    after do
+      ENV.delete('PLAYBOOK')
+      ENV.delete('INVENTORY')
+      ENV.delete('VARS_DIRS_PATH')
+      Dir.chdir(@current_dir)
+    end
+  end
 end
 
 describe "get_hash_behaviourの実行" do

@@ -516,7 +516,7 @@ module AnsibleSpec
 
   def self.get_variables(host, group_idx, hosts=nil)
     vars = {}
-    p = self.get_properties
+    p = self.get_properties.compact.reject{|e| e["hosts"].length == 0}
 
     # roles default
     p[group_idx]['roles'].each do |role|
