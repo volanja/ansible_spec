@@ -1,3 +1,6 @@
+# v0.3.2
+- Merge [#135 Fix wrong index by empty group](https://github.com/volanja/ansible_spec/pull/135) by [mamiya312](https://github.com/mamiya312)
+
 # v0.3.1
 - Fix [#126 no implicit conversion of nil into Array Error when process get_parent](https://github.com/volanja/ansible_spec/issues/126) by [shogos3](https://github.com/shogos3)
 
