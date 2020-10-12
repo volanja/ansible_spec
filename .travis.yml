@@ -1,6 +1,7 @@
 language: ruby
 dist: trusty  # work at Ubuntu 14.04 for install Ruby 1.9.3
 sudo: false
+# https://rubies.travis-ci.org/
 rvm:
   - 1.9.3
   - 2.0.0
@@ -10,6 +11,6 @@ rvm:
   - 2.4.10
   - 2.5.8
   - 2.6.6
-  - 2.7.1
+  - 2.7.2
 script:
     - rspec spec
