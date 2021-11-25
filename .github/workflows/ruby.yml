@@ -33,5 +33,10 @@ jobs:
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
     - name: Install dependencies
       run: bundle install --jobs=3 --retry=3
+    - name: check env
+      run: |
+        gem list
+        which rspec
+        env
     - name: Run tests
       run: rspec spec
