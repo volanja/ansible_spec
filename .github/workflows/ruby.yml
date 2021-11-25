@@ -35,8 +35,6 @@ jobs:
       run: bundle install --jobs=3 --retry=3
     - name: check env
       run: |
-        gem list
-        which rspec
-        env
+        bundle list
     - name: Run tests
-      run: rspec spec
+      run: bundle exec rspec spec
