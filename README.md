@@ -1,7 +1,6 @@
 # ansible_spec
 
 [![Gem Version](https://badge.fury.io/rb/ansible_spec.svg)](https://badge.fury.io/rb/ansible_spec)
-[![Build Status](https://travis-ci.org/volanja/ansible_spec.svg?branch=master)](https://travis-ci.org/volanja/ansible_spec)
 [![build](https://github.com/volanja/ansible_spec/actions/workflows/build.yml/badge.svg)](https://github.com/volanja/ansible_spec/actions/workflows/build.yml)
 
 This is a Ruby gem that implements an Ansible Config Parser for Serverspec.
@@ -337,3 +336,6 @@ To contribute your change, create a GitHub pull request as follows:
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request at https://github.com/volanja/ansible_spec
+
+# Old CI
+[Travis CI - volanja/ansible_spec](https://travis-ci.org/github/volanja/ansible_spec)
