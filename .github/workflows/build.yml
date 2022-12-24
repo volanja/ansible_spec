@@ -19,10 +19,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby-version: ['2.1.9', '2.2.10', '2.3.8', '2.4.10', '2.5.9', '2.6.9', '2.7.5', '3.0.3']
+        # https://github.com/ruby/setup-ruby#supported-versions
+        # EOL >= 2.6
+        ruby-version: ['2.6.10', '2.7.7', '3.0.5']
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Ruby
     # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
     # change this to (see https://github.com/ruby/setup-ruby#versioning):
@@ -30,6 +32,8 @@ jobs:
       #uses: ruby/setup-ruby@473e4d8fe5dd94ee328fdfca9f8c9c7afc9dae5e
       with:
         ruby-version: ${{ matrix.ruby-version }}
+        # 'latest', the latest compatible Bundler version is installed (Bundler 2 on Ruby >= 2.3, Bundler 1 on Ruby < 2.3).
+        bundler: latest
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
     - name: Install dependencies
       run: bundle install --jobs=3 --retry=3
