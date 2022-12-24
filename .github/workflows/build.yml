@@ -32,6 +32,8 @@ jobs:
       #uses: ruby/setup-ruby@473e4d8fe5dd94ee328fdfca9f8c9c7afc9dae5e
       with:
         ruby-version: ${{ matrix.ruby-version }}
+        # 'latest', the latest compatible Bundler version is installed (Bundler 2 on Ruby >= 2.3, Bundler 1 on Ruby < 2.3).
+        bundler: latest
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
     - name: Install dependencies
       run: bundle install --jobs=3 --retry=3
