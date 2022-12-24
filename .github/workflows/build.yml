@@ -36,7 +36,8 @@ jobs:
         bundler: '1.3'
         bundler-cache: false # runs 'bundle install' and caches installed gems automatically
     - name: Install dependencies
-      run: bundle install --jobs=3 --retry=3
+      # run: bundle install --jobs=3 --retry=3
+      run: bundle install
     - name: check env
       run: |
         bundle list
