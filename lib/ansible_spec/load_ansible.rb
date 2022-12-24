@@ -250,6 +250,12 @@ module AnsibleSpec
       puts "Error: No data in #{f}"
       exit
     end
+    # for Ruby 3.1.
+    if playbook.nil?
+      puts "Error: No data in #{f}"
+      exit
+    end
+
     properties = Array.new
     playbook.each do |site|
       if site.has_key?("include")
