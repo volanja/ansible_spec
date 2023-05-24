@@ -483,41 +483,59 @@ module AnsibleSpec
       target_host.keys[0]
   end
 
-  # query replace jinja2 templates with target values 
-  # param: hash (cf. result self.get_variables)
-  # param: number of iterations if found_template
-  # return: hash
-  def self.resolve_variables(vars, max_level=100)
-    vars_yaml = vars.to_yaml
-    level = 0
-    begin
-      found_template = false
-      level += 1
-
-      # query replace jinja2 templates in yaml
-      # replace in-place (gsub!)
-      # use non-greedy regex (.*?)
-      vars_yaml.gsub!(/{{.*?}}/) do |template|
-
-        # grab target variable
-        # ignore whitespaces (\s*)
-        # use non-greedy regex (.*?)
-        target = template.gsub(/{{\s*(.*?)\s*}}/, '\1')
-        
-        # lookup value of target variable
-        value = vars[target]
-        
-        # return lookup value if it exists
-        # or leave template alone  
-        if value.nil? 
-          template
-        else 
-          found_template = true
-          value
-        end
+  def self._resolve_variables(value, vars)
+    if value.is_a?(Hash)
+      return_value = {}
+      value.each do |k, v|
+        return_value[k] = _resolve_variables(v, vars)
       end
-    end while found_template and level <= max_level
-    return YAML.load(vars_yaml)
+      return return_value
+    end
+    if value.is_a?(Array)
+      return_value = []
+      value.each do |v|
+        return_value.append(_resolve_variables(v, vars))
+      end
+      return return_value
+    end
+    if value.is_a?(String)
+      value.gsub!(/{{.*?}}/) do |template|
+        target = template.gsub(/{{\s*(.*?)\s*}}/, '\1')
+        return_value = nil
+        found_template_value = false
+        target.split(/\s*\+\s*/).each do |key|
+          if vars.has_key?(key)
+            if return_value.nil?
+              return_value = vars[key]
+            elsif return_value.is_a?(Hash)
+              return_value = return_value.merge(vars[key])
+            else
+              return_value += vars[key]
+            end
+            found_template_value = true
+          end
+        end
+        if found_template_value
+          return return_value
+        end
+        return value
+      end
+    end
+    value
+  end
+
+  # query replace jinja2 templates with target values
+  # param: hash (cf. result self.get_variables)
+  # return: hash
+  def self.resolve_variables(vars)
+    loop do
+      new_vars = _resolve_variables(vars, vars)
+      break if new_vars == vars
+
+      vars = new_vars
+    end
+
+    vars
   end
 
   def self.get_variables(host, group_idx, hosts=nil)

@@ -18,6 +18,16 @@ var_nested_array_hash_1: 'val_array_hash'
 var_nested_array_hash_2:
   - key: "{{ var_nested_array_hash_1 }}"
 
+var_array_concat_1:
+  - "val_array"
+var_array_concat_2: "{{ var_array_concat_1 + var_array_concat_1 }}"
+
+var_array_merge_1:
+  key1: "val_hash_1"
+var_array_merge_2:
+  key2: "val_hash_2"
+var_array_merge_3: "{{ var_array_merge_1 + var_array_merge_2 }}"
+
 var_nested_whitespace_1: val_nested_whitespace
 var_nested_whitespace_2: "{{var_nested_whitespace_1  }}"
 

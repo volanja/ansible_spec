@@ -450,7 +450,7 @@ describe "get_hash_behaviourの実行" do
     end
   
     it 'exist fourteen pairs in Hash' do
-      expect(@res.length).to eq 14
+      expect(@res.length).to eq 19
     end
   
     it 'exist all pairs' do
@@ -465,6 +465,11 @@ describe "get_hash_behaviourの実行" do
       expect(@res).to include({'var_nested_array_2' => ['val_array']})
       expect(@res).to include({'var_nested_array_hash_1' => 'val_array_hash'})
       expect(@res).to include({'var_nested_array_hash_2' => [{'key' => 'val_array_hash'}]})
+      expect(@res).to include({'var_array_concat_1' => ['val_array']})
+      expect(@res).to include({'var_array_concat_2' => ['val_array', 'val_array']})
+      expect(@res).to include({'var_array_merge_1' => {'key1'=>'val_hash_1'}})
+      expect(@res).to include({'var_array_merge_2' => {'key2'=>'val_hash_2'}})
+      expect(@res).to include({'var_array_merge_3' => {'key1'=>'val_hash_1', 'key2'=>'val_hash_2'}})
       expect(@res).to include({'var_nested_whitespace_1' => 'val_nested_whitespace'})
       expect(@res).to include({'var_nested_whitespace_2' => 'val_nested_whitespace'})
       expect(@res).to include({'var_missingtarget_2' => '{{ var_missingtarget_1 }}'})
