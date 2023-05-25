@@ -162,9 +162,10 @@ module AnsibleSpec
     host['name'] = line
     host['port'] = 22
     host['connection'] = "ssh"
-    if line.include?(":") # 192.168.0.1:22
-      host['uri']  = line.split(":")[0]
-      host['port'] = line.split(":")[1].to_i
+    target = line.split[0]
+    if target.include?(":") # 192.168.0.1:22
+      host['uri']  = target.split(":")[0]
+      host['port'] = target.split(":")[1].to_i
       return host
     end
     # 192.168.0.1 ansible_ssh_port=22
