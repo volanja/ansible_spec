@@ -36,6 +36,7 @@ module AnsibleSpec
 
       # get group
       if line.start_with?('[') && line.end_with?(']')
+        next if line.end_with?(':vars]')  # group variables
         group = line.gsub('[','').gsub(']','')
         groups["#{group}"] = Array.new
         next
