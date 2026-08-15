@@ -190,7 +190,7 @@ module AnsibleSpec
     f = '.ansiblespec'
     y = nil
     if File.exist?(f)
-      y = YAML.load_yaml_file(f)
+      y = load_yaml_file(f)
     end
     if ENV["PLAYBOOK"]
       playbook = ENV["PLAYBOOK"]
@@ -226,7 +226,7 @@ module AnsibleSpec
       path = File.join(rolepath, role, "meta", "main.yml")
 
       if File.exist?(path)
-        dependencies = YAML.load_yaml_file(path).fetch("dependencies", [])
+        dependencies = load_yaml_file(path).fetch("dependencies", [])
         unless dependencies.nil?
           new_deps = dependencies.map { |h|
             h["role"] || h
@@ -243,7 +243,7 @@ module AnsibleSpec
   # return: json
   #         {"name"=>"Ansible-Sample-TDD", "hosts"=>"server", "user"=>"root", "roles"=>["nginx", "mariadb"]}
   def self.load_playbook(f)
-    playbook = YAML.load_yaml_file(f)
+    playbook = load_yaml_file(f)
 
     # e.g. comment-out
     if playbook === false
@@ -259,11 +259,11 @@ module AnsibleSpec
     properties = Array.new
     playbook.each do |site|
       if site.has_key?("include")
-          YAML.load_yaml_file(site["include"]).each { |site|
+          load_yaml_file(site["include"]).each { |site|
             properties.push site
           }
       elsif site.has_key?("import_playbook")
-          YAML.load_yaml_file(site["import_playbook"]).each { |site|
+          load_yaml_file(site["import_playbook"]).each { |site|
             properties.push site
           }
       else
@@ -319,7 +319,7 @@ module AnsibleSpec
     f = '.ansiblespec'
     y = nil
     if File.exist?(f)
-      y = YAML.load_yaml_file(f)
+      y = load_yaml_file(f)
     end
     hash_behaviour = 'replace'
     if ENV["HASH_BEHAVIOUR"]
@@ -383,12 +383,12 @@ module AnsibleSpec
           if Ansible::Vault.encrypted?(vars_file)
             yaml = load_encrypted_file(vars_file)
           else
-            yaml = YAML.load_yaml_file(vars_file)
+            yaml = load_yaml_file(vars_file)
           end
           vars = merge_variables(vars, yaml)
         else
           # Ruby 1.9 and 2.0
-          yaml = YAML.load_yaml_file(vars_file)
+          yaml = load_yaml_file(vars_file)
           vars = merge_variables(vars, yaml)
         end
       end
@@ -464,7 +464,7 @@ module AnsibleSpec
     f = '.ansiblespec'
     y = nil
     if File.exist?(f)
-      y = YAML.load_yaml_file(f)
+      y = load_yaml_file(f)
     end
     if ENV["VARS_DIRS_PATH"]
       vars_dirs_path = ENV["VARS_DIRS_PATH"]
