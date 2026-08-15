@@ -621,9 +621,11 @@ module AnsibleSpec
       def load_ansible_cfg()
         cfg = IniFile.new
         self.find_ansible_cfgs.each do |file|
-          cfg = cfg.merge(IniFile.new :filename => file)
+          cfg_file = IniFile.new :filename => file
+          # Merge without calling tainted? method
+          cfg.to_h.merge!(cfg_file.to_h)
         end
-        cfg.to_h
+        cfg
       end
     end
 
