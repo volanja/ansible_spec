@@ -190,7 +190,7 @@ module AnsibleSpec
     f = '.ansiblespec'
     y = nil
     if File.exist?(f)
-      y = YAML.load_file(f)
+      y = load_yaml_file(f)
     end
     if ENV["PLAYBOOK"]
       playbook = ENV["PLAYBOOK"]
@@ -226,7 +226,7 @@ module AnsibleSpec
       path = File.join(rolepath, role, "meta", "main.yml")
 
       if File.exist?(path)
-        dependencies = YAML.load_file(path).fetch("dependencies", [])
+        dependencies = load_yaml_file(path).fetch("dependencies", [])
         unless dependencies.nil?
           new_deps = dependencies.map { |h|
             h["role"] || h
@@ -243,7 +243,7 @@ module AnsibleSpec
   # return: json
   #         {"name"=>"Ansible-Sample-TDD", "hosts"=>"server", "user"=>"root", "roles"=>["nginx", "mariadb"]}
   def self.load_playbook(f)
-    playbook = YAML.load_file(f)
+    playbook = load_yaml_file(f)
 
     # e.g. comment-out
     if playbook === false
@@ -259,11 +259,11 @@ module AnsibleSpec
     properties = Array.new
     playbook.each do |site|
       if site.has_key?("include")
-          YAML.load_file(site["include"]).each { |site|
+          load_yaml_file(site["include"]).each { |site|
             properties.push site
           }
       elsif site.has_key?("import_playbook")
-          YAML.load_file(site["import_playbook"]).each { |site|
+          load_yaml_file(site["import_playbook"]).each { |site|
             properties.push site
           }
       else
@@ -319,7 +319,7 @@ module AnsibleSpec
     f = '.ansiblespec'
     y = nil
     if File.exist?(f)
-      y = YAML.load_file(f)
+      y = load_yaml_file(f)
     end
     hash_behaviour = 'replace'
     if ENV["HASH_BEHAVIOUR"]
@@ -383,12 +383,12 @@ module AnsibleSpec
           if Ansible::Vault.encrypted?(vars_file)
             yaml = load_encrypted_file(vars_file)
           else
-            yaml = YAML.load_file(vars_file)
+            yaml = load_yaml_file(vars_file)
           end
           vars = merge_variables(vars, yaml)
         else
           # Ruby 1.9 and 2.0
-          yaml = YAML.load_file(vars_file)
+          yaml = load_yaml_file(vars_file)
           vars = merge_variables(vars, yaml)
         end
       end
@@ -464,7 +464,7 @@ module AnsibleSpec
     f = '.ansiblespec'
     y = nil
     if File.exist?(f)
-      y = YAML.load_file(f)
+      y = load_yaml_file(f)
     end
     if ENV["VARS_DIRS_PATH"]
       vars_dirs_path = ENV["VARS_DIRS_PATH"]
@@ -483,7 +483,7 @@ module AnsibleSpec
       target_host.keys[0]
   end
 
-  # query replace jinja2 templates with target values 
+  # query replace jinja2 templates with target values
   # param: hash (cf. result self.get_variables)
   # param: number of iterations if found_template
   # return: hash
@@ -503,15 +503,15 @@ module AnsibleSpec
         # ignore whitespaces (\s*)
         # use non-greedy regex (.*?)
         target = template.gsub(/{{\s*(.*?)\s*}}/, '\1')
-        
+
         # lookup value of target variable
         value = vars[target]
-        
+
         # return lookup value if it exists
-        # or leave template alone  
-        if value.nil? 
+        # or leave template alone
+        if value.nil?
           template
-        else 
+        else
           found_template = true
           value
         end
@@ -586,6 +586,16 @@ module AnsibleSpec
 
   end
 
+  def self.load_yaml_file(file)
+    begin
+      # Psych::VERSION >= '3.1.0'
+      YAML.load_file(file, permitted_classes: [Symbol], aliases: true)
+    rescue ArgumentError
+      # Fallback for older Psych versions
+      YAML.load_file(file)
+    end
+  end
+
   class AnsibleCfg
     def initialize
       @cfg = self.class.load_ansible_cfg
@@ -604,16 +614,19 @@ module AnsibleSpec
          "./ansible.cfg",
          ENV["ANSIBLE_CFG"],
         ].each do |f|
-          files << f if f and File.exists? f
+          files << f if f and File.exist? f
         end
       end
 
+      # return : Hash
       def load_ansible_cfg()
-        cfg = IniFile.new
+        cfg_hash = {}
         self.find_ansible_cfgs.each do |file|
-          cfg = cfg.merge(IniFile.new :filename => file)
+          cfg_file = IniFile.new :filename => file
+          # Merge without calling tainted? method
+          cfg_hash.merge!(cfg_file.to_h)
         end
-        cfg.to_h
+        cfg_hash  # return Hash
       end
     end
 

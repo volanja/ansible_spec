@@ -65,7 +65,7 @@ module AnsibleSpec
   end
 
   def self.safe_touch(file)
-    unless File.exists? "#{file}"
+    unless File.exist? "#{file}"
       File.open("#{file}", 'w') do |f|
           #f.puts content
       end

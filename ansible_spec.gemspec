@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
-lib = File.expand_path('../lib', __FILE__)
+lib = File.expand_path('../lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'ansible_spec/version'
+require_relative 'lib/ansible_spec/version'
 
 Gem::Specification.new do |gem|
   gem.name          = "ansible_spec"
@@ -17,6 +17,7 @@ Gem::Specification.new do |gem|
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
+  gem.required_ruby_version = '>= 2.1.0'
 
   gem.add_development_dependency "bundler"
   gem.add_development_dependency "rake"
