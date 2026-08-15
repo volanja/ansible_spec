@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 lib = File.expand_path('../lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'ansible_spec/version'
+require_relative 'lib/ansible_spec/version'
 
 Gem::Specification.new do |gem|
   gem.name          = "ansible_spec"
