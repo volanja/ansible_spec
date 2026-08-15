@@ -1,3 +1,8 @@
+# v1.0.0
+- Support Ruby 3.2, 3.3, 3.4
+ - Merge [#155 Support Ruby 3.2.11](https://github.com/volanja/ansible_spec/pull/155) by volanja
+ - Merge [#156 Add test case 3.3.12, 3.4.10](https://github.com/volanja/ansible_spec/pull/156) by volanja
+
 # v0.3.2
 - Merge [#135 Fix wrong index by empty group](https://github.com/volanja/ansible_spec/pull/135) by [mamiya312](https://github.com/mamiya312)
 
