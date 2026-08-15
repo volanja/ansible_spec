@@ -618,14 +618,15 @@ module AnsibleSpec
         end
       end
 
+      # return : Hash
       def load_ansible_cfg()
-        cfg = IniFile.new
+        cfg_hash = {}
         self.find_ansible_cfgs.each do |file|
           cfg_file = IniFile.new :filename => file
           # Merge without calling tainted? method
-          cfg.to_h.merge!(cfg_file.to_h)
+          cfg_hash.merge!(cfg_file.to_h)
         end
-        cfg
+        cfg_hash  # return Hash
       end
     end
 
